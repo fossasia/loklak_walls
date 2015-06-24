@@ -3,6 +3,7 @@
 @import 'vars';
 @import 'loader';
 @import 'layout/cms-view';
+
 * {
     font-family: $font-family;
 }
@@ -1741,6 +1742,11 @@ body {
 	text-align: center;
 	padding: 20% 0;
 }
+
+@import 'loklakcore';
+@import 'loklak_more_1';
+@import 'loklak_more_2';
+
 .wall-modal-dialog {
   width: 100%;
   height: 95%;
