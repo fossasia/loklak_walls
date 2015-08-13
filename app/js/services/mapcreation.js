@@ -2,11 +2,12 @@
 
 var servicesModule = require('./_index.js');
 
+
 /**
  * @ngInject
  */
 
-function MapCreationService($rootScope, MapPopUpTemplateService, SearchService) {
+function MapCreationService($rootScope,getpcdistribution,MapPopUpTemplateService, SearchService) {
 
     var service = {};
     var attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -14,6 +15,7 @@ function MapCreationService($rootScope, MapPopUpTemplateService, SearchService) 
         'Imagery © <a href="http://mapbox.com">Mapbox</a>';
     var mapId = 'examples.map-20v6611k';
     var tileLayerSrc = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
+    
 
     function initMapPoints(statuses, templateEngine) {
         var tweets = { "type": "FeatureCollection", "features": []};
@@ -34,7 +36,7 @@ function MapCreationService($rootScope, MapPopUpTemplateService, SearchService) 
         });
         return tweets;
     }
-
+    getpcdist();
     function addPointsToMap(map, tweets, markerType, cbOnMapAction) {
 
         if (markerType === "simpleCircle") {
@@ -135,6 +137,7 @@ function MapCreationService($rootScope, MapPopUpTemplateService, SearchService) 
         var markerType = params.markerType
         var templateEngine = params.templateEngine;
         var cbOnMapAction = params.cbOnMapAction;
+        console.log(countries);
 
         // Reassure that old map is remove
         delete(window.map); 
@@ -162,5 +165,73 @@ function MapCreationService($rootScope, MapPopUpTemplateService, SearchService) 
     return service;
 
 }
+function getpcdist()
+{
+    var data=pcdistribution.getpcdistribution($rootScope.root.twitterSession.screen_name);
+    // get color depending on population density value
+        function getColor(d) {
+            return d > 1000 ? '#800026' :
+                   d > 500  ? '#BD0026' :
+                   d > 200  ? '#E31A1C' :
+                   d > 100  ? '#FC4E2A' :
+                   d > 50   ? '#FD8D3C' :
+                   d > 20   ? '#FEB24C' :
+                   d > 10   ? '#FED976' :
+                              '#FFEDA0';
+        }
+        console.log(data);
 
-servicesModule.service('MapCreationService', ["$rootScope", "MapPopUpTemplateService", "SearchService", MapCreationService]);
+        function style(feature) {
+            return {
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                dashArray: '3',
+                fillOpacity: 0.7,
+                fillColor: getColor(feature.properties.density)
+            };
+        }
+
+        function highlightFeature(e) {
+            var layer = e.target;
+
+            layer.setStyle({
+                weight: 5,
+                color: '#666',
+                dashArray: '',
+                fillOpacity: 0.7
+            });
+
+            if (!L.Browser.ie && !L.Browser.opera) {
+                layer.bringToFront();
+            }
+
+            info.update(layer.feature.properties);
+        }
+
+        var geojson;
+
+        function resetHighlight(e) {
+            geojson.resetStyle(e.target);
+            info.update();
+        }
+
+        function zoomToFeature(e) {
+            map.fitBounds(e.target.getBounds());
+        }
+
+        function onEachFeature(feature, layer) {
+            layer.on({
+                mouseover: highlightFeature,
+                mouseout: resetHighlight,
+                click: zoomToFeature
+            });
+        }
+
+        geojson = L.geoJson(statesData, {
+            style: style,
+            onEachFeature: onEachFeature
+        }).addTo(map);
+
+}
+servicesModule.service('MapCreationService', ["$rootScope", "getpcdistribution","MapPopUpTemplateService", "SearchService", MapCreationService]);

@@ -2,11 +2,12 @@
 // jshint laxbreak:true
 
 var servicesModule = require('./_index.js');
+var json = require('./countries.js'); 
 
 /**
  * @ngInject
  */
-function getpcdistribution($filter) {
+function getpcdistribution($http,$scope,AppSettings) {
 
   var service = {};
 
@@ -152,11 +153,12 @@ function getpcdistribution($filter) {
             followers_follower.sort(compare);
             
         }
+        return country_stat_result;
  
      
 }
 
-
+}
 
   
-servicesModule.service('getpcdistribution','$http','$scope','AppSettings' ['$filter', getpcdistribution,$http,$scope,AppSettings]);
+servicesModule.service('getpcdistribution', ['$http','$scope','AppSettings',getpcdistribution]);
