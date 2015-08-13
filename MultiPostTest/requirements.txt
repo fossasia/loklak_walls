@@ -1,0 +1,12 @@
+Django==1.6.3
+PyMySQL==0.6.2
+South==0.8.4
+bdist-mpkg==0.5.0
+mercurial==3.2.1
+nonude==1.0
+numpy==1.9.1
+requests==2.3.0
+vboxapi==1.0
+virtualenv==1.11.6
+wsgiref==0.1.2
+yolk==0.4.3
