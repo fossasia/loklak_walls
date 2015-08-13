@@ -21,6 +21,7 @@
     "express": "^4.12.4",
     "oauth-shim": "^0.2.3",
     "request": "^2.57.0",
-    "shortid": "^2.2.2"
+    "shortid": "^2.2.2",
+    "twitter": "^1.2.5"
   }
 }
