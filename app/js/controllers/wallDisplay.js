@@ -142,8 +142,6 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         });
     }
 
-    getWallData();
-
     var init = function() {
         flag = false;
         vm.showEmpty = false;
@@ -155,6 +153,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
     };
 
     init();
+    getWallData();
 
     vm.histogramOptions = {
         //scaleBeginAtZero: true

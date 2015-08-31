@@ -27,7 +27,7 @@ function getAuthorizedData(servlet, paramsObj, callback) {
 function updateData(authData, data, callback) {
     var dataToSend = authData;
     dataToSend.apps = data;
-    console.log(JSON.stringify(dataToSend));
+    //console.log(JSON.stringify(dataToSend));
     request.post({
             url: config.apiUrl + 'account.json',
             form: {
@@ -183,7 +183,7 @@ router.delete('/:user/:app/:id', isAuthorized, function(req, res) {
         authData.oauth_token = responseData.accounts[0].oauth_token;
         authData.oauth_token_secret = responseData.accounts[0].oauth_token_secret;
         authData.screen_name = responseData.accounts[0].screen_name;
-        console.log(authData);
+        //console.log(authData);
         if (!appData[req.params.app]) {
             appData[req.params.app] = [];
         }
@@ -197,7 +197,7 @@ router.delete('/:user/:app/:id', isAuthorized, function(req, res) {
                     apps: appData
                 }
                 updateData(authData, appData, function(error, response, body) {
-                    console.log(response.body);
+                    //console.log(response.body);
                     return res.json({
                         status: "OK"
                     });
