@@ -1,15 +1,22 @@
 'use strict';
 
+// High priorities modules
+global.jQuery = require('jquery'); 
+global.$ = global.jQuery;
 var angular = require('angular');
 
-// angular modules
+// Low priorities modules
+require('masonry-layout');
+
+// Angular modules
 require('angular-ui-router');
 require('angular-animate');
 require('angular-moment');
 require('angular-resource');
 require('angular-loading-bar');
-require('ng-tags-input');
 require('angular-base64-upload');
+require('ng-tags-input');
+
 // /require('chart.js');
 require('./templates');
 require('./controllers/_index');
