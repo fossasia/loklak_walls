@@ -1,5 +1,7 @@
 loklak webclient
 =====================================
+
+[![Join the chat at https://gitter.im/loklak/loklak_webclient](https://badges.gitter.im/loklak/loklak_webclient.svg)](https://gitter.im/loklak/loklak_webclient?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/loklak/loklak_webclient.svg?branch=master)](https://travis-ci.org/loklak/loklak_webclient)
 [![Code Climate](https://codeclimate.com/github/loklak/loklak_webclient/badges/gpa.svg)](https://codeclimate.com/github/loklak/loklak_webclient)
 
@@ -30,6 +32,7 @@ Install and run it first.
 Create a Twitter application at [https://apps.twitter.com](https://apps.twitter.com), remember to set the correct website url & callback url (for localhost, `http://127.0.0.1/` works better), then modify `custom_configFile.json` as:
 * Set the twitterConsumerKey var in `custom_configFile.json` to set the Consumer Key (API Key) from your Twitter app
 * Set the twitterConsumerSecret var in `custom_configFile.json` to set the Consumer Secret from your Twitter app  
+* Change the jwtsecret var in `custom_configFile.json` to a different string
 
 A twitter app is valid only for a domain (defined when creating the app). So the credentails above need to be changed also according to the domain (e.g. you'll need to create 2 twitter apps separately for a clone in localhost and for a clone in a remote server)
 

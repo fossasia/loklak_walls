@@ -18,8 +18,13 @@
             <div class="universal-topnav-item topnav-user-actions">
                 <img class="hidden-xs" ng-show="root.twitterSession" src="../images/loklak_icon_yellow_45x45_transparent.png" alt="Loklak logo" id="loklak-nav-logo">
                 <div global-search-form class="hidden-xs"></div>  
+<<<<<<< HEAD
                 <div twitter-session="root.twitterSession" ng-class="{'isNotLoggedIn': !root.twitterSession, 'signin-twitter': true}" signin-twitter hello="root.hello" is-logged-in="root.isLoggedIn" current-user="root.currentUser" logout="root.onLogout"></div>
                 <ul class="hidden-xs global-tweet-button-container" ng-if="root.twitterSession">
+=======
+                <div twitter-session="root.twitterSession" ng-class="{'isNotLoggedIn': !root.twitterSession, 'signin-twitter': true}" signin-twitter hello="root.hello" ></div>
+                <!-- <ul class="hidden-xs global-tweet-button-container" ng-if="root.twitterSession">
+>>>>>>> master
                     <li>
                         <button id="global-new-tweet-button" type="button" class="js-global-new-tweet js-tooltip btn primary-btn tweet-btn js-dynamic-tooltip btn-loklak-blue" data-placement="bottom" data-component-term="new_tweet_button" data-original-title=""  data-toggle="modal" data-target="#myModal" >
                             <span class="fa fa-twitter"></span>

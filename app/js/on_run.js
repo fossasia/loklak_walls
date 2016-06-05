@@ -5,7 +5,7 @@
 /**
  * @ngInject
  */
-function OnRun($rootScope, AppSettings, HelloService) {
+function OnRun($rootScope, $location, AppSettings, HelloService, AuthService) {
 	var root = {};
   root.hello = HelloService;
   
@@ -15,27 +15,21 @@ function OnRun($rootScope, AppSettings, HelloService) {
    */
     root.globalSearchTerm = '';
     root.topNavItems = [
-    		{
-    			'title': 'Home',
-    			'link' : '/',
-          'icon' : 'fa fa-home'
-    		},
-        {
-          'title': 'Report',
-          'link' : '/report',
-          'icon' : 'fa fa-bar-chart'
-        },
-        {
-          'title': 'Wall',
-          'link' : '/wall',
-          'icon' : 'fa fa-list'
-        },
-        {
-          'title': 'Connect',
-          'link' : '/connect',
-          'icon' : 'fa fa-cloud'
-        }
-        
+		{
+			'title': 'Home',
+			'link' : '/',
+			'icon' : 'fa fa-home'
+		},
+		{
+			'title': 'Wall',
+			'link' : '/wall',
+			'icon' : 'fa fa-list'
+		},
+		{
+			'title': 'Report',
+			'link' : '/report',
+			'icon' : 'fa fa-bar-chart'
+		}        
   	  ];
 
     root.fullscreenDisabled = true;
@@ -60,6 +54,32 @@ function OnRun($rootScope, AppSettings, HelloService) {
       $rootScope.root.pageTitle = pageTitle;
     });
     $rootScope.root = root;
+    
+    $rootScope.root.credentials = {
+        name : "",
+        email : "",
+        password : ""
+    };
+    
+    $rootScope.root.onSubmit = function () {
+        console.log("s");
+        AuthService
+        .register($rootScope.root.credentials)
+        .error(function(err){
+            alert(err);
+        })
+        .then(function(){
+            $location.path('/');
+            $rootScope.root.isLoggedIn = AuthService.isLoggedIn();
+            $rootScope.root.currentUser = AuthService.currentUser();
+        });
+    };
+    $rootScope.root.onLogout = function () {
+        AuthService.logout();
+        $location.path('/');
+        $rootScope.root.isLoggedIn = AuthService.isLoggedIn();
+    };
+
 }
 
 module.exports = OnRun;
