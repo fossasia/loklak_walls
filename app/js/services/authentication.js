@@ -61,9 +61,9 @@ var servicesModule = require('./_index.js');
     };
 
     var twitterSignUp = function(){
-      $http.get('/api/login/twitter').success(function(data){
+      return $http.get('/api/login/twitter').success(function(data) {
         saveToken(data.token);
-      })
+      });
     }
 
     return {

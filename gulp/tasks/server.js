@@ -40,7 +40,6 @@ gulp.task('server', function() {
   });
 
   // Initialise Passport before using the route middleware
-  
   server.use(passport.initialize());
   server.use(passport.session());
 

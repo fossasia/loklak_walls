@@ -84,6 +84,10 @@
     $rootScope.root.twitterSignUp = function(){
       AuthService
       .twitterSignUp()
+      .then(function(data){
+       $rootScope.root.isLoggedIn = AuthService.isLoggedIn();
+       $rootScope.root.currentUser = AuthService.currentUser();
+      })
         // .error(function(err){
         //     console.log(err);
         // })
