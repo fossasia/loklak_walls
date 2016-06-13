@@ -13,7 +13,7 @@ var UserSchema = new Schema({
   // oauth_token: String,
   // oauth_token_secret: String,
   // source_type: String,
-  email: { type: String, unique: true, required: true },
+  email: { type: String, unique: true },
   name: { type: String, required: true },
   hash: String,
   salt: String,
@@ -38,8 +38,15 @@ var UserSchema = new Schema({
             mainHashtagText: String,
             mainHashtag: String,
             id: String
-    }]
-  }
+        }]
+  },
+  twitter: {
+      id           : String,
+      token        : String,
+      displayName  : String,
+      username     : String
+  },
+
 });
 
 UserSchema.methods.setPassword = function(password){
@@ -58,7 +65,6 @@ UserSchema.methods.generateJwt = function() {
 
   return jwt.sign({
     _id: this._id,
-    email: this.email,
     name: this.name,
     exp: parseInt(expiry.getTime() / 1000),
   }, config.jwtsecret); // DO NOT KEEP YOUR SECRET IN THE CODE!

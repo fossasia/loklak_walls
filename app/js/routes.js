@@ -96,7 +96,7 @@ function Routes($stateProvider, $locationProvider, $urlRouterProvider, $httpProv
     onExit: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=true;}]
   });
 
-  $urlRouterProvider.otherwise('/');
+  // $urlRouterProvider.otherwise('/');
 
   cfpLoadingBarProvider.includeBar = false;
   cfpLoadingBarProvider.includeSpinner = true;

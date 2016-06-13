@@ -222,8 +222,8 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
                     // $window.open('/' + $scope.currentUser._id + '/wall/' + $scope.userWalls[$scope.isEditing].id, '_blank');
                     // $scope.userWalls[$scope.isEditing].internal = {};
                     // $scope.userWalls[$scope.isEditing].internal.showLoading = false;
-                    $scope.isEditing = -1;
                     initWallOptions();
+                    $scope.isEditing = -1;
                 });
             } else {
                 $scope.userWalls.push(saveData);
@@ -238,9 +238,9 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
                         }
                     }
                     $scope.wallsPresent = true;
+                    initWallOptions();
                     $window.open('/' + $scope.currentUser._id + '/wall/' + result.id, '_blank');
                     // $scope.userWalls[$scope.userWalls.length - 1].showLoading = true;
-                    initWallOptions();
                 });
             }
         } else {

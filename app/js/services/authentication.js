@@ -4,42 +4,41 @@ var servicesModule = require('./_index.js');
 /**
  * @ngInject
  */
-function AuthenticationService($http, $window) {
+ function AuthenticationService($http, $window) {
 
-    var saveToken = function (token) {
-      $window.localStorage['jwt-token'] = token;
-    };
+  var saveToken = function (token) {
+    $window.localStorage['jwt-token'] = token;
+  };
 
-    var getToken = function () {
-      return $window.localStorage['jwt-token'];
-    };
+  var getToken = function () {
+    return $window.localStorage['jwt-token'];
+  };
 
-    var isLoggedIn = function() {
+  var isLoggedIn = function() {
+    var token = getToken();
+    var payload;
+
+    if(token){
+      payload = token.split('.')[1];
+      payload = $window.atob(payload);
+      payload = JSON.parse(payload);
+
+      return payload.exp > Date.now() / 1000;
+    } else {
+      return false;
+    }
+  };
+
+  var currentUser = function() {
+    if(isLoggedIn()){
       var token = getToken();
-      var payload;
-
-      if(token){
-        payload = token.split('.')[1];
-        payload = $window.atob(payload);
-        payload = JSON.parse(payload);
-
-        return payload.exp > Date.now() / 1000;
-      } else {
-        return false;
-      }
-    };
-
-    var currentUser = function() {
-      if(isLoggedIn()){
-        var token = getToken();
-        var payload = token.split('.')[1];
-        payload = $window.atob(payload);
-        payload = JSON.parse(payload);
+      var payload = token.split('.')[1];
+      payload = $window.atob(payload);
+      payload = JSON.parse(payload);
         // console.log(payload);
         // no need for exp, iat, _id fields
         return {
           _id: payload._id,
-          email : payload.email,
           name : payload.name
         };
       }
@@ -61,6 +60,12 @@ function AuthenticationService($http, $window) {
       $window.localStorage.removeItem('jwt-token');
     };
 
+    var twitterSignUp = function(){
+      $http.get('/api/login/twitter').success(function(data){
+        saveToken(data.token);
+      })
+    }
+
     return {
       currentUser : currentUser,
       saveToken : saveToken,
@@ -68,7 +73,8 @@ function AuthenticationService($http, $window) {
       isLoggedIn : isLoggedIn,
       register : register,
       login : login,
-      logout : logout
+      logout : logout,
+      twitterSignUp: twitterSignUp
     };
   }
   

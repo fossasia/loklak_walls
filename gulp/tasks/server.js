@@ -3,10 +3,11 @@
 var config  = require('../config');
 var http    = require('http');
 var express = require('express');
+var session = require('express-session')
 var gulp    = require('gulp');
 var gutil   = require('gulp-util');
 var morgan  = require('morgan');
-
+var flash    = require('connect-flash');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -24,8 +25,12 @@ gulp.task('server', function() {
   server.use(bodyParser.json());
   server.use(bodyParser.urlencoded({ extended: false }));
   server.use(cookieParser());
-  
-  // error handlers
+  server.use(session({
+    secret: "somescrert",
+    resave: true,
+    saveUninitialized: true
+  }));
+
   // Catch unauthorised errors
   server.use(function (err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
@@ -35,7 +40,9 @@ gulp.task('server', function() {
   });
 
   // Initialise Passport before using the route middleware
+  
   server.use(passport.initialize());
+  server.use(passport.session());
 
   // Use the API routes when path starts with /api
   server.use('/api', routesApi);
@@ -70,14 +77,14 @@ gulp.task('server', function() {
     //       ]
     //     }
     //   };
-  
+
   // Uncomment to log all requests to the console
   server.use(morgan('dev'));
   server.use(express.static(config.dist.root));
 
   // Serve index.html for all other routes to leave routing up to Angular
   server.use('/*', function(req, res) {
-      res.sendFile('index.html', { root: 'build' });
+    res.sendFile('index.html', { root: 'build' });
   });
 
   // Start webserver if not already running

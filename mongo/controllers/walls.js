@@ -26,15 +26,12 @@ module.exports.getUserWalls = function (req, res) {
     // If no user ID exists in the JWT return a 401
     
     if (!req.payload._id) {
-        res.status(401).json({
-            "message" : "UnauthorizedError: private wall page"
-        });
+        res.status(401).jsonp([]);
     } else {
         User
         .findById(req.params.user)
         .exec(function(err, user) {
-            console.log(user);
-            
+            // console.log("user", user);
             if (user.apps && user.apps[req.params.app]) {
                 res.jsonp(user.apps[req.params.app]);
             } else {
@@ -59,23 +56,27 @@ module.exports.createWall = function (req, res) {
         .exec(function(err, user) {
             var appData = user.apps;
             if (!appData) {
+                console.log("apps null");
+                
                 appData = {};
             }
             if (!appData[req.params.app]) {
+                console.log("apps.walls null");
+                
                 appData[req.params.app] = [];
             }
-            var randLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-            var uniqid = randLetter + Date.now();
+            // var randLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+            var uniqid = Date.now();
 
             newWall.id = uniqid;
             console.log("newWallid", newWall.id);
             
             appData[req.params.app].push(newWall);
-            console.log("user", user);
+            console.log("user apps", user.apps);
             
             user.save(function(err) {
                 if (err) {
-                    res.send(err);
+                    res.json({id: error});
                 } else {
                     res.json({ id: newWall.id });
                 }

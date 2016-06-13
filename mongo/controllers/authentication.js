@@ -2,6 +2,34 @@ var passport = require('passport');
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
+module.exports.loginTwitter = function(req,res){
+    
+    passport.authenticate('twitter', function(err, user, info){
+    var token;
+    console.log(user);
+
+    // If Passport throws/catches an error
+    if (err) {
+      res.status(404).json(err);
+      return;
+    }
+
+    // If a user is found
+    if(user){
+      token = user.generateJwt();
+      res.status(200);
+      res.json({
+        "token" : token
+      });
+    } else {
+      // If user is not found
+      res.status(401).json(info);
+    }
+  })(req, res);
+
+}
+
+
 module.exports.register = function(req, res) {
   
   // Log in if found, else register
@@ -25,9 +53,8 @@ module.exports.register = function(req, res) {
         user.name = req.body.email;
         user.email = req.body.email;
         user.isVerified = false;
-        user.apps = {
-            walls: []
-        };
+        user.apps = { walls: [] };
+        user.twitter = {}
 
         user.setPassword(req.body.password);
         user.save(function(err) {
@@ -47,6 +74,7 @@ module.exports.login = function(req, res) {
 
   passport.authenticate('local', function(err, user, info){
     var token;
+    console.log(user);
 
     // If Passport throws/catches an error
     if (err) {
@@ -68,3 +96,4 @@ module.exports.login = function(req, res) {
   })(req, res);
 
 };
+
