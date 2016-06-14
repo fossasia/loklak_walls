@@ -17,7 +17,11 @@ function AppsService($q, $http, $resource, AppSettings, AuthService) {
     }, {
         query: {
             method: 'GET',
-            isArray: true
+            isArray: true,
+            params: {
+                user: '@user',
+                app: '@app',
+            }
         },
 
         save: {

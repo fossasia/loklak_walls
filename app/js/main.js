@@ -47,7 +47,8 @@ angular.element(document).ready(function() {
     'chart.js',
     'naif.base64',
     'nya.bootstrap.select',
-    'ng-sweet-alert'
+    'ng-sweet-alert',
+    'ngMessages'
   ];
 
   // mount on window for testing

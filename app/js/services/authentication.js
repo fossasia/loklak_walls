@@ -4,74 +4,49 @@ var servicesModule = require('./_index.js');
 /**
  * @ngInject
  */
-function AuthenticationService($http, $window) {
+ function AuthenticationService($http) {
 
-    var saveToken = function (token) {
-      $window.localStorage['jwt-token'] = token;
-    };
+   var isLoggedIn = function() {
+     $http.get('/api/currentuser').success(function (data) {
+      if(data._id) return true;
+      else return false;
+    }).
+     error(function () {
+      return false;
+    });
+   }
 
-    var getToken = function () {
-      return $window.localStorage['jwt-token'];
-    };
+  var currentUser = function() {
+     return $http.get('/api/currentuser')
+  } 
 
-    var isLoggedIn = function() {
-      var token = getToken();
-      var payload;
+  var register = function(user) {
+    return $http.post('/api/register', user);
+  };
 
-      if(token){
-        payload = token.split('.')[1];
-        payload = $window.atob(payload);
-        payload = JSON.parse(payload);
+  var login = function(user) {
+    return $http.post('/api/login', user);
 
-        return payload.exp > Date.now() / 1000;
-      } else {
-        return false;
-      }
-    };
+  };
 
-    var currentUser = function() {
-      if(isLoggedIn()){
-        var token = getToken();
-        var payload = token.split('.')[1];
-        payload = $window.atob(payload);
-        payload = JSON.parse(payload);
-        // console.log(payload);
-        // no need for exp, iat, _id fields
-        return {
-          _id: payload._id,
-          email : payload.email,
-          name : payload.name
-        };
-      }
-    };
+  var logout = function() {
+    $http.get('/api/logout');
+  };
 
-    var register = function(user) {
-      return $http.post('/api/register', user).success(function(data){
-        saveToken(data.token);
-      });    
-    };
-
-    var login = function(user) {
-      return $http.post('/api/login', user).success(function(data) {
-        saveToken(data.token);
-      });
-    };
-
-    var logout = function() {
-      $window.localStorage.removeItem('jwt-token');
-    };
-
-    return {
-      currentUser : currentUser,
-      saveToken : saveToken,
-      getToken : getToken,
-      isLoggedIn : isLoggedIn,
-      register : register,
-      login : login,
-      logout : logout
-    };
+  var twitterSignUp = function(){
+    $http.get('/api/login/twitter');
   }
-  
 
-  servicesModule.service('AuthService',['$http', '$window', AuthenticationService]);
+  return {
+    currentUser : currentUser,
+    isLoggedIn : isLoggedIn,
+    register : register,
+    login : login,
+    logout : logout,
+    twitterSignUp: twitterSignUp
+  };
+}
+
+
+servicesModule.service('AuthService',['$http', '$window', AuthenticationService]);
 

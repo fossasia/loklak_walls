@@ -1,0 +1,30 @@
+<div class="container">
+
+	<div class="page-header text-center">
+		<h1><span class="fa fa-link"></span> Connected Accounts</h1>
+	</div>
+
+	<div class="row">
+		
+		<!-- TWITTER INFORMATION -->
+		<div class="col-sm-3">
+			</div>
+		<div class="col-sm-6">
+			<div class="well">
+				<h3 class="text-info" style="margin-bottom: 11px;margin-top: 3px;"><span class="fa fa-twitter"></span> Twitter</h3>
+
+				<div ng-if="root.currentUser.twitter.token" >
+					<p style="position: absolute;font-size: 18px;top: 62px;">
+						<strong>Display Name</strong>: {{ root.currentUser.twitter.displayName }}<br>
+						<strong>Username</strong>: {{ root.currentUser.twitter.username }}
+					</p>
+
+					<a ng-show="root.currentUser.twitter.token" ng-href="/api/unlink/twitter" target="_self"  style="position: relative;margin-left: 80%;top: -23px;" class="btn btn-lg btn-info">Unlink</a>
+
+				</div>
+		            <a ng-hide="root.currentUser.twitter.token" target="_self" ng-href="/api/login/twitter" style="position: relative;margin-left: 60%;top: -23px;" class="btn btn-lg btn-info"><span class="fa fa-twitter"></span>&nbsp;Connect Twitter</a>
+
+			</div>
+		</div>
+	</div>
+</div>
