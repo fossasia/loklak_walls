@@ -1,0 +1,87 @@
+var mongoose = require('mongoose');
+var Tweet = mongoose.model('Tweet');
+
+
+// Get all tweets, for approval
+module.exports.getAllTweetsById = function(req,res){
+    Tweet.find({userWallId: req.params.userWallId})
+    .exec(function(err, tweetArr){
+        res.json({tweetArr: tweetArr});
+    })
+}
+
+// Accepts a userId & wallId, queries the combined id for efficiency
+// Returns a approved tweet array for a wall
+module.exports.getApprovedTweetsById = function (req, res) {
+    var userWallId = req.params.userId + req.params.wallId;
+    Tweet
+    .find({userWallId: userWallId, approval: true} )
+    .exec(function(err, tweetArr) {
+        console.log(tweetArr);
+        res.json({tweetArr: tweetArr});
+    });
+}
+
+// Gets a specific tweet by its ._id
+module.exports.getTweetById = function (req, res) {
+    if (!req.isAuthenticated()) {
+        console.log("not Authenticated");
+        res.status(401).jsonp([]);
+    } else {
+        Tweet
+        .findById(req.params.tweetId)
+        .exec(function(err, tweet) {
+            console.log(tweet);
+            res.jsonp({tweet: tweet});
+        });
+    }
+}
+
+// Saves tweet array
+module.exports.storeTweet = function (req, res) {
+// pre-added userwallid & approval false field on client when checked walloptions for moderation
+// req.body contains an array of tweets
+    req.body.forEach(function(tweet){
+        var newTweet = new Tweet(tweet);
+        newTweet.save(function(err,datum){
+            if(err!==null){
+                console.log("err", err);  
+            } else{
+                console.log("datum", datum)
+            }
+        });
+    })
+    res.jsonp({message: "inserted "+req.body.length});
+}
+
+// Update approval status to it's opposite
+module.exports.updateTweet = function (req, res) {
+// set approval field to opposite
+    if (!req.isAuthenticated()) {
+        console.log("not Authenticated");
+        res.status(401).jsonp([]);
+    } else {
+        Tweet
+        .findById(req.params.tweetId)
+        .exec(function(err, tweet) {
+            tweet.approval = true;
+            tweet.save(function(err) {
+                if (err) res.send(err);
+                else res.json({tweet: tweet});
+            });
+        });
+    }
+}
+
+// Remove from store
+module.exports.deleteTweet = function (req, res) { 
+    if (!req.isAuthenticated()) {
+        console.log("not Authenticated");
+        res.status(401).jsonp([]);
+    } else {
+        Tweet
+        .find({_id: req.params.tweetId})
+        .remove()
+        .exec();
+    }
+}

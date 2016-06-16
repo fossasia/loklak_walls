@@ -10,9 +10,9 @@ var Chart = require('chart.js');
 /**
  * @ngInject
  */
-function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http, $window, $resource, AppSettings, SearchService, StatisticsService, AppsService, Fullscreen) {
+ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http, $window, $resource, AppSettings, SearchService, StatisticsService, AppsService, Fullscreen) {
 
-    var vm, flag, allStatuses, nextStatuses, term, count, searchParams, maxStatusCount;
+    var vm, flag, allStatuses, nextStatuses, term, count, searchParams, maxStatusCount, latestCreatedAtDate;
     vm = this;
     vm.invalidId = false;
     var tweetTimeout, cycleInterval, leaderboardInterval;
@@ -115,7 +115,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         searchParams.fromWall = true;
     }
 
-    function getWallData() {
+    function getWallOptionsData() {
         console.log($stateParams);
 
         vm.wallOptions = AppsService.get({
@@ -123,8 +123,10 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
             app: 'wall',
             id: $stateParams.id
         });
+
         vm.wallOptions.$promise.then(function(data) {
-            console.log(data);
+            console.log("data,vmwall", data);
+            console.log("vm.wallOptions", vm.wallOptions)
             
             if (vm.wallOptions.id) {
                 if (vm.wallOptions.layoutStyle === 1) {
@@ -150,13 +152,13 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         });
     }
 
-    getWallData();
+    getWallOptionsData();
 
     var init = function() {
         flag = false;
         vm.showEmpty = false;
-        allStatuses = [];
-        nextStatuses = [];
+        // allStatuses = [];
+        // nextStatuses = [];
         vm.statuses = [];
         searchParams = {};
         vm.displaySearch = true;
@@ -200,7 +202,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
      * Get img tag attr
      * Return in objects
      */
-    function scrapeImgTag(imgTag) {
+     function scrapeImgTag(imgTag) {
         var ngEle = angular.element(imgTag);
         return {
             src: ngEle.attr('src'),
@@ -213,7 +215,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
      * Create photoswipe
      * Lib's docs: http://photoswipe.com/documentation/getting-started.html
      */
-    vm.open = function(status_id) {
+     vm.open = function(status_id) {
         //$interval.cancel(interval);
         // Populating args
         var items = [];
@@ -255,44 +257,120 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
     function removeLeastRecentTweet() {
         var minIndex = 0;
         for (var i = 0; i < vm.statuses.length; i++) {
-            if (vm.statuses[i].created_at < vm.statuses[minIndex]) {
+            console.log("curr tweet", vm.statuses[i].created_at, "vm.statuses[minIndex]", vm.statuses[minIndex]);
+            if (vm.statuses[i].created_at < vm.statuses[minIndex]) { //FIX - mixing .created_at
                 minIndex = i;
             }
         }
+        console.log(minIndex);
         vm.statuses.splice(minIndex, 1);
     }
 
+    // returns an array of new tweets, comparing with those in local storage
+    function getNewTweets(statuses){
+        // initial oldest date from first element of last poll
+        var currNewest = latestCreatedAtDate;
+        var idx =0;
+        var tweetDate= new Date(statuses[idx].created_at);
+        var dataOldest = new Date(statuses[statuses.length-1].created_at);
+        
+        var newTweets =[];
+        // if the whole array is new prepend to localStorage tweets array
+        if(currNewest < dataOldest){
+            newTweets = statuses;
+        } else {
+            // else prepend only new tweets to localStorage tweets array in desc order
+            while(tweetDate > currNewest && idx < statuses.length){
+                newTweets.push(statuses[idx]);
+                idx++;
+                tweetDate= new Date(statuses[idx].created_at);
+            }
+        }
+        return newTweets;
+    }
+
+    // Polls the server every 10 sec.
+    // tweetTimeout holds $timeout 
     vm.update2 = function(refreshTime) {
         return $timeout(function() {
             SearchService.initData(searchParams).then(function(data) {
+
+                console.log("search Params", searchParams);
+                console.log("data.statuses", data.statuses);
+                console.log("vm.statuses", vm.statuses);
+                console.log("arg refreshTime", refreshTime);
+                var url = '/api/tweets/' + $stateParams.user + '/' + $stateParams.id;
+                var userWallId = $stateParams.user +  $stateParams.id;
+                console.log("url", url);
+                
                 if (data.statuses) {
                     if (data.statuses.length <= 0) {
                         vm.showEmpty = true;
-                        tweetTimeout = vm.update2(refreshTime + 10000);
+                        tweetTimeout = vm.update2(refreshTime + 10000); // start next poll 10s from time data was returned
                         console.log(refreshTime + 10000);
                     } else {
                         if (vm.statuses.length <= 0) {
-                            vm.statuses = data.statuses.splice(0, searchParams.count);
+                            // Check for MANUAL MOD flag
+                            if(vm.wallOptions.moderation){
+                                data.statuses.map(function(tweet){
+                                    tweet.userWallId = userWallId;
+                                    tweet.approval = false;                                    
+                                })
+                            } else {
+                                data.statuses.map(function(tweet){
+                                    tweet.userWallId = userWallId;
+                                    tweet.approval = true;
+                                })
+                            }
+                            console.log('stats', data.statuses)
+
+                            // MANUAL MOD - add all to mongo if vm.statuses is empty
+                            $http.post(url, data.statuses).then(function(res){
+                                latestCreatedAtDate = new Date(data.statuses[0].created_at);
+                            }, function(err){ console.log(err); })
+
+                            // get subset of data tweet array if current array is empty
+                            // vm.statuses = data.statuses.splice(0, searchParams.count);
+
+                            // get approved subset of tweets from mongo
+                            $http.get(url).then(function(res){
+                                console.log("res", res);
+                                $scope.statuses = res.data.tweetArr;
+                            })
                         } else {
+                            // MANUAL MOD - add new tweets to mongo
+                            var newTweets = getNewTweets(data.statuses);
+                            if(newTweets.length >0){
+                                $http.post(url,newTweets).then(function(res){
+                                    var latestDataCreatedAtDate = new Date(data.statuses[0].created_at);
+                                    if(latestDataCreatedAtDate > latestCreatedAtDate) latestCreatedAtDate = latestDataCreatedAtDate;
+                                }, function(err){
+                                    console.log(err);
+                                })
+                            }
+
                             for (var i = data.statuses.length - 1; i > -1; i--) {
                                 if (vm.wallOptions.cycle) {
-                                    if (!contains(vm.statuses, data.statuses[i])) {
+                                // tweets are moving cyclicly in array
+                                if (!contains(vm.statuses, data.statuses[i])) {
+                                        // if different tweet, remove oldest top
                                         console.log("triggered");
-                                        removeLeastRecentTweet();
+                                        removeLeastRecentTweet(); // cycle through & remove oldest
                                         $interval.cancel(cycleInterval);
                                         cycleInterval = undefined;
-                                        vm.statuses.unshift(data.statuses[i]);
+                                        vm.statuses.unshift(data.statuses[i]); // add new tweet to front of array
                                         cycleInterval = vm.cycleTweets();
-
                                     }
                                 } else {
-                                    if (data.statuses[i].created_at > vm.statuses[0].created_at) {
-                                        vm.statuses.unshift(data.statuses[i]);
+                                     // from oldest tweet of data, if newer than current newest
+                                     if (data.statuses[i].created_at > vm.statuses[0].created_at) {
+                                        vm.statuses.unshift(data.statuses[i]); // add tweet to front, pop the current oldest
                                         vm.statuses.pop();
                                     }
                                 }
                             }
                         }
+                        // Refresh Time set at 5 to 30s, see getRefreshTime()
                         var newRefreshTime = getRefreshTime(data.search_metadata.period);
                         tweetTimeout = vm.update2(newRefreshTime);
                         vm.showEmpty = false;
@@ -306,23 +384,23 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
                 console.log(refreshTime + 10000);
 
             });
-        }, refreshTime);
-    };
+}, refreshTime);
+};
 
-    var tweetRefreshTime = 4000;
+var tweetRefreshTime = 4000;
 
-    vm.fullscreenEnabled = false;
-    $scope.fullscreen = function() {
-        if (Fullscreen.isEnabled()) {
-            Fullscreen.cancel();
-        } else {
-            Fullscreen.all();
-        }
-    };
+vm.fullscreenEnabled = false;
+$scope.fullscreen = function() {
+    if (Fullscreen.isEnabled()) {
+        Fullscreen.cancel();
+    } else {
+        Fullscreen.all();
+    }
+};
 
-    Fullscreen.$on('FBFullscreen.change', function(evt, isFullscreenEnabled) {
-        vm.fullscreenEnabled = isFullscreenEnabled;
-    });
+Fullscreen.$on('FBFullscreen.change', function(evt, isFullscreenEnabled) {
+    vm.fullscreenEnabled = isFullscreenEnabled;
+});
 
 
 
@@ -351,7 +429,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         }
         var intervalLength = Math.round(labels.length / binCount);
         var newData = [],
-            newLabels = [];
+        newLabels = [];
         for (var i = 0; i < labels.length; i += intervalLength) {
             newLabels.push(labels[i]);
             var sum = 0;
@@ -457,12 +535,12 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
     vm.loadLeaderboard = function () {
         if (vm.wallOptions.showStatistics === true) {
             //if (vm.statuses.length > 0) {
-            var statParams = searchParams;
-            StatisticsService.getStatistics(statParams)
+                var statParams = searchParams;
+                StatisticsService.getStatistics(statParams)
                 .then(function(statistics) {
-                        evalHistogram(statistics);
-                    },
-                    function() {}
+                    evalHistogram(statistics);
+                },
+                function() {}
                 );
             //}
         }
@@ -489,9 +567,9 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         if (vm.wallOptions.showStatistics === true) {
             return $interval(function() {
                 var tabs = $('.nav-tabs-custom > .nav-tabs > li'),
-                    active = tabs.filter('.active'),
-                    next = active.next('li'),
-                    toClick = next.length ? next.find('a') : tabs.eq(0).find('a');
+                active = tabs.filter('.active'),
+                next = active.next('li'),
+                toClick = next.length ? next.find('a') : tabs.eq(0).find('a');
                 toClick.trigger('click');
             }, 5000);
         } else {

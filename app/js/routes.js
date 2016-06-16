@@ -45,6 +45,7 @@
     controller: 'WallCtrl as wall',
     title: 'Wall'
   })
+  // // wall creation modal is ng-included in create.html
   // .state('WallCreate', {
   //   url: '/wall/create',
   //   templateUrl: 'wall/create.html',

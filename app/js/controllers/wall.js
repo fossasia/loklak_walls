@@ -9,7 +9,7 @@ var moment = require('moment');
 /**
  * @ngInject
  */
-function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloService, SearchService, AuthService) {
+function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloService, SearchService, AuthService, $http) {
 
     var vm = this;
     var term = '';
@@ -20,7 +20,8 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
     $scope.selectedTab = 0;
     $scope.isLoggedIn= $rootScope.root.isLoggedIn;
     $scope.currentUser=$rootScope.root.currentUser;
-
+    $scope.statuses=[];
+    
     // for thumbnail url
     $scope.current_id = function(){ return $rootScope.root.currentUser._id; }
     console.log($scope.isLoggedIn);
@@ -62,11 +63,11 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
         $scope.newWallOptions.headerForeColour = '#FFFFFF';
         $scope.newWallOptions.headerPosition = 'Top';
         $scope.newWallOptions.layoutStyle = 1;
+        $scope.newWallOptions.moderation = false;
         $scope.newWallOptions.showLoading = false;
         $scope.newWallOptions.showStatistics = true;
         $scope.newWallOptions.showLoklakLogo = true;
         $scope.newWallOptions.showEventName = true;
-        $scope.newWallOptions.moderation = false;
     };
 
     $scope.tabSelected = function(index) {
@@ -205,6 +206,13 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
                 //     }
                 // }
                 //$scope.userWalls[$scope.isEditing].internal.showLoading = true;
+                var url = '/api/tweets/'+ $rootScope.root.currentUser._id + $scope.userWalls[$scope.isEditing].id;
+                console.log('url', url);
+                $http.get(url).then(function(result){
+                    console.log(result.data.tweetArr)
+                    $scope.statuses = result.data.tweetArr;
+                })
+
                 $scope.userWalls[$scope.isEditing].$update({
                     user: $rootScope.root.currentUser._id,
                     app: 'wall',
@@ -243,6 +251,8 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
                     initWallOptions();
                     $window.open('/' + $scope.currentUser._id + '/wall/' + result.id, '_blank');
                     // $scope.userWalls[$scope.userWalls.length - 1].showLoading = true;
+                    $scope.isEditing = -1;
+
                 });
             }
         } else {
@@ -328,4 +338,4 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
 
 }
 
-controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$window', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', WallCtrl]);
+controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$window', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', '$http', WallCtrl]);

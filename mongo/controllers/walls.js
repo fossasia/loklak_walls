@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
+// For individual wall page
 module.exports.getWallById = function (req, res) {
     console.log(req.params);
     
@@ -22,6 +23,7 @@ module.exports.getWallById = function (req, res) {
     });
 }
 
+// For user wall dashboard
 module.exports.getUserWalls = function (req, res) {
     
     if (!req.isAuthenticated()) {
@@ -137,9 +139,8 @@ module.exports.deleteWall = function (req, res) {
         User
         .findById(req.params.user)
         .exec(function(err, user) {
-            console.log(user);   
+            console.log(user);
             var appData = user.apps; 
-            
             if (!appData[req.params.app]) {
                 appData[req.params.app] = [];
             }

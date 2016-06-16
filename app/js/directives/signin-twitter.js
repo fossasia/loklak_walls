@@ -55,147 +55,147 @@ function($interval, $location, $timeout, $rootScope, HelloService, SearchService
 
 			// If service init result in e.g. login
 			// Create global session variable
-			hello.on('auth.login', function(auth) {
-				hello(auth.network).api('/me').then(function(twitterSession) {
-					$rootScope.root.twitterSession = true;
+			// hello.on('auth.login', function(auth) {
+			// 	hello(auth.network).api('/me').then(function(twitterSession) {
+			// 		$rootScope.root.twitterSession = true;
 
-					$rootScope.$apply(function() {
-						$rootScope.root.twitterSession = twitterSession;
-						$scope.imageURLClear = twitterSession.profile_image_url_https.split('_normal');
-						$rootScope.root.twitterSession.profileURL = $scope.imageURLClear[0]+$scope.imageURLClear[1];
-					});
+			// 		$rootScope.$apply(function() {
+			// 			$rootScope.root.twitterSession = twitterSession;
+			// 			$scope.imageURLClear = twitterSession.profile_image_url_https.split('_normal');
+			// 			$rootScope.root.twitterSession.profileURL = $scope.imageURLClear[0]+$scope.imageURLClear[1];
+			// 		});
 
-					SearchService.retrieveTopology($rootScope.root.twitterSession.screen_name, 10000).then(function(result) {
-						result.topology.followers.forEach(function(status) {
-							status.isAFollower = true;
-							status.isAFollowing = status.following;
-						});
-						result.topology.following.forEach(function(status) {
-							status.isAFollower = false;
-							status.isAFollowing = true;
-						});
-						$rootScope.userTopology  = result.topology;
-						console.log($rootScope.userTopology);
-						$rootScope.userTopology.noOfFollowings = result.user.friends_count;
-						$rootScope.userTopology.noOfFollowers = result.user.followers_count;
-					}, function() {});
+			// 		SearchService.retrieveTopology($rootScope.root.twitterSession.screen_name, 10000).then(function(result) {
+			// 			result.topology.followers.forEach(function(status) {
+			// 				status.isAFollower = true;
+			// 				status.isAFollowing = status.following;
+			// 			});
+			// 			result.topology.following.forEach(function(status) {
+			// 				status.isAFollower = false;
+			// 				status.isAFollowing = true;
+			// 			});
+			// 			$rootScope.userTopology  = result.topology;
+			// 			console.log($rootScope.userTopology);
+			// 			$rootScope.userTopology.noOfFollowings = result.user.friends_count;
+			// 			$rootScope.userTopology.noOfFollowers = result.user.followers_count;
+			// 		}, function() {});
 
-					var oauth_info = hello("twitter").getAuthResponse();
-					if (oauth_info) {
-					    var screen_name = oauth_info.screen_name;
-					    var token = oauth_info.access_token.split(":")[0];
-					    var secret = oauth_info.access_token.split(":")[1].split("@")[0];
-					    AuthorizedSearch.getLoggedInAccountInfo(screen_name, token, secret).then(function(data) {
-					        	$rootScope.root.authorizedUserInfo = data;
-					    }, function() {});
-					}
+			// 		var oauth_info = hello("twitter").getAuthResponse();
+			// 		if (oauth_info) {
+			// 		    var screen_name = oauth_info.screen_name;
+			// 		    var token = oauth_info.access_token.split(":")[0];
+			// 		    var secret = oauth_info.access_token.split(":")[1].split("@")[0];
+			// 		    AuthorizedSearch.getLoggedInAccountInfo(screen_name, token, secret).then(function(data) {
+			// 		        	$rootScope.root.authorizedUserInfo = data;
+			// 		    }, function() {});
+			// 		}
 
-					// angular.element(".topnav .global-search-container").removeClass("ng-hide");
+			// 		// angular.element(".topnav .global-search-container").removeClass("ng-hide");
 
 
-				}, function() {
-					console.log("Authentication failed, try again later");
-				});
+			// 	}, function() {
+			// 		console.log("Authentication failed, try again later");
+			// 	});
 
-				hello(auth.network).api('/me/friends').then(function(twitterFriendFeed) {
-					// Gather id_str from result from Twitter API
-					// for later the get similar results from loklak
-					var activityFeedIdStrArray = [];
-					twitterFriendFeed.data.forEach(function(feed) {
-						if (feed.status) {
-							activityFeedIdStrArray.push(feed.status.id_str);
-						}
-					});
-					// Sort by created time to show on timeline
-					twitterFriendFeed.data.sort(function(a,b) {
-						if (b.status && a.status) {
-							return new Date(b.status.created_at) - new Date(a.status.created_at);
-						}
-					});
-					// Injection out of angular operations
-					$rootScope.$apply(function() {
-						$rootScope.root.twitterFriends = twitterFriendFeed;
-						$rootScope.root.activityFeedIdStrArray = activityFeedIdStrArray;
-						$rootScope.root.homeFeedLimit = 15;
-						$rootScope.root.doneGettingFeed = true;
-						$rootScope.root.loadMoreHomeFeed = function(operand) {
-							$rootScope.root.homeFeedLimit += operand;
-						};
-					});
-				}, function(){
-					console.log('Unable to load tweets from your followers');
-				});
+			// 	hello(auth.network).api('/me/friends').then(function(twitterFriendFeed) {
+			// 		// Gather id_str from result from Twitter API
+			// 		// for later the get similar results from loklak
+			// 		var activityFeedIdStrArray = [];
+			// 		twitterFriendFeed.data.forEach(function(feed) {
+			// 			if (feed.status) {
+			// 				activityFeedIdStrArray.push(feed.status.id_str);
+			// 			}
+			// 		});
+			// 		// Sort by created time to show on timeline
+			// 		twitterFriendFeed.data.sort(function(a,b) {
+			// 			if (b.status && a.status) {
+			// 				return new Date(b.status.created_at) - new Date(a.status.created_at);
+			// 			}
+			// 		});
+			// 		// Injection out of angular operations
+			// 		$rootScope.$apply(function() {
+			// 			$rootScope.root.twitterFriends = twitterFriendFeed;
+			// 			$rootScope.root.activityFeedIdStrArray = activityFeedIdStrArray;
+			// 			$rootScope.root.homeFeedLimit = 15;
+			// 			$rootScope.root.doneGettingFeed = true;
+			// 			$rootScope.root.loadMoreHomeFeed = function(operand) {
+			// 				$rootScope.root.homeFeedLimit += operand;
+			// 			};
+			// 		});
+			// 	}, function(){
+			// 		console.log('Unable to load tweets from your followers');
+			// 	});
 
-				var updateTimeline = function() {
-					console.log("Getting newer tweets");
-					hello(auth.network).api('/me/friends').then(function(twitterFriendFeed) {
-						// Sort by created time to show on timeline
-						twitterFriendFeed.data.sort(function(a,b) {
-							if (b.status && a.status) {
-								return new Date(b.status.created_at) - new Date(a.status.created_at);
-							}
-						});
-						var haveNewerTweet = true;
-						var i = 0;
-						var newerTweets = [];
-						var currentNewest = new Date($rootScope.root.twitterFriends.data[0].status.created_at);
-						while (haveNewerTweet && i < twitterFriendFeed.data.length) {
-							if (!twitterFriendFeed.data[i].status) {
-								i++;
-							} else {
-								var beingEvalTimestamp = new Date(twitterFriendFeed.data[i].status.created_at);
-								if (beingEvalTimestamp <= currentNewest) {
-									haveNewerTweet = false;
-								} else {
-									newerTweets.push(twitterFriendFeed.data[i]);
-									i++;
-								}
-							}
-						}
-						if (newerTweets.length > 0) {
-							$rootScope.$apply(function() {
-								$rootScope.root.timelineNewTweets = newerTweets;
-								$rootScope.root.haveNewerTweets = true;
-							});
-						}
-					}, function(){
-						console.log('Unable to load tweets from your followers');
-					});
-				};
+			// 	var updateTimeline = function() {
+			// 		console.log("Getting newer tweets");
+			// 		hello(auth.network).api('/me/friends').then(function(twitterFriendFeed) {
+			// 			// Sort by created time to show on timeline
+			// 			twitterFriendFeed.data.sort(function(a,b) {
+			// 				if (b.status && a.status) {
+			// 					return new Date(b.status.created_at) - new Date(a.status.created_at);
+			// 				}
+			// 			});
+			// 			var haveNewerTweet = true;
+			// 			var i = 0;
+			// 			var newerTweets = [];
+			// 			var currentNewest = new Date($rootScope.root.twitterFriends.data[0].status.created_at);
+			// 			while (haveNewerTweet && i < twitterFriendFeed.data.length) {
+			// 				if (!twitterFriendFeed.data[i].status) {
+			// 					i++;
+			// 				} else {
+			// 					var beingEvalTimestamp = new Date(twitterFriendFeed.data[i].status.created_at);
+			// 					if (beingEvalTimestamp <= currentNewest) {
+			// 						haveNewerTweet = false;
+			// 					} else {
+			// 						newerTweets.push(twitterFriendFeed.data[i]);
+			// 						i++;
+			// 					}
+			// 				}
+			// 			}
+			// 			if (newerTweets.length > 0) {
+			// 				$rootScope.$apply(function() {
+			// 					$rootScope.root.timelineNewTweets = newerTweets;
+			// 					$rootScope.root.haveNewerTweets = true;
+			// 				});
+			// 			}
+			// 		}, function(){
+			// 			console.log('Unable to load tweets from your followers');
+			// 		});
+			// 	};
 
-				/*
-				 * Start an interval to update timeline
-				 * The interval is incremental
-				 * implemented with recursive interval
-				 * base interval is 20s, increment is 11s
-				 */
-				angular.forEach(timelineIntervals, function(interval) {
-				    $interval.cancel(interval);
-				});
-				var updateTimlineInterval = function(refreshTime) {
-					return $timeout(function() {
-						updateTimeline();
-						refreshTime += 11000;
-						updateTimlineInterval(refreshTime);
-					}, refreshTime);
-				};
-				updateTimlineInterval(20000);
+			// 	/*
+			// 	 * Start an interval to update timeline
+			// 	 * The interval is incremental
+			// 	 * implemented with recursive interval
+			// 	 * base interval is 20s, increment is 11s
+			// 	 */
+			// 	angular.forEach(timelineIntervals, function(interval) {
+			// 	    $interval.cancel(interval);
+			// 	});
+			// 	var updateTimlineInterval = function(refreshTime) {
+			// 		return $timeout(function() {
+			// 			updateTimeline();
+			// 			refreshTime += 11000;
+			// 			updateTimlineInterval(refreshTime);
+			// 		}, refreshTime);
+			// 	};
+			// 	updateTimlineInterval(20000);
 
-			});
+			// });
 
-			hello.on('auth.logout', function(auth) {
-				$rootScope.$apply(function() {
-					$rootScope.root.twitterSession = false;
-				});
-				angular.element("#map").remove();
-				if ($location.path() === "/search") {
-					angular.element(".topnav .global-search-container").removeClass("ng-hide");
-				} else {
-					angular.element(".topnav .global-search-container").addClass("ng-hide");
-				}
-			}, function() {
-					console.log("Signed out failed, try again later");
-			});
+			// hello.on('auth.logout', function(auth) {
+			// 	$rootScope.$apply(function() {
+			// 		$rootScope.root.twitterSession = false;
+			// 	});
+			// 	angular.element("#map").remove();
+			// 	if ($location.path() === "/search") {
+			// 		angular.element(".topnav .global-search-container").removeClass("ng-hide");
+			// 	} else {
+			// 		angular.element(".topnav .global-search-container").addClass("ng-hide");
+			// 	}
+			// }, function() {
+			// 		console.log("Signed out failed, try again later");
+			// });
 
 			$rootScope.root.timelineShowNewerTweets = function() {
 				$rootScope.root.twitterFriends.data = $rootScope.root.timelineNewTweets.concat($rootScope.root.twitterFriends.data);

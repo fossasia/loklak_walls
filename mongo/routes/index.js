@@ -7,6 +7,7 @@ var ctrlProfile = require('../controllers/profile');
 var ctrlAuth = require('../controllers/authentication');
 var ctrlMailer = require('../controllers/email');
 var ctrlWalls = require('../controllers/walls');
+var ctrlTweetStore = require('../controllers/tweets');
 
 // AUTH ================================
 router.post('/register', function(req,res,next){
@@ -63,12 +64,27 @@ router.get('/currentuser', auth, function(req,res){
 router.get('/send', ctrlMailer.send);
 router.get('/verify', ctrlMailer.verify);
 
+// TWEET API ===========================
+// :tweetId - ._id of tweet object
+// :userId  - ._id of user object
+// :wallId  - .apps.wall.id of wall options
+router.get   ('/tweets/:userWallId', ctrlTweetStore.getAllTweetsById);
+router.get   ('/tweets/:userId/:wallId', ctrlTweetStore.getApprovedTweetsById);
+router.get   ('/tweets/:userId/:wallId/:tweetId', auth, ctrlTweetStore.getTweetById);
+router.post  ('/tweets/:userId/:wallId', auth, ctrlTweetStore.storeTweet);
+router.put   ('/tweets/:userId/:wallId/:tweetId', auth, ctrlTweetStore.updateTweet);
+router.delete('/tweets/:userId/:wallId/:tweetId', auth, ctrlTweetStore.deleteTweet);
+
 // WALL API ============================
+// :user - ._id of user  as wall options are embedded under user obj
+// :app  - "wall"  		 as currently the only app is wall
+// :id 	 - .apps.wall.id of wall options
 router.get   ('/:user/:app', auth, ctrlWalls.getUserWalls);
 router.get   ('/:user/:app/:id', ctrlWalls.getWallById);
 router.post  ('/:user/:app', auth, ctrlWalls.createWall);
 router.put   ('/:user/:app/:id', auth, ctrlWalls.updateWall);
 router.delete('/:user/:app/:id', auth, ctrlWalls.deleteWall);
+
 
 
 function auth(req, res, next) {
