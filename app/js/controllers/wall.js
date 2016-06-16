@@ -66,11 +66,12 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
         $scope.newWallOptions.showStatistics = true;
         $scope.newWallOptions.showLoklakLogo = true;
         $scope.newWallOptions.showEventName = true;
+        $scope.newWallOptions.moderation = false;
     };
 
     $scope.tabSelected = function(index) {
         $scope.selectedTab = index;
-        if (index === 2) {
+        if (index >= 2 ) {
             $scope.showNext = false;
         } else {
             $scope.showNext = true;

@@ -13,6 +13,7 @@
                             <li ng-click="tabSelected(0)" class="active"><a href="#info" data-toggle="tab"><i class="fa fa-align-left fa-2x"></i><br><h4>INFO</h4></a></li>
                             <li ng-click="tabSelected(1)"><a href="#content" data-toggle="tab"><i class="fa fa-filter fa-2x"></i><br><h4>CONTENT</h4></a></li>
                             <li ng-click="tabSelected(2)"><a href="#design" data-toggle="tab"><i class="fa fa-paint-brush fa-2x"></i><br><h4>DESIGN</h4></a></li>
+                            <li ng-show="newWallOptions.moderation"ng-click="tabSelected(3)"><a href="#moderation" data-toggle="tab"><i class="fa fa-ban fa-2x"></i><br><h4>MANUAL MODERATION</h4></a></li>
                         </ul>
                     </div>
                     <div class="col-xs-offset-2 col-xs-10">
@@ -180,6 +181,12 @@
                                                     </div>
                                                     <hr>
                                                     <h4>Coming Soon</h4>
+                                                    <div class="form-group row">
+                                                        <h4 class="col-xs-9">Manual Moderation
+                                                            <br><small>This gives you the ability to approve or deny every Tweet before it shows on your Tweet wall</small></h4>
+                                                        <toggle-switch class="wall-toggle-switch" on-label="YES" off-label="NO" ng-model="newWallOptions.moderation">
+                                                        </toggle-switch>
+                                                    </div>
                                                     <div class="form-group row wall-exclude-toggles">
                                                         <h4 class="col-xs-9">Hide retweets
                                                             <br><small>Retweets will not be shown, but they WILL be counted in the stats and leaderboards.</small></h4>
@@ -193,12 +200,6 @@
                                                         <input style="min-width:100px;width:10%;" disabled="true" class="col-xs-2" type="text" ng-model="newWallOptions.followerThreshold">
                                                     </div>
                                                     <hr>
-                                                    <div class="form-group row wall-exclude-toggles">
-                                                        <h4 class="col-xs-9">Moderation
-                                                            <br><small>This gives you the ability to approve or deny every Tweet before it shows on your Tweet wall</small></h4>
-                                                        <toggle-switch disabled="true" class="wall-toggle-switch" on-label="YES" off-label="NO" ng-model="newWallOptions.moderation">
-                                                        </toggle-switch>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -312,15 +313,41 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="tab-pane" id="moderation">
+                                <div>
+                                    <div class="box-body">
+                                        <div class="row wall-preview-container">
+                                            <div class="col-md-4">
+                                                <div>
+                                                    <div class="box-header">
+                                                        <label>Approve or Reject Tweets</label>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <div>
+                                                            <div class="row">
+                                                            </div>
+                                                            <div class="row design-box">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-7">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <hr style ="margin-top: 0;margin-bottom: -3px;border: 0;border-top: 1px solid #eeeeee;margin-left: 18%;box-shadow: 3px 0px 9px rgba(50, 50, 50, 0.2);">
             <div class="modal-footer">
                 <div style="float:left;" class="col-xs-offset-2">
-                    <a ng-show="showNext" ng-click="proceed()" type="submit" class="btn btn-loklak-blue">Next Step</a>
+                    <a ng-show="showNext" ng-click="proceed()" type="submit" style="margin-left: 15px;" class="btn btn-lg btn-loklak-blue">Next Step</a>
                     <!-- <a ng-click="proceed()" type="submit" class="btn btn-primary">Save and Close</a> -->
-                    <a ng-hide="showNext" ng-disabled="!(newWallOptions.eventName && newWallOptions.mainHashtagText)" type="submit" class="btn btn-loklak-blue" ng-click="!(newWallOptions.eventName && newWallOptions.mainHashtagText) || start()">Start twitter wall</a>
+                    <a ng-hide="showNext" ng-disabled="!(newWallOptions.eventName && newWallOptions.mainHashtagText)" type="submit" class="btn btn-lg btn-loklak-blue" style="margin-left: 15px;"ng-click="!(newWallOptions.eventName && newWallOptions.mainHashtagText) || start()">Save twitter wall</a>
                     <span ng-show="(!showNext) && ((step1.eventNameInput.$invalid) || (step1.hashtagInput.$invalid))" style="color:red;">Enter an event name and your event's main hashtag</span>
                 </div>
             </div>

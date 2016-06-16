@@ -36,7 +36,7 @@ function buildScript(file) {
   }
 
   var transforms = [
-    babelify,
+    // babelify,
     debowerify,
     ngAnnotate,
     'brfs',
