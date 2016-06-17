@@ -444,15 +444,15 @@
     display: block;
     height: 100%;
     background: white;
-    padding: 20px 12px;
-    margin-bottom: 25px;
+    padding: 9px 24px;
+    margin-bottom: 4px;
     border-bottom: 1px solid $search-grey-border;
     &:first-child {
         border-top-left-radius: 6px;
         border-right-left-radius: 6px;
     }
     .avatar {
-        height: 130px;
+        height: 100px;
         max-width: 130px;
         float: left;
         border-radius: 6px;

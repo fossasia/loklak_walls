@@ -70,6 +70,6 @@ gulp.task('server', function() {
     }
   });
 
-  s.listen(config.serverport);
+  s.listen(process.env.PORT || config.serverport);
 
 });

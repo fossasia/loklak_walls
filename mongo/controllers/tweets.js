@@ -4,7 +4,9 @@ var Tweet = mongoose.model('Tweet');
 
 // Get all tweets, for approval
 module.exports.getAllTweetsById = function(req,res){
-    Tweet.find({userWallId: req.params.userWallId})
+    Tweet
+    .find({userWallId: req.params.userWallId})
+    .sort({created_at: -1})
     .exec(function(err, tweetArr){
         res.json({tweetArr: tweetArr});
     })
@@ -16,9 +18,10 @@ module.exports.getApprovedTweetsById = function (req, res) {
     var userWallId = req.params.userId + req.params.wallId;
     Tweet
     .find({userWallId: userWallId, approval: true} )
+    .limit(50)
     .exec(function(err, tweetArr) {
-        console.log(tweetArr);
-        res.json({tweetArr: tweetArr});
+        console.log(tweetArr.length);
+        res.json({statuses: tweetArr});
     });
 }
 
