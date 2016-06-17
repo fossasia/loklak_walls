@@ -6,8 +6,9 @@ var Tweet = mongoose.model('Tweet');
 module.exports.getAllTweetsById = function(req,res){
     Tweet
     .find({userWallId: req.params.userWallId})
-    .sort({created_at: -1})
+    // .sort({created_at: -1})
     .exec(function(err, tweetArr){
+        console.log('first', tweetArr[0]);
         res.json({tweetArr: tweetArr});
     })
 }
@@ -20,7 +21,7 @@ module.exports.getApprovedTweetsById = function (req, res) {
     .find({userWallId: userWallId, approval: true} )
     .limit(50)
     .exec(function(err, tweetArr) {
-        console.log(tweetArr.length);
+        console.log('first', tweetArr[0]);
         res.json({statuses: tweetArr});
     });
 }
@@ -60,14 +61,18 @@ module.exports.storeTweet = function (req, res) {
 // Update approval status to it's opposite
 module.exports.updateTweet = function (req, res) {
 // set approval field to opposite
+console.log("update")
     if (!req.isAuthenticated()) {
         console.log("not Authenticated");
         res.status(401).jsonp([]);
     } else {
+        console.log("req.params", req.params);
+        console.log("req.params", req.body);
         Tweet
         .findById(req.params.tweetId)
         .exec(function(err, tweet) {
-            tweet.approval = true;
+            
+            tweet.approval = !tweet.approval;
             tweet.save(function(err) {
                 if (err) res.send(err);
                 else res.json({tweet: tweet});
@@ -83,8 +88,9 @@ module.exports.deleteTweet = function (req, res) {
         res.status(401).jsonp([]);
     } else {
         Tweet
-        .find({_id: req.params.tweetId})
-        .remove()
-        .exec();
+        .remove({userWallId: req.params.userWallId})
+        .exec(function(err){
+            console.log("err", err);
+        });
     }
 }

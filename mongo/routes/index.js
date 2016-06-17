@@ -72,8 +72,8 @@ router.get   ('/tweets/:userWallId', ctrlTweetStore.getAllTweetsById);
 router.get   ('/tweets/:userId/:wallId', ctrlTweetStore.getApprovedTweetsById);
 router.get   ('/tweets/:userId/:wallId/:tweetId', auth, ctrlTweetStore.getTweetById);
 router.post  ('/tweets/:userId/:wallId', auth, ctrlTweetStore.storeTweet);
-router.put   ('/tweets/:userId/:wallId/:tweetId', auth, ctrlTweetStore.updateTweet);
-router.delete('/tweets/:userId/:wallId/:tweetId', auth, ctrlTweetStore.deleteTweet);
+router.put   ('/tweets/:tweetId', auth, ctrlTweetStore.updateTweet);
+router.delete('/tweets/:userId/:wallId', auth, ctrlTweetStore.deleteTweet);
 
 // WALL API ============================
 // :user - ._id of user  as wall options are embedded under user obj

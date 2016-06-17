@@ -13,7 +13,7 @@
                             <li ng-click="tabSelected(0)" class="active"><a href="#info" data-toggle="tab"><i class="fa fa-align-left fa-2x"></i><br><h4>INFO</h4></a></li>
                             <li ng-click="tabSelected(1)"><a href="#content" data-toggle="tab"><i class="fa fa-filter fa-2x"></i><br><h4>CONTENT</h4></a></li>
                             <li ng-click="tabSelected(2)"><a href="#design" data-toggle="tab"><i class="fa fa-paint-brush fa-2x"></i><br><h4>DESIGN</h4></a></li>
-                            <li ng-show="newWallOptions.moderation"ng-click="tabSelected(3)"><a href="#moderation" data-toggle="tab"><i class="fa fa-ban fa-2x"></i><br><h4>MANUAL MODERATION</h4></a></li>
+                            <li ng-show="newWallOptions.moderation"ng-click="tabSelected(3)"><a href="#moderation" data-toggle="tab"><i class="fa fa-ban fa-2x"></i><br><h4>MODERATION</h4></a></li>
                         </ul>
                     </div>
                     <div class="col-xs-offset-2 col-xs-10">
@@ -318,7 +318,7 @@
                                     <div class="box-body">
                                         <div class="row wall-preview-container">
                                          <div class="row">
-                                            <div ng-repeat="status in statuses" linear open="wall.open" data="status" class="animate-repeat"></div>
+                                            <div ng-repeat="status in statuses" linear-approve open="wall.open" toggle="wall.toggle" data="status"></div>
                                         </div>
                                         </div>
                                     </div>

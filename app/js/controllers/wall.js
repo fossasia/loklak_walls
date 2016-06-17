@@ -284,7 +284,7 @@ console.log('aftr search', data)
                         if(latestCreatedAtDate===null){
                             $http.post(posturl, data.statuses)
                             .then(function(result){
-                                console.log(result.message);
+                                console.log(result);
                                 latestCreatedAtDate = new Date(data.statuses[0].created_at);
                             }, function(err){ 
                                 console.log(err); 
@@ -296,7 +296,7 @@ console.log('aftr search', data)
                             })
                             $http.post(posturl, data.statuses)
                             .then(function(result){
-                                console.log(result.message);
+                                console.log(result);
                                 latestCreatedAtDate = new Date(data.statuses[0].created_at);
                             }, function(err){ 
                                 console.log(err); 
@@ -308,7 +308,9 @@ console.log('aftr search', data)
                 // sets searchParams
                 calculateTerm();
                 searchLoklakServer();
-                modPostPromise = $interval(searchLoklakServer(), 30000);
+                modPostPromise = $interval(function(){
+                    searchLoklakServer()
+                }, 30000);
             }
         } else {
             alert("Please sign in first");
@@ -415,7 +417,6 @@ console.log('aftr search', data)
         console.log(term);
         searchParams.q = term;
         searchParams.count = maxStatusCount;
-        console.log($scope.newWallOptions.cyclePostLimit);
         if ($scope.newWallOptions.cycle) {
             if ($scope.newWallOptions.cyclePostLimit > searchParams.count) {
                 searchParams.count = $scope.newWallOptions.cyclePostLimit;
@@ -496,8 +497,8 @@ console.log('aftr search', data)
                     if(latestCreatedAtDate===null){
                         $http.post(posturl, data.statuses)
                         .then(function(result){
-                            console.log(result.message);
                             latestCreatedAtDate = new Date(data.statuses[0].created_at);
+                            console.log(latestCreatedAtDate);
                         }, function(err){ 
                             console.log(err); 
                         })
@@ -506,10 +507,10 @@ console.log('aftr search', data)
                             var statusCreatedAt = new Date(status.created_at);
                             return statusCreatedAt > latestCreatedAtDate;
                         })
-                        $http.post(url, data.statuses)
+                        $http.post(posturl, data.statuses)
                         .then(function(result){
-                            console.log(result.message);
                             latestCreatedAtDate = new Date(data.statuses[0].created_at);
+                            console.log(latestCreatedAtDate);
                         }, function(err){ 
                             console.log(err); 
                         })
@@ -521,7 +522,9 @@ console.log('aftr search', data)
             calculateTerm();
             searchLoklakServer();
 
-            modPostPromise = $interval(searchLoklakServer(), 30000);
+            modPostPromise = $interval(function(){
+                searchLoklakServer()
+            }, 30000);
         }
     };
 
@@ -577,6 +580,14 @@ console.log('aftr search', data)
 
     init();
 
+    $scope.$on('$destroy', function() {
+        if (modGetPromise) {
+            $interval.cancel(modGetPromise);
+        }
+        if (modPostPromise) {
+            $interval.cancel(modPostPromise);
+        }
+    });
 }
 
 controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$window', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', '$http', '$interval', WallCtrl]);

@@ -319,8 +319,8 @@ var Chart = require('chart.js');
                                             cycleInterval = vm.cycleTweets();
                                         }
                                     } else {
-                                         // from oldest tweet of data, if newer than current newest
-                                         if (data.statuses[i].created_at > vm.statuses[0].created_at) {
+                                        // from oldest tweet of data, if newer than current newest
+                                        if (data.statuses[i].created_at > vm.statuses[0].created_at) {
                                             vm.statuses.unshift(data.statuses[i]); // add tweet to front, pop the current oldest
                                             vm.statuses.pop();
                                         }
@@ -341,7 +341,8 @@ var Chart = require('chart.js');
                     tweetTimeout = vm.update2(refreshTime + 10000);
                     console.log(refreshTime + 10000);
                 }
-                if(vm.wallOptions.moderation){
+                if(!vm.wallOptions.moderation){
+                    console.log("Not Moderated")
                     SearchService.initData(searchParams).then(success, error);
                     // get approved subset of tweets from mongo, instead of search service from loklak_server
                     // var url = '/api/tweets/' + $stateParams.user + '/' + $stateParams.id;
@@ -356,6 +357,7 @@ var Chart = require('chart.js');
                     // console.log("url", url);
                 
                 } else {
+                    console.log("Moderated")
                     var url = '/api/tweets/' + $stateParams.user + '/' + $stateParams.id;
                     $http.get(url).then(success, error);
                 }
