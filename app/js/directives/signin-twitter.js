@@ -337,14 +337,10 @@ function($interval, $location, $timeout, $rootScope, HelloService, SearchService
 					var isOnline = hello('twitter').getAuthResponse();
 					console.log(toState);
 					
-					if (!$rootScope.root.isLoggedIn) {
-						if (toState.name === "Search" || toState.name === "Topology") {
-							angular.element(".topnav .global-search-container").removeClass("ng-hide");
-						} else {
-							angular.element(".topnav .global-search-container").addClass("ng-hide");
-						}
-					} else if(toState.name === "Search"){
+					if(toState.name === "Search"){
 						angular.element(".topnav .global-search-container").removeClass("ng-hide");
+					} else if(toState.name === "Home"){
+						angular.element(".topnav .global-search-container").addClass("ng-hide");
 					}
 				});
 

@@ -13,7 +13,7 @@ var smtpTransport = nodemailer.createTransport("SMTP",{
 var rand,mailOptions,host,link;
 
 module.exports.send = function(req, res) {
-    // console.log(req.get('host'));
+    console.log(req.get('host'));
     rand=Math.floor((Math.random() * 100) + 54);
     host=req.get('host');
     link="http://"+req.get('host')+"/api/verify?id="+rand;

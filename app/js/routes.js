@@ -3,7 +3,7 @@
 /**
  * @ngInject
  */
-function Routes($stateProvider, $locationProvider, $urlRouterProvider, $httpProvider, cfpLoadingBarProvider) {
+ function Routes($stateProvider, $locationProvider, $urlRouterProvider, $httpProvider, cfpLoadingBarProvider) {
   $locationProvider.html5Mode(true);
 
   $stateProvider
@@ -12,6 +12,13 @@ function Routes($stateProvider, $locationProvider, $urlRouterProvider, $httpProv
     controller: 'MapCtrl as map',
     templateUrl: 'home.html',
     title: 'Home'
+  })
+  .state('profile', {
+    url: '/profile',
+    controller: 'ProfileCtrl as profile',
+    templateUrl: 'profile.html',
+    title: 'profile',
+
   })
   .state('About', {
     url: '/about',
@@ -44,59 +51,59 @@ function Routes($stateProvider, $locationProvider, $urlRouterProvider, $httpProv
   //   controller: 'WallCtrl as wall',
   //   title: 'Wall'
   // })
-  .state('WallDisplay', {
-    url: '/:user/wall/:id',
-    templateUrl: 'wall/display.html',
-    controller: 'WallDisplay as wall',
-    title: 'Wall',
-    onEnter: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=false;}],
-    onExit: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=true;}]
-  })
-  .state('Statistics', {
-    url: '/statistics?q&since&until',
-    controller: 'StatisticsCtrl as statistics',
-    templateUrl: 'statistics.html',
-    title: 'Statistics'
-  })
-  .state('SingleTweet', {
-    url: '/tweet?q',
-    controller: 'SingleTweetCtrl as singleTweet',
-    templateUrl: 'single-tweet.html',
-    title: 'SingleTweet'
-  })
-  .state('Topology', {
-    url: '/topology?screen_name',
-    templateUrl: 'topology.html',
-    controller: 'TopologyCtrl as topology',
-    title: 'Topology'
-  })
-  .state('DataConnect', {
-    url: '/connect',
-    templateUrl: 'data-connect/data-connect.html',
-    controller: 'DataConnectCtrl as dataConnect',
-    title: 'My Connections'
-  })
-  .state('DataConnectWSourceType', {
-    url: '/connect/:source_type',
-    templateUrl: 'data-connect/data-connect.html',
-    controller: 'DataConnectCtrl as dataConnect',
-    title: 'My Connections'
-  })
- .state('Analyze', {
-    url: '/report',
-    templateUrl: 'analyze/analyze.html',
-    controller: 'AnalyzeCtrl as Analyze',
-    title: 'Analyze Data'
-  })
-  .state('Redirecting', {
-    url: '/redirect',
-    templateUrl: 'redirect.html',
-    title: 'Redirecting',
-    onEnter: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=false;}],
-    onExit: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=true;}]
-  });
+.state('WallDisplay', {
+  url: '/:user/wall/:id',
+  templateUrl: 'wall/display.html',
+  controller: 'WallDisplay as wall',
+  title: 'Wall',
+  onEnter: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=false;}],
+  onExit: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=true;}]
+})
+.state('Statistics', {
+  url: '/statistics?q&since&until',
+  controller: 'StatisticsCtrl as statistics',
+  templateUrl: 'statistics.html',
+  title: 'Statistics'
+})
+.state('SingleTweet', {
+  url: '/tweet?q',
+  controller: 'SingleTweetCtrl as singleTweet',
+  templateUrl: 'single-tweet.html',
+  title: 'SingleTweet'
+})
+.state('Topology', {
+  url: '/topology?screen_name',
+  templateUrl: 'topology.html',
+  controller: 'TopologyCtrl as topology',
+  title: 'Topology'
+})
+.state('DataConnect', {
+  url: '/connect',
+  templateUrl: 'data-connect/data-connect.html',
+  controller: 'DataConnectCtrl as dataConnect',
+  title: 'My Connections'
+})
+.state('DataConnectWSourceType', {
+  url: '/connect/:source_type',
+  templateUrl: 'data-connect/data-connect.html',
+  controller: 'DataConnectCtrl as dataConnect',
+  title: 'My Connections'
+})
+.state('Analyze', {
+  url: '/report',
+  templateUrl: 'analyze/analyze.html',
+  controller: 'AnalyzeCtrl as Analyze',
+  title: 'Analyze Data'
+})
+.state('Redirecting', {
+  url: '/redirect',
+  templateUrl: 'redirect.html',
+  title: 'Redirecting',
+  onEnter: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=false;}],
+  onExit: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=true;}]
+});
 
-  $urlRouterProvider.otherwise('/');
+  // $urlRouterProvider.otherwise('/');
 
   cfpLoadingBarProvider.includeBar = false;
   cfpLoadingBarProvider.includeSpinner = true;

@@ -3,14 +3,16 @@
 var config  = require('../config');
 var http    = require('http');
 var express = require('express');
+var session = require('express-session')
 var gulp    = require('gulp');
 var gutil   = require('gulp-util');
 var morgan  = require('morgan');
-
+var flash    = require('connect-flash');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
+var MongoStore = require('connect-mongo')(session);
 
 require('../../mongo/models/db');
 require('../../mongo/config/passport');
@@ -20,64 +22,41 @@ var routesApi = require('../../mongo/routes/index');
 gulp.task('server', function() {
 
   var server = express();
+  var dbURI = 'mongodb://localhost/test';
+  if (process.env.NODE_ENV === 'production') {
+    dbURI = process.env.MONGOLAB_URI;
+  }
 
   server.use(bodyParser.json());
   server.use(bodyParser.urlencoded({ extended: false }));
   server.use(cookieParser());
-  
-  // error handlers
-  // Catch unauthorised errors
-  server.use(function (err, req, res, next) {
-    if (err.name === 'UnauthorizedError') {
-      res.status(401);
-      res.json({"message" : err.name + ": " + err.message});
-    }
-  });
+
+  server.use(session({
+    store: new MongoStore({
+      url: dbURI
+    }),
+    secret: "somescrert",
+    resave: true,
+    saveUninitialized: true,
+
+  }));
 
   // Initialise Passport before using the route middleware
   server.use(passport.initialize());
+  server.use(passport.session());
+  server.use(flash());
+
 
   // Use the API routes when path starts with /api
   server.use('/api', routesApi);
 
-    //   var mock = {
-    //     "screen_name": "makkleon",
-    //     "oauth_token": "282563431-vXp71wR2DLlBSuY2XGLdgfe6c4jTLqjacjGn8tyt",
-    //     "oauth_token_secret": "TwpffGJphpOz81rg0HrdL4MBw1Q801z73bxAomeVAo8cv",
-    //     "source_type": "TWITTER",
-    //     "servers": {
-    //       "wall": [
-    //         {
-    //           "profanity": true,
-    //           "images": true,
-    //           "videos": false,
-    //           "headerColour": "#3c8dbc",
-    //           "headerForeColour": "#FFFFFF",
-    //           "headerPosition": "Top",
-    //           "layoutStyle": 1,
-    //           "showStatistics": true,
-    //           "showLoklakLogo": true,
-    //           "showEventName": true,
-    //           "all": [],
-    //           "any": [],
-    //           "none": [],
-    //           "eventName": "1",
-    //           "sinceDate": "2016-04-30T16:00:00.000Z",
-    //           "mainHashtagText": "asd",
-    //           "mainHashtag": "#asd",
-    //           "id": "EyKbNu8Xb"
-    //         }
-    //       ]
-    //     }
-    //   };
-  
   // Uncomment to log all requests to the console
   server.use(morgan('dev'));
   server.use(express.static(config.dist.root));
 
   // Serve index.html for all other routes to leave routing up to Angular
   server.use('/*', function(req, res) {
-      res.sendFile('index.html', { root: 'build' });
+    res.sendFile('index.html', { root: 'build' });
   });
 
   // Start webserver if not already running

@@ -606,3 +606,40 @@
 		}
 	}
 }
+
+
+/* Login Form */
+.signup-or-separator {
+    position: relative;
+    height: 34px;
+    text-align: center;
+    background: none;
+
+    .text {
+	    display: inline-block;
+	    padding: 8px;
+	    margin: 0;
+	    background-color: #fff;
+	}
+
+	hr {
+	    width: 90%;
+	    margin: -16px auto 10px auto;
+	    border-top: 1px solid #dce0e0;
+	}
+}
+
+.inner-addon {
+  position: relative;
+  .glyphicon {
+	  position: absolute;
+	  padding: 10px;
+	  pointer-events: none;
+  }
+}
+.left-addon .glyphicon  { left:  10%;}
+.right-addon .glyphicon { right: 0px;}
+
+.left-addon input  { padding-left:  30px; }
+.right-addon input { padding-right: 30px; }
+

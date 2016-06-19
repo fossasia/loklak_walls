@@ -18,9 +18,11 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
     $scope.invalidFile = false;
     $scope.showNext = true;
     $scope.selectedTab = 0;
-    $scope.isLoggedIn= AuthService.isLoggedIn();
-    $scope.currentUser= AuthService.currentUser();
-    $scope.current_id= function(){ return AuthService.currentUser()._id};
+    $scope.isLoggedIn= $rootScope.root.isLoggedIn;
+    $scope.currentUser=$rootScope.root.currentUser;
+
+    // for thumbnail url
+    $scope.current_id = function(){ return $rootScope.root.currentUser._id; }
     console.log($scope.isLoggedIn);
     
     /*
@@ -182,8 +184,8 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
         $('#wall-modal').modal('toggle');
         // if ($rootScope.root.twitterSession) {
         if ($rootScope.root.isLoggedIn) {
-            //save wall
-            console.log("Saving wall");
+            
+            // new wall options
             var saveData = new AppsService({
                 user: $scope.currentUser._id,
                 app: 'wall'
@@ -191,7 +193,6 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
             for (var k in $scope.newWallOptions) {
                 saveData[k] = $scope.newWallOptions[k];
             }
-            console.log("saveData", saveData);
             
             if ($scope.isEditing !== -1) {
                 console.log("updating", $scope.userWalls[$scope.isEditing]);
@@ -204,7 +205,7 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
                 // }
                 //$scope.userWalls[$scope.isEditing].internal.showLoading = true;
                 $scope.userWalls[$scope.isEditing].$update({
-                    user: $scope.currentUser._id,
+                    user: $rootScope.root.currentUser._id,
                     app: 'wall',
                     id: $scope.userWalls[$scope.isEditing].id
                 }, function(result) {
@@ -222,8 +223,8 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
                     // $window.open('/' + $scope.currentUser._id + '/wall/' + $scope.userWalls[$scope.isEditing].id, '_blank');
                     // $scope.userWalls[$scope.isEditing].internal = {};
                     // $scope.userWalls[$scope.isEditing].internal.showLoading = false;
-                    $scope.isEditing = -1;
                     initWallOptions();
+                    $scope.isEditing = -1;
                 });
             } else {
                 $scope.userWalls.push(saveData);
@@ -238,9 +239,9 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
                         }
                     }
                     $scope.wallsPresent = true;
+                    initWallOptions();
                     $window.open('/' + $scope.currentUser._id + '/wall/' + result.id, '_blank');
                     // $scope.userWalls[$scope.userWalls.length - 1].showLoading = true;
-                    initWallOptions();
                 });
             }
         } else {
