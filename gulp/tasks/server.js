@@ -17,7 +17,6 @@ var MongoStore = require('connect-mongo')(session);
 require('../../mongo/models/db');
 require('../../mongo/config/passport');
 
-var routesApi = require('../../mongo/routes/index');
 
 gulp.task('server', function() {
 
@@ -27,8 +26,8 @@ gulp.task('server', function() {
     dbURI = process.env.MONGOLAB_URI;
   }
 
-  server.use(bodyParser.json());
-  server.use(bodyParser.urlencoded({ extended: false }));
+  server.use(bodyParser.json({limit:"50mb"}));
+  server.use(bodyParser.urlencoded({ limit:"50mb", extended: false }));
   server.use(cookieParser());
 
   server.use(session({
@@ -46,21 +45,24 @@ gulp.task('server', function() {
   server.use(passport.session());
   server.use(flash());
 
-
-  // Use the API routes when path starts with /api
-  server.use('/api', routesApi);
-
   // Uncomment to log all requests to the console
   server.use(morgan('dev'));
   server.use(express.static(config.dist.root));
+
+  // Start webserver if not already running
+  var s = module.exports = http.createServer(server);
+  var routesApi = require('../../mongo/routes/index');
+  
+  // var io = require('socket.io')(s);
+
+  // Use the API routes when path starts with /api
+  server.use('/api', routesApi);
 
   // Serve index.html for all other routes to leave routing up to Angular
   server.use('/*', function(req, res) {
     res.sendFile('index.html', { root: 'build' });
   });
 
-  // Start webserver if not already running
-  var s = http.createServer(server);
   s.on('error', function(err){
     if(err.code === 'EADDRINUSE'){
       gutil.log('Development server is already started at port ' + config.serverport);

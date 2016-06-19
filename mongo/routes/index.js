@@ -55,7 +55,7 @@ router.get('/logout', function(req, res) {
 
 // USER ================================
 router.get('/currentuser', auth, function(req,res){
-	console.log(req.user)
+	// console.log(req.user)
 	if(req.user._id) res.json(req.user);
 	else res.json({"message":"no user"})
 });
@@ -73,7 +73,7 @@ router.get   ('/tweets/:userId/:wallId', ctrlTweetStore.getApprovedTweetsById);
 router.get   ('/tweets/:userId/:wallId/:tweetId', auth, ctrlTweetStore.getTweetById);
 router.post  ('/tweets/:userId/:wallId', auth, ctrlTweetStore.storeTweet);
 router.put   ('/tweets/:tweetId', auth, ctrlTweetStore.updateTweet);
-router.delete('/tweets/:userId/:wallId', auth, ctrlTweetStore.deleteTweet);
+router.delete('/tweets/:userWallId', auth, ctrlTweetStore.deleteTweet);
 
 // WALL API ============================
 // :user - ._id of user  as wall options are embedded under user obj

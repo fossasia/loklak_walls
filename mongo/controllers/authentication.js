@@ -6,7 +6,7 @@ module.exports.loginTwitter = function(req,res){
     
     passport.authenticate('twitter', function(err, user, info){
     var token;
-    console.log("authctrl", user);
+    // console.log("authctrl", user);
 
     // If Passport throws/catches an error
     if (err) {
