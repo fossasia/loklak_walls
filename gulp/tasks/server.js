@@ -50,20 +50,8 @@ gulp.task('server', function() {
   server.use(express.static(config.dist.root));
 
   // Start webserver if not already running
-  var s = module.exports = http.createServer(server);
-  var routesApi = require('../../mongo/routes/index');
-  
-  // var io = require('socket.io')(s);
-
-  // Use the API routes when path starts with /api
-  server.use('/api', routesApi);
-
-  // Serve index.html for all other routes to leave routing up to Angular
-  server.use('/*', function(req, res) {
-    res.sendFile('index.html', { root: 'build' });
-  });
-
-  s.on('error', function(err){
+  var s = http.createServer(server);
+    s.on('error', function(err){
     if(err.code === 'EADDRINUSE'){
       gutil.log('Development server is already started at port ' + config.serverport);
     }
@@ -73,5 +61,22 @@ gulp.task('server', function() {
   });
 
   s.listen(process.env.PORT || config.serverport);
+  var io = require('socket.io')(s);
+  io.on('connection', function (socket) {
+    console.log("connected")
+  });
+  module.exports = io;
+
+  var routesApi = require('../../mongo/routes/index');
+  
+
+  // Use the API routes when path starts with /api
+  server.use('/api', routesApi);
+
+  // Serve index.html for all other routes to leave routing up to Angular
+  server.use('/*', function(req, res) {
+    res.sendFile('index.html', { root: 'build' });
+  });
+
 
 });

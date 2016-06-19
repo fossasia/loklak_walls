@@ -10,7 +10,7 @@ var Chart = require('chart.js');
 /**
  * @ngInject
  */
- function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http, $window, $resource, AppSettings, SearchService, StatisticsService, AppsService, Fullscreen) {
+ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http, $window, $resource, AppSettings, SearchService, StatisticsService, AppsService, Fullscreen, socket) {
 
     var vm, flag, allStatuses, nextStatuses, term, count, searchParams, maxStatusCount;
     vm = this;
@@ -106,7 +106,6 @@ var Chart = require('chart.js');
             term = term.substring(2).trim();
         }
 
-        console.log(term);
         searchParams.q = term;
         searchParams.count = maxStatusCount;
         console.log(vm.wallOptions.cyclePostLimit);
@@ -128,8 +127,6 @@ var Chart = require('chart.js');
         });
 
         vm.wallOptions.$promise.then(function(data) {
-            console.log("data vmwall", data);
-            console.log("vm.wallOptions", vm.wallOptions)
             
             if (vm.wallOptions.id) {
                 if (vm.wallOptions.layoutStyle === 1) {
@@ -149,26 +146,14 @@ var Chart = require('chart.js');
                 leaderboardInterval = vm.cycleLeaderboard();
 
                 // SOCKET.IO INIT - Poll once then listen for socket event
-                var url = '/api/tweets/' + $stateParams.user + '/' + $stateParams.id;
+                var url = '/api/tweets/' + $stateParams.user + $stateParams.id;
                 $http.get(url).then(function(res){
-                    console.log('data',res.data)
 
                     if (vm.statuses.length <= 0) {
                         // get subset of res.data tweet array if current array is empty
                         // vm.statuses = res.data.splice(0, searchParams.count);
                         vm.statuses = res.data.statuses;
                     } else {
-                        console.log('0',tweetArr)
-
-                        tweetArr= tweetArr.sort(function(a,b){
-                            if (a.created_at > b.created_at){
-                                return 1
-                            } else {
-                                return -1;
-                            }
-                        })
-                        console.log('1',tweetArr)
-
                         for (var i = tweetArr.length - 1; i > -1; i--) {
                             if (vm.wallOptions.cycle) {
                             // tweets are moving cyclicly in array
@@ -193,47 +178,6 @@ var Chart = require('chart.js');
                 }, 
                     function(err){ console.log("error",err); }
                 );
-
-                var userWallId = $stateParams.user + $stateParams.id;
-                var socketId = 'addNewTweets' + userWallId;
-                console.log("socketId", socketId);
-
-
-                // socketio.on(socketId, function(tweetArr){
-
-                //     tweetArr.sort(function(a,b){
-                //         return b.created_at - a.created_at;
-                //     })
-
-                //     if (vm.statuses.length <= 0) {
-                //         // get subset of data tweet array if current array is empty
-                //         // vm.statuses = tweetArr.splice(0, searchParams.count);
-                //         vm.statuses = tweetArr;
-                //     } else {
-                //         for (var i = tweetArr.length - 1; i > -1; i--) {
-                //             if (vm.wallOptions.cycle) {
-                //             // tweets are moving cyclicly in array
-                //             if (!contains(vm.statuses, tweetArr[i])) {
-                //                     // if different tweet, remove oldest top
-                //                     console.log("triggered");
-                //                     removeLeastRecentTweet(); // cycle through & remove oldest
-                //                     $interval.cancel(cycleInterval);
-                //                     cycleInterval = undefined;
-                //                     vm.statuses.unshift(tweetArr[i]); // add new tweet to front of array
-                //                     cycleInterval = vm.cycleTweets();
-                //                 }
-                //             } else {
-                //                 // from oldest tweet of data, if newer than current newest
-                //                 if (tweetArr[i].created_at > vm.statuses[0].created_at) {
-                //                     vm.statuses.unshift(tweetArr[i]); // add tweet to front, pop the current oldest
-                //                     vm.statuses.pop();
-                //                 }
-                //             }
-                //         }
-                //     }
-
-                // })
-
             } else {
                 vm.invalidId = true;
             }
@@ -355,9 +299,7 @@ var Chart = require('chart.js');
         vm.statuses.splice(minIndex, 1);
     }
 
-    // Polls the server every 10 sec.
-    // tweetTimeout holds $timeout 
-
+    // Polls the server every 10 sec.- replaced by socket
     vm.update2 = function(refreshTime) {
         return $timeout(function() {
                 var success = function(data) {
@@ -410,17 +352,6 @@ var Chart = require('chart.js');
                 if(!vm.wallOptions.moderation){
                     console.log("Not Moderated")
                     SearchService.initData(searchParams).then(success, error);
-                    // get approved subset of tweets from mongo, instead of search service from loklak_server
-                    // var url = '/api/tweets/' + $stateParams.user + '/' + $stateParams.id;
-                    // $http.get(url).then(function(res){
-                    //     var data = res.data;
-
-                    // console.log("search Params", searchParams);
-                    // console.log("data.statuses", data.statuses);
-                    // console.log("vm.statuses", vm.statuses);
-                    // console.log("arg refreshTime", refreshTime);
-                    // var userWallId = $stateParams.user +  $stateParams.id;
-                    // console.log("url", url);
                 
                 } else {
                     console.log("Moderated")
@@ -620,6 +551,19 @@ var Chart = require('chart.js');
         }
     };
 
+    socket.on('toggle',function(tweetId){
+        var tweetIdx = vm.statuses.findIndex(function(tweet){
+            return tweet._id === tweetId;
+        });
+        vm.statuses[tweetIdx].approval = !vm.statuses[tweetIdx].approval;
+    });
+
+    socket.on('addNewTweets' + $stateParams.user + $stateParams.id, function(tweetArr){
+        tweetArr.forEach(function(el,idx){
+            vm.statuses.splice(idx,0,el);
+        })
+    })
+
     $scope.$on('$destroy', function() {
         // if (tweetTimeout) {
             // $timeout.cancel(tweetTimeout);
@@ -630,8 +574,9 @@ var Chart = require('chart.js');
         if (leaderboardInterval) {
             $interval.cancel(leaderboardInterval);
         }
+        socket.removeAllListeners();
     });
 
 }
 
-controllersModule.controller('WallDisplay', ['$scope', '$stateParams', '$interval', '$timeout', '$location', '$http', '$window', '$resource', 'AppSettings', 'SearchService', 'StatisticsService', 'AppsService', 'Fullscreen', WallDisplay]);
+controllersModule.controller('WallDisplay', ['$scope', '$stateParams', '$interval', '$timeout', '$location', '$http', '$window', '$resource', 'AppSettings', 'SearchService', 'StatisticsService', 'AppsService', 'Fullscreen', 'socket', WallDisplay]);

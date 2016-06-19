@@ -22,9 +22,8 @@
             <span am-time-ago="data.created_at"></span>
             <span ng-show="data.place_name" class="created-at"> • <i class="fa fa-map-marker"></i> {{data.place_name}}</span>
         </div>
-        <!-- <p>{{data.approval}}</p> -->
-            <a class="btn btn-success btn-small pull-right" ng-class="{'disabled' : data.approval}" style="margin-right: 10px;" ng-click="toggle(data._id)" href="#"><i class="fa fa-check "></i></a>
-            <a class="btn btn-danger btn-small pull-right" ng-class="{'disabled': !data.approval}" style="margin-right: 10px;" ng-click="toggle(data._id)" href="#"><i class="fa fa-times "></i></a>
+            <a class="btn btn-success btn-small pull-right" ng-class="{'disabled' : data.approval}" style="margin-right: 10px;" ng-click="toggle()" href="#"><i class="fa fa-check "></i></a>
+            <a class="btn btn-danger btn-small pull-right" ng-class="{'disabled': !data.approval}" style="margin-right: 10px;" ng-click="toggle()" href="#"><i class="fa fa-times "></i></a>
 
 
         <!-- </div> -->

@@ -1,8 +1,6 @@
 var mongoose = require('mongoose');
 var Tweet = mongoose.model('Tweet');
-
-// var s = require('../../gulp/tasks/server.js');
-// var io = require('socket.io')(s);
+var io = require(__dirname + '/../../gulp/tasks/server.js');
 
 // /tweets/:userWallId
 // Get all tweets, for approval
@@ -13,7 +11,7 @@ module.exports.getAllTweetsById = function(req,res){
     .sort({created_at: -1})
     .exec(function(err, tweetArr){
         console.log('first', tweetArr[0]);
-        res.json({tweetArr: tweetArr});
+        res.json({statuses: tweetArr});
     })
 }
 
@@ -51,21 +49,24 @@ module.exports.getTweetById = function (req, res) {
 // Saves tweet array
 module.exports.storeTweet = function (req, res) {
     // pre-added userwallid & approval false field on client when checked walloptions for moderation
-    // req.body contains an array of tweets
-    req.body.forEach(function(tweet){
+    // req.body is an object contains tweetArr and userWallId.
+
+    req.body.tweetArr.forEach(function(tweet){
         var newTweet = new Tweet(tweet);
         newTweet.save(function(err,datum){
             if(err!==null){
                 console.log("err", err);  
             } else{
-                // console.log("datum", datum)
+                var tweetArr = [datum];
+                // EMIT POST EVENT
+                io.emit("addNewTweetsArr", tweetArr);
+                // EMIT TOGGLE EVENT
+                io.emit("addNewTweets"+req.body.userWallId, tweetArr);
             }
-        });
+        })
     });
-
-    // io.emit("addNewTweets" + req.body.userWallId, req.body);
-
-    res.jsonp({message: "inserted "+req.body.length + " tweets"});
+    
+    res.jsonp({message: "inserted " + req.body.tweetArr.length + " tweets"});
 }
 
 // Update approval status to it's opposite
@@ -79,6 +80,7 @@ module.exports.updateTweet = function (req, res) {
         Tweet
         .findById(req.params.tweetId)
         .exec(function(err, tweet) {
+            console.log(tweet)
             tweet.approval = !tweet.approval;
             tweet.save(function(err) {
                 if (err) res.send(err);
@@ -86,7 +88,8 @@ module.exports.updateTweet = function (req, res) {
             });
         });
 
-        // EMIT TOGGLE BROADCAST
+        // EMIT TOGGLE EVENT
+        io.emit("toggle", req.params.tweetId);
     }
 }
 

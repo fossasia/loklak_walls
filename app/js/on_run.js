@@ -35,6 +35,8 @@
    root.fullscreenDisabled = true;
    root.sidebarEnabled = false;
 
+   $rootScope.modPostPromise=null;
+
    $rootScope.$on('cfpLoadingBar:started', function() {
     angular.element('#loklak-nav-logo').hide();
   });
@@ -43,6 +45,7 @@
     angular.element('#loklak-nav-logo').show();
   });
 
+  $rootScope.modPostPromise; // For cancelling the $interval polling
 
     // check if authenticated
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){

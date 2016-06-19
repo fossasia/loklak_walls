@@ -9,11 +9,11 @@ var moment = require('moment');
 /**
  * @ngInject
  */
- function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloService, SearchService, AuthService, $http, $interval) {
+ function WallCtrl($scope, $rootScope, $timeout, AppsService, HelloService, SearchService, AuthService, $http, $interval, socket) {
 
     var vm = this;
     var term = '';
-    var modPostPromise; // For cancelling the $interval polling
+    // var $rootScope.modPostPromise; // For cancelling the $interval polling
     var searchParams;
     var latestCreatedAtDate = null;
     var maxStatusCount;
@@ -76,13 +76,21 @@ var moment = require('moment');
     };
 
     $scope.tabSelected = function(index) {
-        $scope.selectedTab = index;
-        if ($scope.selectedTab === 2) {
-            $scope.showNext = false;
-            $scope.showStart = true;
-        } else if ($scope.selectedTab === 3){
-            $scope.showNext = false;
-            $scope.showStart = false;
+        if(index === -1){
+            $scope.isEditing = -1;
+            $scope.selectedTab = 0;
+        } else {
+            $scope.selectedTab = index;
+            if ($scope.selectedTab === 2) {
+                $scope.showNext = false;
+                $scope.showStart = true;
+            } else if ($scope.selectedTab === 3){
+                $scope.showNext = false;
+                $scope.showStart = false;
+            } else {
+                $scope.showNext = true;
+                $scope.showStart = false;
+            }
         }
 
     };
@@ -305,7 +313,7 @@ var moment = require('moment');
         $('#wall-modal').modal('toggle');
 
         if ($rootScope.root.isLoggedIn) {
-            $interval.cancel(modPostPromise);
+            $interval.cancel($rootScope.modPostPromise);
 
             // new wall options
             var saveData = new AppsService({
@@ -328,7 +336,7 @@ var moment = require('moment');
 
 
 
-                    // initWallOptions();
+                    initWallOptions();
 
                     console.log("result", result.id);
                     $scope.userWalls = AppsService.query({
@@ -346,7 +354,7 @@ var moment = require('moment');
                     // $window.open('/' + $scope.currentUser._id + '/wall/' + $scope.userWalls[$scope.isEditing].id, '_blank');
                     // $scope.userWalls[$scope.isEditing].internal = {};
                     // $scope.userWalls[$scope.isEditing].internal.showLoading = false;
-                    $scope.selectedTab=1;
+                    $scope.selectedTab=0;
                 });
 
             // Add new wall options
@@ -399,10 +407,11 @@ var moment = require('moment');
                             console.log('statuses received from search', data.statuses)
                             // MANUAL MOD - add all to mongo if first poll, else filter then add and update most recent date
                             if(latestCreatedAtDate===null){
-                                var tweetArr = data.statuses;
+                                var toPost = {};
+                                toPost.tweetArr = data.statuses;
+                                toPost.userWallId = userWallId;
 
-                                $http.post(posturl, tweetArr)
-                                .then(function(result){
+                                $http.post(posturl, toPost).then(function(result){
                                     console.log(result.data.message);
                                     if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
                                     console.log("latest", latestCreatedAtDate)
@@ -417,8 +426,11 @@ var moment = require('moment');
                                 data.statuses = data.statuses.filter(function(status){
                                     return status.created_at > latestCreatedAtDate;
                                 }) 
-                                $http.post(posturl, data.statuses)
-                                .then(function(result){
+                                var toPost = {};
+                                toPost.tweetArr = data.statuses;
+                                toPost.userWallId = userWallId;
+
+                                $http.post(posturl, toPost).then(function(result){
                                     console.log(result.data.message);
                                     if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
                                     console.log("latest", latestCreatedAtDate)
@@ -432,14 +444,13 @@ var moment = require('moment');
                     }
 
                     searchLoklakServer();
-                    $interval.cancel(modPostPromise);
-                    modPostPromise = $interval(function(){
+                    $rootScope.modPostPromise = $interval(function(){
                         searchLoklakServer();
                     }, 30000);
 
                     // Reset wall options
                     initWallOptions();
-                    $window.open('/' + $scope.currentUser._id + '/wall/' + result.id, '_blank');
+                    window.open('/' + $scope.currentUser._id + '/wall/' + result.id);
                     $scope.userWalls[latestWallIdx].showLoading = false;
                     
 
@@ -454,8 +465,6 @@ var moment = require('moment');
     };
 
 
-
-
     $scope.resetDate = function() {
         $scope.newWallOptions.sinceDate = null;
         $scope.newWallOptions.untilDate = null;
@@ -468,7 +477,7 @@ var moment = require('moment');
 
     // TODO: remove tweets with same userWallId
     $scope.deleteWall = function(index) {
-        $interval.cancel(modPostPromise);
+        $interval.cancel($rootScope.modPostPromise);
         $http.delete('/api/tweets/'+$scope.currentUser._id+$scope.userWalls[index].id, index)
         // .then(function(data){console.log(data)});
 
@@ -486,6 +495,7 @@ var moment = require('moment');
             }
             //$scope.userWalls[index].showLoading = false;
         });
+        $scope.isEditing = -1;
     };
 
     $scope.editWall = function(index) {
@@ -501,7 +511,7 @@ var moment = require('moment');
         $scope.pollWallTweets();
 
         // Stop previous interval POST
-        $interval.cancel(modPostPromise);
+        $interval.cancel($rootScope.modPostPromise);
         calculateTerm(); // sets searchParams for searchLoklakServer
 
         // Start selected wall's interval POST
@@ -532,10 +542,11 @@ var moment = require('moment');
                 console.log('statuses received from search', data.statuses)
                 // MANUAL MOD - add all to mongo if first poll, else filter then add and update most recent date
                 if(latestCreatedAtDate===null){
-                    var tweetArr = data.statuses;
+                    var toPost = {};
+                    toPost.tweetArr = data.statuses;
+                    toPost.userWallId = userWallId;
 
-                    $http.post(posturl, tweetArr)
-                    .then(function(result){
+                    $http.post(posturl, toPost).then(function(result){
                         console.log(result.data.message);
                         if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
                         console.log("latest", latestCreatedAtDate)
@@ -550,8 +561,11 @@ var moment = require('moment');
                     data.statuses = data.statuses.filter(function(status){
                         return status.created_at > latestCreatedAtDate;
                     }) 
-                    $http.post(posturl, data.statuses)
-                    .then(function(result){
+                    var toPost = {};
+                    toPost.tweetArr = data.statuses;
+                    toPost.userWallId = userWallId;
+
+                    $http.post(posturl, toPost).then(function(result){
                         console.log(result.data.message);
                         if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
                         console.log("latest", latestCreatedAtDate)
@@ -564,9 +578,10 @@ var moment = require('moment');
             })
         }
         searchLoklakServer();
-        modPostPromise = $interval(function(){
+        $rootScope.modPostPromise = $interval(function(){
             searchLoklakServer();
         }, 30000);
+
     };
 
     $scope.pollWallTweets = function(){
@@ -583,7 +598,7 @@ var moment = require('moment');
         function getAllTweets(){
             $http.get(userWallTweetsUrl).then(function(result){
                 // addNewTweets(result.data.tweetArr);
-                $scope.statuses = result.data.tweetArr;
+                $scope.statuses = result.data.statuses;
                 latestCreatedAtDate = $scope.statuses.length>0 ? $scope.statuses[0].created_at : null;
             })
         }
@@ -630,11 +645,30 @@ var moment = require('moment');
 
     init();
 
+    socket.on('addNewTweetsArr', function(tweetArr){
+        tweetArr.forEach(function(el,idx){
+            $scope.statuses.splice(idx,0,el);
+        })
+    })
+
     $scope.$on('$destroy', function() {
-        if (modPostPromise) {
-            $interval.cancel(modPostPromise);
+        if ($rootScope.modPostPromise) {
+            $interval.cancel($rootScope.modPostPromise);
+        }
+        socket.removeAllListeners();
+
+    });
+
+    angular.element(document).bind("keydown", function(event) {
+        if (event.keyCode === 27) {
+            $scope.$apply(function() {
+                $scope.tweetModalShow = false;   
+                $scope.isEditing = -1;
+                $scope.selectedTab=0;
+            });
         }
     });
+
 }
 
-controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$window', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', '$http', '$interval', WallCtrl]);
+controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', '$http', '$interval', 'socket', WallCtrl]);

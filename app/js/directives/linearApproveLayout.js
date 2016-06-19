@@ -6,7 +6,6 @@ var directivesModule = require('./_index.js');
  * @ngInject
  */
 function linearApproveLayoutDirective() {
-    	// toggle: '&',
 
   return {
     scope: {
@@ -15,10 +14,10 @@ function linearApproveLayoutDirective() {
     templateUrl: 'wall/templates/linear-approve.html',
     controller: ['$scope', '$http', function($scope, $http) {
 
-    	$scope.toggle = function(id){
-    		console.log(id);
+    	$scope.toggle = function(){
+    		console.log($scope.data);
     		$scope.data.approval = !$scope.data.approval;
-    		$http.put('/api/tweets/'+id, $scope.data);
+    		$http.put('/api/tweets/'+$scope.data._id, $scope.data);
     	}
 
 
