@@ -18,7 +18,7 @@
     controller: 'ProfileCtrl as profile',
     templateUrl: 'profile.html',
     title: 'profile',
-
+    authenticate: true
   })
   .state('About', {
     url: '/about',
@@ -43,7 +43,8 @@
     url: '/wall',
     templateUrl: 'wall/create.html',
     controller: 'WallCtrl as wall',
-    title: 'Wall'
+    title: 'Wall',
+    verify: true
   })
   // // wall creation modal is ng-included in create.html
   // .state('WallCreate', {

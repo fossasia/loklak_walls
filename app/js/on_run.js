@@ -5,7 +5,7 @@
 /**
  * @ngInject
  */
- function OnRun($rootScope, $location, AppSettings, HelloService, AuthService, MailService, $http, SweetAlert) {
+ function OnRun($rootScope, $location, AppSettings, HelloService, AuthService, MailService, $http, SweetAlert, $state) {
    var root = {};
    root.hello = HelloService;
    
@@ -49,13 +49,37 @@
 
     // check if authenticated
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){
-      if (toState.authenticate && !AuthService.isLoggedIn()){
+  
+      if (toState.authenticate || toState.verify ){
           // User isn’t authenticated
-          $state.transitionTo("/");
-          event.preventDefault(); 
-        }
-      }
-    );
+          AuthService.currentUser().success(function(data){
+            if(toState.verify && !data.isVerified){
+              $state.transitionTo("Home");
+              SweetAlert.alert("Not verified", {
+                title: 'User not verified',
+                text: 'To create walls, you must click the verification link in the email of account you used to sign up.',
+                type: 'error',
+                showCancelButton: true,
+                confirmButtonColor:"#607d8b",
+                confirmButtonText:"Send Confirmation Email",
+                cancelButtonText:"Cancel",
+              }).then(function(response){
+                if(response){
+                  MailService.sendConfirmation(data.local.email);
+                } else {
+                  console.log("exit");
+                }
+              })
+            }else if(!data._id){
+              $state.transitionTo("Home");
+              SweetAlert.alert("Error", "Please log in.")
+              event.preventDefault();
+            }
+
+      });
+
+      } 
+    });
 
     // change page title based on state
     $rootScope.$on('$stateChangeSuccess', function(event, toState) {
@@ -108,7 +132,11 @@
         if(!data.message){
           $rootScope.root.isLoggedIn = true;
           $rootScope.root.currentUser = data;
-          SweetAlert.swal("Good job!", "Registered", "success");
+          SweetAlert.success("Registered!", {
+            title: "User registered",
+            text: "Check email for verification",
+          });
+          MailService.sendConfirmation($rootScope.root.user.email);
         } else {
           $rootScope.root.isLoggedIn = false;
           $rootScope.root.currentUser = null;
