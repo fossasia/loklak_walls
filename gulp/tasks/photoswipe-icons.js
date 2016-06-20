@@ -12,6 +12,6 @@ gulp.task('photoswipe-icons', function() {
   return gulp.src(config.photoswipeicons.src)
     .pipe(changed(config.photoswipeicons.dest)) // Ignore unchanged files
     .pipe(gulp.dest(config.photoswipeicons.dest))
-    .pipe(gulpif(browserSync.active, browserSync.reload({ stream: true, once: true })));
+    // .pipe(gulpif(browserSync.active, browserSync.reload({ stream: true, once: true })));
 
 });

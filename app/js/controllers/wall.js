@@ -647,7 +647,8 @@ var moment = require('moment');
 
     socket.on('addNewTweetsArr', function(tweetArr){
         tweetArr.forEach(function(el,idx){
-            $scope.statuses.splice(idx,0,el);
+            if(el.userWallId === $scope.currentUser._id + $scope.userWalls[$scope.isEditing].id)
+                $scope.statuses.splice(idx,0,el);
         })
     })
 

@@ -23,7 +23,7 @@ gulp.task('server', function() {
   var server = express();
   var dbURI = 'mongodb://localhost/test';
   if (process.env.NODE_ENV === 'production') {
-    dbURI = process.env.MONGOLAB_URI;
+    dbURI = process.env.MONGODB_URI;
   }
 
   server.use(bodyParser.json({limit:"50mb"}));
