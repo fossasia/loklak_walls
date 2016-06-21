@@ -1,47 +1,98 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
-var jwt = require('express-jwt');
 var config = require('../../custom_configFile.json');
-
-var auth = jwt({
-  secret: config.jwtsecret,
-  userProperty: 'payload'
-});
 
 var ctrlProfile = require('../controllers/profile');
 var ctrlAuth = require('../controllers/authentication');
 var ctrlMailer = require('../controllers/email');
 var ctrlWalls = require('../controllers/walls');
+var ctrlTweetStore = require('../controllers/tweets');
 
-// profile
-// router.get('/profile', auth, ctrlProfile.profileRead);
+// AUTH ================================
+router.post('/register', function(req,res,next){
+	passport.authenticate('local-signup',function(err, user, info){
+		if (err) { return next(err); }
+		if (!user) { console.log("info", info);
+		 	res.json(info); 
+		}
+		req.login(user, function(err) {
+			if (err) { return next(err); }
+			res.json(user);
+		})
+	})(req, res);
+});
+router.post('/login', function(req,res,next){
+	passport.authenticate('local-login',function(err, user, info){
+		req.login(user, function(err) {
+			if (err) { return next(err); }
+			if(!user) res.json(info);
+			res.json(user);
+		})
+	})(req, res);
+});
+router.get('/login/twitter', passport.authenticate('twitter'));
+router.get('/login/twitter/callback', 
+	passport.authenticate('twitter', {
+		successRedirect : '/profile',
+		failureRedirect : '/'
+	}));
 
-// WALL API
-// router.get('/walls', auth, ctrlWalls.wallReadById);
+// UNLINKING ACCOUNTS ==================
+router.get('/unlink/twitter', function(req, res) {
+	var user           = req.user;
+	user.twitter.token = undefined;
+	user.save(function(err) {
+		res.redirect('/profile');
+	});
+});
 
-// WALL API
-router.get   ('/:user/:app/:id', ctrlWalls.getWallById);
+// LOGOUT ==============================
+router.get('/logout', function(req, res) {
+	req.logout();
+	res.redirect('/');
+});
+
+// USER ================================
+router.get('/currentuser', auth, function(req,res){
+	// console.log(req.user)
+	if(req.user._id) res.json(req.user);
+	else res.json({"message":"no user"})
+});
+
+// EMAIL CONFIRMATIONS =================
+router.get('/send', ctrlMailer.send);
+router.get('/verify', ctrlMailer.verify);
+
+// TWEET API ===========================
+// :tweetId - ._id of tweet object
+// :userId  - ._id of user object
+// :wallId  - .apps.wall.id of wall options
+router.get   ('/tweets/:userWallId', ctrlTweetStore.getAllTweetsById);
+router.get   ('/tweets/:userId/:wallId', ctrlTweetStore.getApprovedTweetsById);
+router.get   ('/tweets/:userId/:wallId/:tweetId', auth, ctrlTweetStore.getTweetById);
+router.post  ('/tweets/:userId/:wallId', auth, ctrlTweetStore.storeTweet);
+router.put   ('/tweets/:tweetId', auth, ctrlTweetStore.updateTweet);
+router.delete('/tweets/:userWallId', auth, ctrlTweetStore.deleteTweet);
+
+// WALL API ============================
+// :user - ._id of user  as wall options are embedded under user obj
+// :app  - "wall"  		 as currently the only app is wall
+// :id 	 - .apps.wall.id of wall options
 router.get   ('/:user/:app', auth, ctrlWalls.getUserWalls);
+router.get   ('/:user/:app/:id', ctrlWalls.getWallById);
 router.post  ('/:user/:app', auth, ctrlWalls.createWall);
 router.put   ('/:user/:app/:id', auth, ctrlWalls.updateWall);
 router.delete('/:user/:app/:id', auth, ctrlWalls.deleteWall);
 
-// AUTH - Email
-router.post('/register', ctrlAuth.register);
-router.post('/login', ctrlAuth.login);
 
-// AUTH - Twitter
-router.get('/login/twitter', passport.authenticate('twitter') );
-router.get('/login/twitter/callback',
-  passport.authenticate('twitter', {
-    successRedirect : '/twitter',
-    failureRedirect : '/'
-  })
-);
 
-// EMAIL CONFIRMATIONS
-router.get('/send', ctrlMailer.send);
-router.get('/verify', ctrlMailer.verify);
+function auth(req, res, next) {
+	console.log("auth", req.isAuthenticated())
+    if (req.isAuthenticated())
+        return next();
+    res.redirect('/');
+}
 
 module.exports = router;
+

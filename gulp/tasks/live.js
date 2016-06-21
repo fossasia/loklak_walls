@@ -9,6 +9,6 @@ gulp.task('live', ['settings', 'clean'], function(cb) {
 
   global.isProd = true;
 
-  runSequence(['styles', 'minify-css', 'photoswipe-icons', 'images', 'fonts', 'views', 'browserify', 'admin-js'], 'gzip', ['server', 'oauth'], cb);
+  runSequence(['styles', 'minify-css', 'photoswipe-icons', 'images', 'fonts', 'views', 'browserify', 'admin-js'], 'watch', ['server'], cb);
 
 });

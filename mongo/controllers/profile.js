@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
+// Using $rootscope.root.currentUser instead of calling api
 module.exports.profileRead = function(req, res) {
 
-  if (!req.payload._id) {
+  if (!req.isAuthenticated()) {
     res.status(401).json({
       "message" : "UnauthorizedError: private profile"
     });

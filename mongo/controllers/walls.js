@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
+// For individual wall page
 module.exports.getWallById = function (req, res) {
     console.log(req.params);
     
@@ -8,8 +9,8 @@ module.exports.getWallById = function (req, res) {
     .findById(req.params.user)
     .exec(function(err, user) {
         console.log(user);
-        
-        if (user.apps[req.params.app]) {
+        if(user===undefined) res.jsonp({});
+        if(user.apps[req.params.app]) {
             for (i = 0; i < user.apps[req.params.app].length; i = i + 1) {
                 if (user.apps[req.params.app][i].id === req.params.id) {
                     return res.jsonp(user.apps[req.params.app][i]);
@@ -22,19 +23,20 @@ module.exports.getWallById = function (req, res) {
     });
 }
 
+// For user wall dashboard
 module.exports.getUserWalls = function (req, res) {
-    // If no user ID exists in the JWT return a 401
     
-    if (!req.payload._id) {
-        res.status(401).json({
-            "message" : "UnauthorizedError: private wall page"
-        });
+    if (!req.isAuthenticated()) {
+        console.log("not Authenticated");
+        res.status(401).jsonp([]);
     } else {
         User
         .findById(req.params.user)
         .exec(function(err, user) {
-            console.log(user);
-            
+            console.log("user", user);
+            if(!user.apps){
+                user.apps = { map:[] };
+            }
             if (user.apps && user.apps[req.params.app]) {
                 res.jsonp(user.apps[req.params.app]);
             } else {
@@ -48,8 +50,11 @@ module.exports.getUserWalls = function (req, res) {
 module.exports.createWall = function (req, res) {
     var newWall = req.body;
     console.log("newWall", newWall);
-    
-    if (!req.payload._id) {
+    newWall.id = Date.now();
+    console.log("newWallid", newWall.id);
+
+    if (!req.isAuthenticated()) {
+        console.log("not Authenticated");
         res.status(401).json({
             "message" : "UnauthorizedError: private wall page"
         });
@@ -59,23 +64,23 @@ module.exports.createWall = function (req, res) {
         .exec(function(err, user) {
             var appData = user.apps;
             if (!appData) {
+                console.log("apps null");
+                
                 appData = {};
             }
             if (!appData[req.params.app]) {
+                console.log("apps.walls null");
+                
                 appData[req.params.app] = [];
             }
-            var randLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-            var uniqid = randLetter + Date.now();
 
-            newWall.id = uniqid;
-            console.log("newWallid", newWall.id);
             
             appData[req.params.app].push(newWall);
-            console.log("user", user);
+            console.log("user apps", user.apps);
             
             user.save(function(err) {
                 if (err) {
-                    res.send(err);
+                    console.log(err)
                 } else {
                     res.json({ id: newWall.id });
                 }
@@ -86,7 +91,7 @@ module.exports.createWall = function (req, res) {
 }
 
 module.exports.updateWall = function (req, res) {
-    if (!req.payload._id) {
+    if (!req.isAuthenticated()) {
         res.status(401).json({
             "message" : "UnauthorizedError: private wall page"
         });
@@ -108,9 +113,7 @@ module.exports.updateWall = function (req, res) {
                     found = true;
                     // Assigning causes error, use splice
                     // appData[req.params.app][i] = req.body;
-                    appData[req.params.app].splice(i, 1, req.body);
-                    console.log("appDataa", appData);
-                    
+                    appData[req.params.app].splice(i, 1, req.body);                    
                     user.save(function(err) {
                         if (err) res.send(err);
                         else res.json({ id : req.body.id});
@@ -128,7 +131,7 @@ module.exports.updateWall = function (req, res) {
 };
 
 module.exports.deleteWall = function (req, res) {    
-    if (!req.payload._id) {
+    if (!req.isAuthenticated()) {
         res.status(401).json({
             "message" : "UnauthorizedError: private wall page"
         });
@@ -136,9 +139,8 @@ module.exports.deleteWall = function (req, res) {
         User
         .findById(req.params.user)
         .exec(function(err, user) {
-            console.log(user);   
+            console.log(user);
             var appData = user.apps; 
-            
             if (!appData[req.params.app]) {
                 appData[req.params.app] = [];
             }

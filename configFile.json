@@ -3,14 +3,13 @@
 	"domain": "http://localhost:3000",
 	"twitterConsumerKey": "KEY_HERE",
 	"twitterConsumerSecret": "KEY_HERE",
-	"twitterCallbackUrl": "http://localhost:3000/auth/twitter/callback",
+	"twitterCallbackUrl": "http://localhost:3000/api/login/twitter/callback",
 	"oauthProxyUrl": "http://localhost:3002/oauthproxy",
 	"oauthProxyRedirectUrl": "http://localhost:3002/proxy",
 	"oauthProxyPort": "3002",
 	"gulpDevExpressPort": "3001",
 	"linkDebuggingServiceHost":"http://localhost",
 	"linkDebuggingServicePort": "8061",
-  "jwtsecret": "CHANGE_THE_SECRET",
-  "emailID": "CHANGE_THE_EMAIL_ID",
-  "emailPW": "CHANGE_THE_EMAIL_PW"
+	"emailID": "CHANGE_THE_EMAIL_ID",
+	"emailPW": "CHANGE_THE_EMAIL_PW"
 }

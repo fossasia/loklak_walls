@@ -1,4 +1,4 @@
-<div ng-attr-id="{{data.id_str}}" class="linear linear-simple" ng-show="data.approval">
+<div ng-attr-id="{{data.id_str}}" class="linear linear-simple" ng-class="{'approved':data.approval, 'rejected':!data.approval}">
     <img class="avatar spinner" onError="this.onerror=null;this.src='/images/anon_200x200.png';" ng-src="{{data.user.profile_image_url_https | biggerProfileImage}}" alt="user-images">
     <div class="linear-content row">
         <!-- <div class="row"> -->
@@ -22,6 +22,10 @@
             <span am-time-ago="data.created_at"></span>
             <span ng-show="data.place_name" class="created-at"> • <i class="fa fa-map-marker"></i> {{data.place_name}}</span>
         </div>
+            <a class="btn btn-success btn-small pull-right" ng-class="{'disabled' : data.approval}" style="margin-right: 10px;" ng-click="toggle()" href="#"><i class="fa fa-check "></i></a>
+            <a class="btn btn-danger btn-small pull-right" ng-class="{'disabled': !data.approval}" style="margin-right: 10px;" ng-click="toggle()" href="#"><i class="fa fa-times "></i></a>
+
+
         <!-- </div> -->
     </div>
 </div>

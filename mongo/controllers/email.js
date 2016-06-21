@@ -13,7 +13,7 @@ var smtpTransport = nodemailer.createTransport("SMTP",{
 var rand,mailOptions,host,link;
 
 module.exports.send = function(req, res) {
-    // console.log(req.get('host'));
+    console.log(req.get('host'));
     rand=Math.floor((Math.random() * 100) + 54);
     host=req.get('host');
     link="http://"+req.get('host')+"/api/verify?id="+rand;
@@ -42,13 +42,15 @@ module.exports.verify = function(req,res){
         console.log("Domain is matched. Information is from Authentic email");
         if(req.param('id')==rand) {
             console.log("email is verified");
-            User.update({email: mailOptions.to}, {$set: {isVerified: true}}, function(err,user){
+            User.update({"local.email": mailOptions.to}, {$set: {isVerified: true}}, function(err,user){
                 if(err) {
                     res.status(404).json(err);
                     return;
+                } else {
+                    console.log("Email "+mailOptions.to+" is Successfully verified");
+                    res.redirect('/');
                 }
-                // res.end("Email "+mailOptions.to+" is Successfully verified");
-                res.redirect('/');
+                
             })
         } else {
             console.log("email is not verified");
