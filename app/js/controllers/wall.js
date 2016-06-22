@@ -332,29 +332,24 @@ var moment = require('moment');
                     app: 'wall',
                     id: $scope.userWalls[$scope.isEditing].id
                 }, function(result) {
-                    calculateTerm(); // sets searchParams for searchLoklakServer 
+                    // calculateTerm(); // sets searchParams for searchLoklakServer 
+                    // initWallOptions();
 
-
-
-                    initWallOptions();
-
-                    console.log("result", result.id);
-                    $scope.userWalls = AppsService.query({
+                    AppsService.query({
                         user: $scope.currentUser._id,
                         app: 'wall'
-
-
                     }, function(result) {
+                        console.log("result", result);
+                        $scope.userWalls = result;
                         if ($scope.userWalls.length === 0) {
                             $scope.wallsPresent = false;
                             console.log("No walls");
                         }
                     });
-                    $scope.userWalls[$scope.isEditing].showLoading = false;
+                    // $scope.userWalls[$scope.isEditing].showLoading = false;
                     // $window.open('/' + $scope.currentUser._id + '/wall/' + $scope.userWalls[$scope.isEditing].id, '_blank');
                     // $scope.userWalls[$scope.isEditing].internal = {};
                     // $scope.userWalls[$scope.isEditing].internal.showLoading = false;
-                    $scope.selectedTab=0;
                 });
 
             // Add new wall options
@@ -456,7 +451,7 @@ var moment = require('moment');
 
                 });
             }
-
+            $scope.selectedTab=0;
             $scope.isEditing = -1;
 
         } else {
