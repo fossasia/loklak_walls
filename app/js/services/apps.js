@@ -5,7 +5,7 @@ var servicesModule = require('./_index.js');
 /**
  * @ngInject
  */
-function AppsService($q, $http, $resource, AppSettings, AuthService) {
+function AppsService($q, $http, $resource) {
 
     // var url = AppSettings.oauthProxyUrl.split('/')[0] + '/' + AppSettings.oauthProxyUrl.split('/')[1] + '/' + AppSettings.oauthProxyUrl.split('/')[2];
 
@@ -56,4 +56,4 @@ function AppsService($q, $http, $resource, AppSettings, AuthService) {
 
 }
 
-servicesModule.service('AppsService', ['$q', '$http', '$resource', 'AppSettings', 'AuthService', AppsService]);
+servicesModule.service('AppsService', ['$q', '$http', '$resource', AppsService]);
