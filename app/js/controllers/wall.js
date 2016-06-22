@@ -391,7 +391,7 @@ var moment = require('moment');
                             console.log('options', $scope.newWallOptions);
                             // If manual moderation, query loklak server, 
                             // set all approval to false, then add to store.
-                            if($scope.newWallOptions.moderation){
+                            if(!$scope.newWallOptions.moderation){
                                 data.statuses.map(function(tweet){
                                     tweet.userWallId = userWallId;
                                     tweet.approval = true;                                    
@@ -526,7 +526,7 @@ var moment = require('moment');
                 console.log('options', $scope.newWallOptions);
                 // If manual moderation, query loklak server, 
                 // set all approval to false, then add to store.
-                if($scope.newWallOptions.moderation){
+                if(!$scope.newWallOptions.moderation){
                     data.statuses.map(function(tweet){
                         tweet.userWallId = userWallId;
                         tweet.approval = true;                                    
