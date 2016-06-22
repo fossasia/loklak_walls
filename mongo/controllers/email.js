@@ -16,7 +16,7 @@ module.exports.send = function(req, res) {
     console.log(req.get('host'));
     rand=Math.floor((Math.random() * 100) + 54);
     host=req.get('host');
-    link="http://"+req.get('host')+"/api/verify?id="+rand;
+    link="http://"+req.get('host')+"/api/verify/"+rand;
     mailOptions={
         to : req.param("to"), 
         subject : "Please confirm your Loklak Web Client account",
@@ -40,7 +40,7 @@ module.exports.verify = function(req,res){
     console.log(req.protocol+":/"+req.get('host'));
     if((req.protocol+"://"+req.get('host'))===("http://"+host)) {
         console.log("Domain is matched. Information is from Authentic email");
-        if(req.param('id')===rand) {
+        if(parseInt(req.params.id,10)===rand) {
             console.log("email is verified");
             User.update(
                 {'local.email': mailOptions.to}, 
