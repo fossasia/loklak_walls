@@ -38,9 +38,9 @@ module.exports.send = function(req, res) {
 
 module.exports.verify = function(req,res){
     console.log(req.protocol+":/"+req.get('host'));
-    if((req.protocol+"://"+req.get('host'))==("http://"+host)) {
+    if((req.protocol+"://"+req.get('host'))===("http://"+host)) {
         console.log("Domain is matched. Information is from Authentic email");
-        if(req.param('id')==rand) {
+        if(req.param('id')===rand) {
             console.log("email is verified");
             User.update({"local.email": mailOptions.to}, {$set: {isVerified: true}}, function(err,user){
                 if(err) {
