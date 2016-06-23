@@ -62,7 +62,7 @@ router.get('/currentuser', auth, function(req,res){
 
 // EMAIL CONFIRMATIONS =================
 router.get('/send', ctrlMailer.send);
-router.get('/verify', ctrlMailer.verify);
+router.get('/verify/:id', ctrlMailer.verify);
 
 // TWEET API ===========================
 // :tweetId - ._id of tweet object
