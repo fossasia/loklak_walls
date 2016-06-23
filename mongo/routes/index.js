@@ -9,6 +9,8 @@ var ctrlMailer = require('../controllers/email');
 var ctrlWalls = require('../controllers/walls');
 var ctrlTweetStore = require('../controllers/tweets');
 
+// /api routes
+
 // AUTH ================================
 router.post('/register', function(req,res,next){
 	passport.authenticate('local-signup',function(err, user, info){
@@ -76,16 +78,14 @@ router.put   ('/tweets/:tweetId', auth, ctrlTweetStore.updateTweet);
 router.delete('/tweets/:userWallId', auth, ctrlTweetStore.deleteTweet);
 
 // WALL API ============================
-// :user - ._id of user  as wall options are embedded under user obj
-// :app  - "wall"  		 as currently the only app is wall
-// :id 	 - .apps.wall.id of wall options
+// :user - ._id of user
+// :app  - "wall" or "stats"
+// :id 	 - .id of wall object
 router.get   ('/:user/:app', auth, ctrlWalls.getUserWalls);
 router.get   ('/:user/:app/:id', ctrlWalls.getWallById);
 router.post  ('/:user/:app', auth, ctrlWalls.createWall);
 router.put   ('/:user/:app/:id', auth, ctrlWalls.updateWall);
 router.delete('/:user/:app/:id', auth, ctrlWalls.deleteWall);
-
-
 
 function auth(req, res, next) {
 	console.log("auth", req.isAuthenticated())
