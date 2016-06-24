@@ -61,12 +61,18 @@
   onEnter: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=false;}],
   onExit: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=true;}]
 })
-.state('Statistics', {
-  url: '/statistics?q&since&until',
-  controller: 'StatisticsCtrl as statistics',
-  templateUrl: 'statistics.html',
+.state('StatisticsDisplay', {
+  url: '/:user/statistics/:id',
+  templateUrl: 'wall/statistics.html',
+  controller: 'StatisticsCtrl as stats',
   title: 'Statistics'
 })
+// .state('Statistics', {
+//   url: '/statistics?q&since&until',
+//   controller: 'StatisticsCtrl as statistics',
+//   templateUrl: 'statistics.html',
+//   title: 'Statistics'
+// })
 .state('SingleTweet', {
   url: '/tweet?q',
   controller: 'SingleTweetCtrl as singleTweet',
