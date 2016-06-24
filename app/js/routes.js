@@ -65,7 +65,7 @@
   url: '/:user/statistics/:id',
   templateUrl: 'wall/statistics.html',
   controller: 'StatisticsCtrl as stats',
-  title: 'Statistics',
+  title: 'Statistics'
 })
 // .state('Statistics', {
 //   url: '/statistics?q&since&until',

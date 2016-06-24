@@ -6,14 +6,6 @@ var servicesModule = require('./_index.js');
  * @ngInject
  */
 function AnalyticService(moment) {
-        // returns an object of {word:freq} pairs
-        
-        return {
-            getNewTweets: getNewTweets,
-            updateWordFreq: updateWordFreq,
-            updateMentionFreq: updateMentionFreq,
-            updateHashtagDateFreq: updateHashtagDateFreq
-        }
         
         // returns an array of new tweets, comparing with those in local storage
         function getNewTweets(oldArr, statuses){
@@ -83,7 +75,7 @@ function AnalyticService(moment) {
             if(Object.keys(counts).length === 0 && counts.constructor === Object){
                 store.wordFreq = counts;
             } else {
-                for (sWord in counts){
+                for (var sWord in counts){
                     store.wordFreq[sWord] = store.wordFreq[sWord] || 0;
                     store.wordFreq[sWord] += counts[sWord];
                 }
@@ -172,7 +164,9 @@ function AnalyticService(moment) {
                 var currentM = moment(d.created_at).set('hour',0).set('minute',0).set('second',0);
                 var dayDiff = latestDateM.diff(currentM, 'days');
                 // don't display day diff >= 40
-                if(dayDiff<40) return dayDiff
+                if(dayDiff<40) {
+                    return dayDiff;
+                }
             })
             // set latest day at idx 0 (as dayDiff = 0)
             .sortKeys(function(a,b){ return b-a;}) 
@@ -191,5 +185,15 @@ function AnalyticService(moment) {
             store.hashtagDateFreq = filteredFreq;
                 
         }       
+
+        // returns an object of {word:freq} pairs
+        
+        return {
+            getNewTweets: getNewTweets,
+            updateWordFreq: updateWordFreq,
+            updateMentionFreq: updateMentionFreq,
+            updateHashtagDateFreq: updateHashtagDateFreq
+        }
+
 }
 servicesModule.service('AnalyticService', ['moment', AnalyticService]);
