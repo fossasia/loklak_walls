@@ -35,7 +35,7 @@ module.exports.getUserWalls = function (req, res) {
         .exec(function(err, user) {
             console.log("user", user);
             if(!user.apps){
-                user.apps = { map:[] };
+                user.apps = { wall:[] };
             }
             if (user.apps && user.apps[req.params.app]) {
                 res.jsonp(user.apps[req.params.app]);

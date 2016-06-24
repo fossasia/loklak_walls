@@ -797,23 +797,37 @@
             padding-bottom: 15%;
         }
         .wall-thumbnail-footer {
-            color: black;
+            color: #3c8dbc;
             text-align: center;
-            padding-top: 10%;
+            padding-top: 8%;
             width: 250px;
             margin-left: 0px;
             border-top: 1px solid $search-grey-border;
-            div {
-                border-left: 1px solid $search-grey-border;
+            div.col-xs-4 {
                 text-align: center;
+                &.border{
+                    border-left: 1px solid $search-grey-border;
+                }
+                &:hover {
+                    cursor: pointer;
+                    color: $search-light-black;
+                    transition: 0.5s;
+                }
                 span {
-                    &:hover {
-                        text-decoration: underline;
-                        cursor: pointer;
-                        color: $search-light-black;
-                    }
+                    padding: 16px;
                     i {
                         margin-right: 5px;
+                    }
+                }
+                a {
+                    padding: 16px;
+                    i {
+                        margin-right: 5px;
+                    }
+                    &:hover {
+                        cursor: pointer;
+                        color: $search-light-black;
+                        transition: 0.5s;
                     }
                 }
             }
@@ -827,4 +841,9 @@
 
 .approved {
     background-color: rgba(139,195,74,0.2);
+}
+
+i.thumbnail-icon {
+    font-size: 18px;
+    margin-top: -3px;
 }

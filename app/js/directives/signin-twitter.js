@@ -235,12 +235,12 @@ function($interval, $location, $timeout, $rootScope, HelloService, SearchService
 				}
 
 				// If suggestions are shown, clicked out of its area will disable it
-				if(!targetClasses || targetClasses.indexOf("suggestion-item") === -1) {
-					if ($rootScope.root.haveSearchSuggestion !== false) {
-						$rootScope.suggestionsHttpCanceler.resolve();
-						$rootScope.root.haveSearchSuggestion = false;
-					}
-				}
+				// if(!targetClasses || targetClasses.indexOf("suggestion-item") === -1) {
+				// 	if ($rootScope.root.haveSearchSuggestion !== false) {
+				// 		$rootScope.suggestionsHttpCanceler.resolve();
+				// 		$rootScope.root.haveSearchSuggestion = false;
+				// 	}
+				// }
 
 			};
 
