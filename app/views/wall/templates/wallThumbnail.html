@@ -11,11 +11,18 @@
             <h4 class="wall-thumbnail-mainhashtag">{{data.mainHashtag}}</h4>
         </a>
         <div class="row wall-thumbnail-footer">
-            <div class="col-xs-6">
-                <span ng-click="editWall(data)"><i class="fa fa-pencil"></i>Edit</span>
+            <div class="col-xs-4" >
+                <a data-toggle="tooltip" title="Statistics" ng-href="{{userId}}/statistics/{{data.id}}" target="_window" ><i class="fa fa-bar-chart thumbnail-icon"></i></a>
             </div>
-            <div class="col-xs-6">
-                <span ng-click="deleteWall(data)"><i class="fa fa-trash-o"></i>Delete</span>
+            <div class="col-xs-4 border"  >
+                <span data-toggle="tooltip" title="Edit" ng-click="editWall(data)">
+                    <i class="fa fa-pencil thumbnail-icon"></i>
+                </span>
+            </div>
+            <div class="col-xs-4 border" >
+                <span data-toggle="tooltip" title="Delete" ng-click="deleteWall(data)" >
+                    <i class="fa fa-trash-o thumbnail-icon"></i>
+                </span>
             </div>
         </div>
     </div>

@@ -45,10 +45,14 @@ directivesModule.directive('barChart', [
             // update data from hashtagDateFreq
             $scope.$watch('data', update, true);
             
-            function update(hashtagDateFreq){
-                
+            function update(hashtagDateFreq, oldhashtagDateFreq){
+
+                console.log('updating hashtagdatefreq',hashtagDateFreq);
+                if(!oldhashtagDateFreq) {
+                    return;
+                }
                 // fade out bars & axis if just cleared query
-                if(hashtagDateFreq.length===0){
+                if(hashtagDateFreq.length === 0 && oldhashtagDateFreq.length !== 0){
                     
                     svg.selectAll("rect, .xaxis, .yaxis")
                     .transition().duration(500)
@@ -79,7 +83,7 @@ directivesModule.directive('barChart', [
                 // console.log(hashtagDateFreq);
                 
                 // generate ["top1","topN"] array
-                var numtopN = Object.keys(hashtagDateFreq[0]).length-1;
+                // var numtopN = Object.keys(hashtagDateFreq[0]).length-1;
                 var xData=[];
                 for(var i=0;i<$scope.max; i++){
                     xData.push("top"+(i+1));

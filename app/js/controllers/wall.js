@@ -77,14 +77,13 @@ var moment = require('moment');
 
     $scope.tabSelected = function(index) {
         if(index === -1){
-            $scope.isEditing = -1;
             $scope.selectedTab = 0;
         } else {
             $scope.selectedTab = index;
-            if ($scope.selectedTab === 2) {
+            if (index === 2) {
                 $scope.showNext = false;
                 $scope.showStart = true;
-            } else if ($scope.selectedTab === 3){
+            } else if (index === 3){
                 $scope.showNext = false;
                 $scope.showStart = false;
             } else {
@@ -345,6 +344,8 @@ var moment = require('moment');
                             $scope.wallsPresent = false;
                             console.log("No walls");
                         }
+                        $scope.isEditing = -1;
+
                     });
                     // $scope.userWalls[$scope.isEditing].showLoading = false;
                     // $window.open('/' + $scope.currentUser._id + '/wall/' + $scope.userWalls[$scope.isEditing].id, '_blank');
@@ -451,8 +452,6 @@ var moment = require('moment');
 
                 });
             }
-            $scope.selectedTab=0;
-            $scope.isEditing = -1;
 
         } else {
             alert("Please sign in first");
@@ -621,6 +620,7 @@ var moment = require('moment');
     $scope.openModal = function() {
         initWallOptions();
         $('#wall-modal').modal('toggle');
+        $scope.selectedTab = 0;
     };
 
     var init = function() {
