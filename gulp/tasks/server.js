@@ -62,9 +62,32 @@ gulp.task('server', function() {
 
   s.listen(process.env.PORT || config.serverport);
   var io = require('socket.io')(s);
+  var clientWalls = {};
+
   io.on('connection', function (socket) {
-    console.log("connected")
+    console.log("connected");
+    
+    // logged in user joins room with user id
+    socket.on('create', function(room) {
+      socket.join(room);
+      var clients_in_the_room = io.sockets.adapter.rooms[room]; 
+      return (clients_in_the_room.length);
+    });
+
+    // leave and remove wallId so that check can be there
+    socket.on('leave', function(room) {
+      socket.leave(room);
+      var clients_in_the_room = io.sockets.adapter.rooms[room]; 
+      console.log(clients_in_the_room.length);
+      clientWalls[wallId] = false;
+      return (clients_in_the_room.length);
+    });
+    socket.on('addWall', function(wallId){
+      if(clientWalls[wallId] === undefined)
+      clientWalls[wallId] = true;
+    })
   });
+
   module.exports = io;
 
   var routesApi = require('../../mongo/routes/index');

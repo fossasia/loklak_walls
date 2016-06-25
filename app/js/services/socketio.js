@@ -4,9 +4,10 @@ var servicesModule = require('./_index.js');
 /**
  * @ngInject
  */
-function socketio($rootScope) {
+function socketio($rootScope, AuthService) {
 
   var socket = io.connect();
+
   return {
 
     on: function (eventName, callback) {
@@ -38,5 +39,5 @@ function socketio($rootScope) {
 
 };
 
-servicesModule.factory('socket',['$rootScope', socketio]);
+servicesModule.factory('socket',['$rootScope', 'AuthService', socketio]);
 
