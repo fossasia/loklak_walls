@@ -15,10 +15,15 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
     var vm, flag, allStatuses, nextStatuses, term, count, searchParams, maxStatusCount;
     vm = this;
     vm.invalidId = false;
+    vm.statuses = [];
     var cycleInterval, 
         tweetTimeout,
         leaderboardInterval;
     var latestCreatedAtDate = null;
+    var userWallId = $stateParams.user + $stateParams.id;
+    var posturl = '/api/tweets/'+ $stateParams.user + '/' + $stateParams.id;
+    var socketId = socket.getId();
+    var refreshTime =0;
 
     function calculateTerm(argument) {
         term = "";
@@ -141,7 +146,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
 
                 // On INIT
                 calculateTerm();
-                tweetTimeout = vm.update2(0);
+                tweetTimeout = vm.update2(refreshTime);
                 vm.loadLeaderboard();
                 cycleInterval = vm.cycleTweets();
                 leaderboardInterval = vm.cycleLeaderboard();
@@ -187,14 +192,24 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
     // INIT
     getWallOptionsData();
 
+    // GET current tweets for user's wall, and update most recent date
     var init = function() {
         flag = false;
         vm.showEmpty = false;
         // allStatuses = [];
         // nextStatuses = [];
-        vm.statuses = [];
+        var userWallIdURL = '/api/tweets/' + $stateParams.user + $stateParams.id;
+        $http.get(userWallIdURL).then(function(res){
+            console.log(res.data.statuses)
+            vm.statuses=res.data.statuses;
+            if(vm.statuses.length>0) {
+                latestCreatedAtDate = vm.statuses[0].created_at;
+            }
+        });
         searchParams = {};
         vm.displaySearch = true;
+        socket.emit('create', $stateParams.user + $stateParams.id);
+
     };
 
     init();
@@ -302,112 +317,130 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
     vm.update2 = function(refreshTime) {
         return $timeout(function() {
 
-            var success = function(data) {
-                if (data.statuses) {
-                    if (data.statuses.length <= 0) {
-                        vm.showEmpty = true;
-                        tweetTimeout = vm.update2(refreshTime + 10000); // start next poll 10s more previous
-                    } else {
-                        console.log('search data', data)
-                        console.log('moderation', vm.wallOptions)
-                        var userWallId = $stateParams.user + $stateParams.id;
-                        var posturl = '/api/tweets/'+ $stateParams.user + '/' + $stateParams.id;
-
-                        // If manual moderation, query loklak server, 
-                        // set all approval to false, then add to store.
-                        if(!vm.wallOptions.moderation){
-                            data.statuses.map(function(tweet){
-                                tweet.userWallId = userWallId;
-                                tweet.approval = true;                                    
-                            })
-                        } else {
-                            console.log("Manual moderation")
-                            data.statuses.map(function(tweet){
-                                tweet.userWallId = userWallId;
-                                tweet.approval = false;
-                            })
-                        }
-                        // MANUAL MOD - add all to mongo if first poll, else filter then add and update most recent date
-                        if(latestCreatedAtDate===null){
-                            var toPost = {};
-                            toPost.tweetArr = data.statuses;
-                            toPost.userWallId = userWallId;
-
-                            $http.post(posturl, toPost).then(function(result){
-                                console.log(result.data.message);
-                                if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
-                                console.log("latest", latestCreatedAtDate)
-
-                                $scope.pollWallTweets();
-
-                            }, function(err){ 
-                                console.log(err); 
-                            })
-
-                        } else {
-                            data.statuses = data.statuses.filter(function(status){
-                                return status.created_at > latestCreatedAtDate;
-                            }) 
-                            var toPost = {};
-                            toPost.tweetArr = data.statuses;
-                            toPost.userWallId = userWallId;
-
-                            $http.post(posturl, toPost).then(function(result){
-                                console.log(result.data.message);
-                                if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
-                                console.log("latest", latestCreatedAtDate)
-
-                            }, function(err){ 
-                                console.log(err); 
-                            })
-                        }
-
-
-                        if (vm.statuses.length <= 0) {
-                            // get subset of data tweet array if current array is empty
-                            vm.statuses = data.statuses.splice(0, searchParams.count);
-                        } else {
-                            for (var i = data.statuses.length - 1; i > -1; i--) {
-                                if (vm.wallOptions.cycle) {
-                                // tweets are moving cyclicly in array
-                                    if (!contains(vm.statuses, data.statuses[i])) {
-                                        // if different tweet, remove oldest top
-                                        console.log("triggered");
-                                        removeLeastRecentTweet(); // cycle through & remove oldest
-                                        $interval.cancel(cycleInterval);
-                                        cycleInterval = undefined;
-                                        vm.statuses.unshift(data.statuses[i]); // add new tweet to front of array
-                                        cycleInterval = vm.cycleTweets();
-                                    }
-                                } else {
-                                    // from oldest tweet of data, if newer than current newest
-                                    if (data.statuses[i].created_at > vm.statuses[0].created_at) {
-                                        vm.statuses.unshift(data.statuses[i]); // add tweet to front, pop the current oldest
-                                        vm.statuses.pop();
-                                    }
-                                }
-                            }
-                        }
-                        // Refresh Time set at 5 to 30s, see getRefreshTime()
-                        var newRefreshTime = getRefreshTime(data.search_metadata.period);
-                        tweetTimeout = vm.update2(newRefreshTime);
-                        vm.showEmpty = false;
-                    }
-                } else {
-                    // No statuses array in response
-                    tweetTimeout = vm.update2(refreshTime + 10000);
-                }
-            }
-            var error = function(error) {
-                tweetTimeout = vm.update2(refreshTime + 10000);
-                console.log(refreshTime + 10000);
-            }
-
-            SearchService.initData(searchParams).then(success, error);
+            socket.emit('checkDup', {userWallId:userWallId, socketId:socketId});
 
         }, refreshTime);
     };
 
+    function successCb(data) {
+        console.log('search data', data);
+        if (data.statuses) {
+            if (data.statuses.length <= 0) {
+                vm.showEmpty = true;
+                tweetTimeout = vm.update2(refreshTime + 10000); // start next poll 10s more previous
+            } else {
+                console.log('moderation', vm.wallOptions)
+
+                // If manual moderation, query loklak server, 
+                // set all approval to false, then add to store.
+                if(!vm.wallOptions.moderation){
+                    data.statuses.map(function(tweet){
+                        tweet.userWallId = userWallId;
+                        tweet.approval = true;                                    
+                    })
+                } else {
+                    console.log("Manual moderation")
+                    data.statuses.map(function(tweet){
+                        tweet.userWallId = userWallId;
+                        tweet.approval = false;
+                    })
+                }
+                // MANUAL MOD - add all to mongo if first poll, else filter then add and update most recent date
+                if(latestCreatedAtDate===null){
+                    var toPost = {};
+                    toPost.tweetArr = data.statuses;
+                    toPost.userWallId = userWallId;
+
+                    $http.post(posturl, toPost).then(function(result){
+                        console.log(result.data.message);
+                        if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
+                        console.log("latest", latestCreatedAtDate)
+
+                    }, function(err){ 
+                        console.log(err); 
+                    })
+
+                } else {
+                    data.statuses = data.statuses.filter(function(status){
+                        return status.created_at > latestCreatedAtDate;
+                    }) 
+                    var toPost = {};
+                    toPost.tweetArr = data.statuses;
+                    toPost.userWallId = userWallId;
+
+                    $http.post(posturl, toPost).then(function(result){
+                        console.log(result.data.message);
+                        if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
+                        console.log("latest", latestCreatedAtDate)
+
+                    }, function(err){ 
+                        console.log(err); 
+                    })
+                }
+
+                if (vm.statuses.length <= 0) {
+                    // get subset of data tweet array if current array is empty
+                    vm.statuses = data.statuses.splice(0, searchParams.count);
+                } else {
+                    for (var i = data.statuses.length - 1; i > -1; i--) {
+                        if (vm.wallOptions.cycle) {
+                        // tweets are moving cyclicly in array
+                            if (!contains(vm.statuses, data.statuses[i])) {
+                                // if different tweet, remove oldest top
+                                console.log("triggered");
+                                removeLeastRecentTweet(); // cycle through & remove oldest
+                                $interval.cancel(cycleInterval);
+                                cycleInterval = undefined;
+                                vm.statuses.unshift(data.statuses[i]); // add new tweet to front of array
+                                cycleInterval = vm.cycleTweets();
+                            }
+                        } else {
+                            // from oldest tweet of data, if newer than current newest
+                            if (data.statuses[i].created_at > vm.statuses[0].created_at) {
+                                vm.statuses.unshift(data.statuses[i]); // add tweet to front, pop the current oldest
+                                vm.statuses.pop();
+                            }
+                        }
+                    }
+                }
+                // Refresh Time set at 5 to 30s, see getRefreshTime()
+                var newRefreshTime = getRefreshTime(data.search_metadata.period);
+                tweetTimeout = vm.update2(newRefreshTime);
+                vm.showEmpty = false;
+            }
+        } else {
+            // No statuses array in response
+            tweetTimeout = vm.update2(refreshTime + 10000);
+        }
+    }
+    function errorCb(error) {
+        tweetTimeout = vm.update2(refreshTime + 10000);
+        console.log(refreshTime + 10000);
+    }
+
+    socket.on('checkDupSuccess'+userWallId+socketId, function(result){
+        console.log("checkdupSuc", result)
+        if(result){
+            SearchService.initData(searchParams).then(successCb, errorCb);
+            socket.emit('addPollingWalls', userWallId);
+        }
+    })
+
+    $scope.addNewTweets = function (newStatuses){
+        // if current moderation empty or, all new data statuses are newer prepend whole array to tweet store array
+        if(vm.statuses.length===0 ){
+            vm.statuses = newStatuses;
+        } else {
+            var idx =0;
+            var dataMostRecent = newStatuses.length > 0 ? newStatuses[idx].created_at : null;
+            var storeMostRecent = vm.statuses[0].created_at;
+            // else prepend only new tweets to localStorage tweets array in desc order
+            while(dataMostRecent !== null && dataMostRecent > storeMostRecent && idx < newStatuses.length){
+                vm.statuses.splice(idx, 0, newStatuses[idx]);
+                dataMostRecent = newStatuses[++idx].created_at;
+            }
+        }
+    }
     $scope.pollWallTweets = function(){
         var userWallTweetsUrl = '/api/tweets/'+ $stateParams.user + '/' + $stateParams.id;
         $http.get(userWallTweetsUrl).then(function(result){
@@ -606,14 +639,21 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         }
     };
 
-    socket.on('toggle',function(tweetId){
+    socket.on('toggle', function(tweetId){
+        var tweetId = String(tweetId);
         var tweetIdx = vm.statuses.findIndex(function(tweet){
+            console.log(tweet._id, tweetId)
             return tweet._id === tweetId;
         });
-        vm.statuses[tweetIdx].approval = !vm.statuses[tweetIdx].approval;
+        console.log('idx', tweetIdx)
+        if(tweetIdx > -1){
+            console.log("toggling", tweetIdx)
+            vm.statuses[tweetIdx].approval = !vm.statuses[tweetIdx].approval;
+        }
     });
 
-    socket.on('addNewTweets' + $stateParams.user + $stateParams.id, function(tweetArr){
+    socket.on('addNewTweets' + userWallId, function(tweetArr){
+        console.log("adding to vm.statuses")
         tweetArr.forEach(function(el,idx){
             vm.statuses.splice(idx,0,el);
         })
@@ -629,7 +669,9 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         if (leaderboardInterval) {
             $interval.cancel(leaderboardInterval);
         }
-        socket.removeAllListeners();
+        socket.removeListener('toggle');
+        socket.removeListener('addNewTweets' + userWallId);
+        socket.removeListener('checkDupSuccess'+userWallId+socketId);
     });
 
 }

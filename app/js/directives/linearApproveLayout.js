@@ -15,12 +15,9 @@ function linearApproveLayoutDirective() {
     controller: ['$scope', '$http', function($scope, $http) {
 
     	$scope.toggle = function(){
-    		console.log($scope.data);
     		$scope.data.approval = !$scope.data.approval;
     		$http.put('/api/tweets/'+$scope.data._id, $scope.data);
     	}
-
-
     }]
 
   };

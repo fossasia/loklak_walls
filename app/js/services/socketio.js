@@ -30,6 +30,16 @@ function socketio($rootScope, AuthService) {
       })
     },
 
+    getId: function(){
+      return socket.id;
+    },
+
+    removeListener: function(eventName, cb){
+      socket.removeListener(eventName, function(){
+        cb()
+      })
+    },
+
     removeAllListeners: function (eventName, data, callback) {
       socket.removeAllListeners();
     }

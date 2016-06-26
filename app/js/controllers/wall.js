@@ -19,6 +19,7 @@ var moment = require('moment');
     var maxStatusCount;
 
     $scope.isEditing = -1;
+    $scope.lastEdited = -1;
     $scope.wallsPresent = true;
     $scope.invalidFile = false;
     $scope.showNext = true;
@@ -280,7 +281,10 @@ var moment = require('moment');
                 $timeout(function() {
                     $('.nav-tabs > .active').next('li').find('a').trigger('click');
                 });
-                if ($scope.selectedTab === 2) {
+                if($scope.selectedTab <= 1){
+                    $scope.showNext = true;
+                    $scope.showStart = false;
+                } else if ($scope.selectedTab === 2) {
                     $scope.showNext = false;
                     $scope.showStart = true;
                 } else if ($scope.selectedTab === 3){
@@ -311,7 +315,7 @@ var moment = require('moment');
         // var dataParams = encodeURIComponent(angular.toJson($scope.newWallOptions));
         $('#wall-modal').modal('toggle');
 
-        if ($rootScope.root.isLoggedIn) {
+        if($rootScope.root.isLoggedIn) {
             // $interval.cancel($rootScope.modPostPromise);
 
             // new wall options
@@ -354,14 +358,14 @@ var moment = require('moment');
                 });
 
             // Add new wall options
-            } else { 
-                $scope.userWalls.push(saveData);
-                var latestWallIdx = $scope.userWalls.length - 1;
+        } else { 
+            $scope.userWalls.push(saveData);
+            var latestWallIdx = $scope.userWalls.length - 1;
 
-                $scope.userWalls[latestWallIdx].showLoading = true;
+            $scope.userWalls[latestWallIdx].showLoading = true;
 
-                var result = saveData.$save(function(result) {
-                    console.log('latestWallIdx' , latestWallIdx)
+            var result = saveData.$save(function(result) {
+                console.log('latestWallIdx' , latestWallIdx)
 
                     // Update the wall dashboard thumbnail
                     $scope.newWallOptions.id = result.id;
@@ -379,7 +383,7 @@ var moment = require('moment');
 
                     // var posturl = '/api/tweets/'+ $rootScope.root.currentUser._id + '/' + $scope.userWalls[latestWallIdx].id;
                     // var userWallId = $rootScope.root.currentUser._id + $scope.userWalls[latestWallIdx].id
-        
+
                     // var searchLoklakServer = function(){
                     //     console.log('searchParams', searchParams)
 
@@ -404,7 +408,7 @@ var moment = require('moment');
                     //                 tweet.approval = false;
                     //             })
                     //         }
-                                
+
                     //         console.log('statuses received from search', data.statuses)
                     //         // MANUAL MOD - add all to mongo if first poll, else filter then add and update most recent date
                     //         if(latestCreatedAtDate===null){
@@ -455,21 +459,21 @@ var moment = require('moment');
                     $scope.userWalls[latestWallIdx].showLoading = false;
 
                 });
-            }
+}
 
-        } else {
-            alert("Please sign in first");
-        }
-    };
+} else {
+    alert("Please sign in first");
+}
+};
 
 
-    $scope.resetDate = function() {
-        $scope.newWallOptions.sinceDate = null;
-        $scope.newWallOptions.untilDate = null;
-    };
+$scope.resetDate = function() {
+    $scope.newWallOptions.sinceDate = null;
+    $scope.newWallOptions.untilDate = null;
+};
 
-    $scope.resetLogo = function() {
-        $scope.newWallOptions.logo = null;
+$scope.resetLogo = function() {
+    $scope.newWallOptions.logo = null;
         //$scope.$apply();
     };
 
@@ -498,24 +502,31 @@ var moment = require('moment');
 
     $scope.editWall = function(index) {
         console.log("Editing wall #", index);
+        var currentUserId = $rootScope.root.currentUser._id;
+        var wallId = $scope.userWalls[index].id
 
         $scope.statuses = [];   
         $scope.newWallOptions = $scope.userWalls[index];
+
+        // Remove previous index's listener
+        if($scope.lastEdited > -1){
+            socket.removeListener('addNewTweets' + currentUserId + $scope.userWalls[$scope.lastEdited].id);
+        }
+
         $scope.isEditing = index;
         $('#wall-modal').modal('toggle');
 
-        var currentUserId = $rootScope.root.currentUser._id;
-        var userWallId = $scope.userWalls[index].id
 
         // POLL MODERATION DATA FROM DB, THEN LISTEN FOR SOCKET.IO EVENTS
-        var userWallIdURL = '/api/tweets/' + currentUserId + userWallId;
+        var userWallIdURL = '/api/tweets/' + currentUserId + wallId;
         $http.get(userWallIdURL).then(function(res){
             $scope.statuses=res.data.statuses;
         });
 
-        socket.removeAllListeners();
-        socket.on('addNewTweets' + currentUserId + userWallId, function(tweetArr){
-            $scope.statuses.splice(0,0,tweetArr[0]);
+        socket.on('addNewTweets' + currentUserId + wallId, function(tweetArr){
+            tweetArr.forEach(function(el,idx){
+                $scope.statuses.splice(idx,0,el);
+            })
         })
 
         // Stop previous poll and Start poll for current wall to $scope.statuses, for 30s
@@ -594,28 +605,28 @@ var moment = require('moment');
         //     searchLoklakServer();
         // }, 30000);
 
-    };
+};
 
-    $scope.pollWallTweets = function(){
+$scope.pollWallTweets = function(){
 
-        console.log($scope.userWalls)
+    console.log($scope.userWalls)
 
-        var userWallTweetsUrl="";
-        if($scope.isEditing !== -1){
-            userWallTweetsUrl = '/api/tweets/'+ $rootScope.root.currentUser._id + $scope.userWalls[$scope.isEditing].id;
-        }else{
-            userWallTweetsUrl = '/api/tweets/'+ $rootScope.root.currentUser._id +$scope.userWalls[$scope.userWalls.length-1].id;
-        }
+    var userWallTweetsUrl="";
+    if($scope.isEditing !== -1){
+        userWallTweetsUrl = '/api/tweets/'+ $rootScope.root.currentUser._id + $scope.userWalls[$scope.isEditing].id;
+    }else{
+        userWallTweetsUrl = '/api/tweets/'+ $rootScope.root.currentUser._id +$scope.userWalls[$scope.userWalls.length-1].id;
+    }
 
-        function getAllTweets(){
-            $http.get(userWallTweetsUrl).then(function(result){
+    function getAllTweets(){
+        $http.get(userWallTweetsUrl).then(function(result){
                 // addNewTweets(result.data.tweetArr);
                 $scope.statuses = result.data.statuses;
                 latestCreatedAtDate = $scope.statuses.length>0 ? $scope.statuses[0].created_at : null;
             })
-        }
+    }
 
-        function addNewTweets(newStatuses){
+    function addNewTweets(newStatuses){
             // if current moderation empty or, all new data statuses are newer prepend whole array to tweet store array
             if($scope.statuses.length===0 ){
                 $scope.statuses = newStatuses;
@@ -638,7 +649,7 @@ var moment = require('moment');
     $scope.openModal = function() {
         initWallOptions();
         $('#wall-modal').modal('toggle');
-        $scope.selectedTab = 0;
+        $('.nav-tabs').first().find('a').trigger('click');
     };
 
     var init = function() {
@@ -657,13 +668,6 @@ var moment = require('moment');
     };
 
     init();
-
-    socket.on('addNewTweetsArr', function(tweetArr){
-        tweetArr.forEach(function(el,idx){
-            if(el.userWallId === $scope.currentUser._id + $scope.userWalls[$scope.isEditing].id)
-                $scope.statuses.splice(idx,0,el);
-        })
-    })
 
     $scope.$on('$destroy', function() {
         // if ($rootScope.modPostPromise) {

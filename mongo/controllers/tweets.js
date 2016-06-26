@@ -51,20 +51,21 @@ module.exports.storeTweet = function (req, res) {
     // pre-added userwallid & approval false field on client when checked walloptions for moderation
     // req.body is an object contains tweetArr and userWallId.
 
-    req.body.tweetArr.forEach(function(tweet){
+    var tweetArr = req.body.tweetArr;
+    tweetArr.forEach(function(tweet){
         var newTweet = new Tweet(tweet);
         newTweet.save(function(err,datum){
             if(err!==null){
                 console.log("err", err);  
             } else{
                 var tweetArr = [datum];
-                // EMIT POST EVENT
-                io.emit("addNewTweetsArr", tweetArr);
-                // EMIT TOGGLE EVENT
+                console.log("adding new tweet")
+                // EMIT POST EVENT to add tweets with ._id
                 io.emit("addNewTweets"+req.body.userWallId, tweetArr);
             }
         })
     });
+
     
     res.jsonp({message: "inserted " + req.body.tweetArr.length + " tweets"});
 }
@@ -76,20 +77,24 @@ module.exports.updateTweet = function (req, res) {
         console.log("not Authenticated");
         res.status(401).jsonp([]);
     } else {
-        // console.log("tweet data", req.body);
+        io.emit('toggle', req.params.tweetId);
+        console.log(req.params)
+
         Tweet
         .findById(req.params.tweetId)
         .exec(function(err, tweet) {
             console.log(tweet)
             tweet.approval = !tweet.approval;
             tweet.save(function(err) {
-                if (err) res.send(err);
-                else res.json({tweet: tweet});
+                if (err) {
+                    res.send(err);
+                } else {
+                    // EMIT TOGGLE EVENT
+                    res.json({tweet: tweet});
+                }
             });
         });
 
-        // EMIT TOGGLE EVENT
-        io.emit("toggle", req.params.tweetId);
     }
 }
 
