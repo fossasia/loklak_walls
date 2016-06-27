@@ -33,6 +33,7 @@ function AnalyticService(moment) {
         }
         
         function updateWordFreq(store, newTweets){
+            console.log(store)
             
             // sWords is an array of selected words from tweet
             var sWords = newTweets

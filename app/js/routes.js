@@ -67,6 +67,12 @@
   controller: 'StatisticsCtrl as stats',
   title: 'Statistics'
 })
+.state('StatisticsBubble', {
+  url: '/:user/bubbles/:id',
+  templateUrl: 'wall/bubbles.html',
+  controller: 'BubbleCtrl as stats',
+  title: 'BubbleChart'
+})
 // .state('Statistics', {
 //   url: '/statistics?q&since&until',
 //   controller: 'StatisticsCtrl as statistics',
