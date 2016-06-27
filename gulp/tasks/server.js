@@ -62,9 +62,51 @@ gulp.task('server', function() {
 
   s.listen(process.env.PORT || config.serverport);
   var io = require('socket.io')(s);
+  var pollingWalls = {};
+  var clientIds = {};
+
   io.on('connection', function (socket) {
-    console.log("connected")
+    console.log("connected");
+    clientIds[socket.id] = [];
+    
+    // UserwallId room when start poll
+    socket.on('create', function(userWallId) {
+      socket.join(userWallId);
+    });
+
+    // Check duplicate, start if no one else polling
+    socket.on('checkDup', function(data){
+      var clients_in_the_room = io.sockets.adapter.rooms[data.userWallId]; 
+      var isNoOneElsePolling = pollingWalls[data.userWallId] === socket.id || !pollingWalls[data.userWallId];
+      console.log("pollingwalls", pollingWalls)
+      console.log("clientIds", clientIds)
+      console.log("checkDup", clients_in_the_room)
+      if(clients_in_the_room){
+        var result = clients_in_the_room.length === 1 || isNoOneElsePolling;
+        var responseEmit = 'checkDupSuccess'+ data.userWallId+ data.socketId;
+        socket.emit(responseEmit, result);
+      }
+    })
+
+    // Start polling and mark poller 
+    // Pre-cond: no one else polling / previous poller leaves
+    socket.on('addPollingWalls', function(userWallId){
+      pollingWalls[userWallId] = socket.id;
+      clientIds[socket.id].push(userWallId);
+    })
+
+    // Leave and remove wallId so that another poll can pass
+    socket.on('disconnect', function() {
+      console.log("disconnect")
+      var clientWallPoll = clientIds[socket.id];
+      clientWallPoll.forEach(function(wallId){
+        pollingWalls[wallId] = null;
+      })
+    })
+
+
   });
+
   module.exports = io;
 
   var routesApi = require('../../mongo/routes/index');

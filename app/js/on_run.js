@@ -5,7 +5,7 @@
 /**
  * @ngInject
  */
- function OnRun($rootScope, $location, AppSettings, HelloService, AuthService, MailService, $http, SweetAlert, $state) {
+ function OnRun($rootScope, $location, AppSettings, HelloService, AuthService, MailService, $http, SweetAlert, $state, socket) {
    var root = {};
    root.hello = HelloService;
    
@@ -118,6 +118,8 @@
         $rootScope.root.isLoggedIn = true;
         $rootScope.root.currentUser = data;
         $location.path('/profile');
+        console.log("joining ", data._id);
+        socket.emit("create", data._id);
       }).error(function() {
           SweetAlert.alert("Please try again", {title: "Error Logging In!"});
       });
@@ -137,6 +139,8 @@
             text: "Check email for verification",
           });
           MailService.sendConfirmation($rootScope.root.user.email);
+          console.log("joining ", data._id);
+          socket.emit("create", data._id);
         } else {
           $rootScope.root.isLoggedIn = false;
           $rootScope.root.currentUser = null;
