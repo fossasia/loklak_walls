@@ -9,6 +9,8 @@ function BubbleCtrl($http, $stateParams, AnalyticService, socket) { // jshint ig
 	stats.hashtagDateFreq = [];
 	stats.wordFreq={};
 	stats.mentionFreq= {};
+	stats.userId = $stateParams.user;
+	stats.wallId = $stateParams.id;
 
 	// SOCKET.IO INIT - Poll once then listen for socket event
 	var url = '/api/tweets/' + $stateParams.user + $stateParams.id;

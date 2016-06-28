@@ -7,6 +7,8 @@ function StatisticsCtrl($http, $stateParams, AnalyticService, socket) { // jshin
 	stats.statuses = [];
 	stats.hashtagfreq = [];
 	stats.hashtagDateFreq = [];
+	stats.userId = $stateParams.user;
+	stats.wallId = $stateParams.id;
 
 	// SOCKET.IO INIT - Poll once then listen for socket event
 	var url = '/api/tweets/' + $stateParams.user + $stateParams.id;

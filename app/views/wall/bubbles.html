@@ -1,4 +1,14 @@
-<div ng-controller='BubbleCtrl' class="row" >
-    <bubble-cloud class="col-md-6" data="stats.mentionFreq" min ="1" title="Most Mentions"></bubble-cloud>
-    <bubble-cloud class="col-md-6" data="stats.wordFreq" min="3" title="Word Frequency"></bubble-cloud>     
+<div ng-controller='BubbleCtrl' >
+	<div class="row">
+		<bubble-cloud class="col-md-6" data="stats.mentionFreq" min ="1" title="Most Mentions"></bubble-cloud>
+		<bubble-cloud class="col-md-6" data="stats.wordFreq" min="3" title="Word Frequency"></bubble-cloud>     
+	</div>
+	<div class="row">	
+		<div class="col-md-4 text-center">
+		</div>
+		<div class="col-md-4 text-center"> 
+			<a class="btn btn-primary btn-lg" ng-href="{{stats.userId}}/statistics/{{stats.wallId}}" ><i class="fa fa-bar-chart thumbnail-icon"></i> Go to Bar Charts</a>
+		</div>
+	</div>
+
 </div>
