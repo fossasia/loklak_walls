@@ -3,30 +3,30 @@
 var controllersModule = require('./_index');
 
 function BubbleCtrl($http, $stateParams, AnalyticService, socket) { // jshint ignore:line
-	var stats = this;
-	stats.statuses = [];
-	stats.hashtagfreq = [];
-	stats.hashtagDateFreq = [];
-	stats.wordFreq={};
-	stats.mentionFreq= {};
-	stats.userId = $stateParams.user;
-	stats.wallId = $stateParams.id;
+	var bubblesVm = this;
+	bubblesVm.statuses = [];
+	bubblesVm.hashtagfreq = [];
+	bubblesVm.hashtagDateFreq = [];
+	bubblesVm.wordFreq={};
+	bubblesVm.mentionFreq= {};
+	bubblesVm.userId = $stateParams.user;
+	bubblesVm.wallId = $stateParams.id;
 
 	// SOCKET.IO INIT - Poll once then listen for socket event
 	var url = '/api/tweets/' + $stateParams.user + $stateParams.id;
 	$http.get(url).then(
 		function(res){
-			stats.statuses = res.data.statuses;
-			if(!stats.statuses.length) {
+			bubblesVm.statuses = res.data.statuses;
+			if(bubblesVm.statuses.length === 0) {
 				console.log("no new tweets");
 			} else {
-			AnalyticService.updateWordFreq(stats, res.data.statuses);
-			AnalyticService.updateMentionFreq(stats, res.data.statuses);
+			AnalyticService.updateWordFreq(bubblesVm, res.data.statuses);
+			AnalyticService.updateMentionFreq(bubblesVm, res.data.statuses);
 
 			// process all for hashtagfreq
 
-			// AnalyticService.updateHashtagDateFreq(stats, stats.statuses, 7);
-			// console.log(stats)
+			// AnalyticService.updateHashtagDateFreq(bubblesVm, bubblesVm.statuses, 7);
+			// console.log(bubblesVm)
 	   		}
 		}, 
 		function(err){ console.log("error",err); }
@@ -34,19 +34,19 @@ function BubbleCtrl($http, $stateParams, AnalyticService, socket) { // jshint ig
 
     socket.on('addNewTweets' + $stateParams.user + $stateParams.id, function(tweetArr){
     	console.log("adding new tweet", tweetArr[0])
-        // stats.statuses.splice(0,0,tweetArr[0]);
-        // AnalyticService.updateHashtagDateFreq(stats, stats.statuses, 7);
+        // bubblesVm.statuses.splice(0,0,tweetArr[0]);
+        // AnalyticService.updateHashtagDateFreq(bubblesVm, bubblesVm.statuses, 7);
         // var newTweets;
-        // if(!stats.statuses || stats.statuses.length === 0){
+        // if(!bubblesVm.statuses || bubblesVm.statuses.length === 0){
         // 	newTweets = data;
-        // 	stats.statuses = data;
+        // 	bubblesVm.statuses = data;
         // } else {
         // 	newTweets = analyticService.getNewTweets(data);
-        // 	stats.statuses = newTweets.concat(stats.statuses);
+        // 	bubblesVm.statuses = newTweets.concat(bubblesVm.statuses);
         // }           
 
-        // AnalyticService.updateWordFreq(stats, tweetArr);
-        // AnalyticService.updateMentionFreq(stats, tweetArr);
+        AnalyticService.updateWordFreq(bubblesVm, tweetArr);
+        AnalyticService.updateMentionFreq(bubblesVm, tweetArr);
 
     })
 
