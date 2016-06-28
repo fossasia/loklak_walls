@@ -17,7 +17,7 @@
     url: '/profile',
     controller: 'ProfileCtrl as profile',
     templateUrl: 'profile.html',
-    title: 'profile',
+    title: 'Profile',
     authenticate: true
   })
   .state('About', {
@@ -40,7 +40,7 @@
     reloadOnSearch: false
   })
   .state('Wall', {
-    url: '/wall',
+    url: '/walls',
     templateUrl: 'wall/create.html',
     controller: 'WallCtrl as wall',
     title: 'Wall',
@@ -103,7 +103,7 @@
   controller: 'DataConnectCtrl as dataConnect',
   title: 'My Connections'
 })
-.state('Analyze', {
+.state('Report', {
   url: '/report',
   templateUrl: 'analyze/analyze.html',
   controller: 'AnalyzeCtrl as Analyze',
@@ -117,7 +117,7 @@
   onExit: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=true;}]
 });
 
-  // $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/');
 
   cfpLoadingBarProvider.includeBar = false;
   cfpLoadingBarProvider.includeSpinner = true;

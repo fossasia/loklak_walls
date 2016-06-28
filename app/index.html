@@ -18,24 +18,21 @@
 </head>
 
 <body class="skin-blue layout-top-nav has-drawer" ng-style="{'overflow-y': root.fullscreenDisabled ? 'auto' : 'hidden'}">
-    <div class="wrapper">
+    <div class="wrapper" style="background-color: #f5f8fa !important;">
         <div ng-include ng-if="root.fullscreenDisabled" src="'topnav.html'"></div>
         <div ng-include ng-if="root.fullscreenDisabled && root.sidebarEnabled" src="'sidebar.html'"></div>
         <div ng-class="!root.fullscreenDisabled?'':'view-container'" ui-view></div>
         <div ng-include src="'pswp.html'"></div>
         <div ng-include ng-if="root.fullscreenDisabled" src="'controlsidebar.html'"></div>
     </div>
-    <div class="retweet-modal hide" retweet-modal></div>
-    <div class="copy-link-modal hide" copy-link-modal></div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.1.2/masonry.pkgd.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.1.8/imagesloaded.pkgd.min.js"></script>
     <script src="//rawgit.com/t4t5/sweetalert/master/dist/sweetalert.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.7/d3-tip.min.js"></script>
-
-
     <script src="/js/main.js"></script>
     <script src="/js/app.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.9/angular-material.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 
 </body>
