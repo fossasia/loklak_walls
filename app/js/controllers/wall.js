@@ -384,7 +384,7 @@ $scope.pollWallTweets = function(){
     $scope.openModal = function() {
         initWallOptions();
         $('#wall-modal').modal('toggle');
-        $('.nav-tabs').first().find('a').trigger('click');
+        $('#selectTab a[href="#info"]').tab('show') // Select tab by name
     };
 
     var init = function() {
