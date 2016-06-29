@@ -71,16 +71,19 @@ function AnalyticService(moment) {
                     counts[sWord]++;
                 }
             }
-            // // console.log("counts: ", counts);
+
             
             if(Object.keys(counts).length === 0 && counts.constructor === Object){
                 store.wordFreq = counts;
             } else {
-                for (var sWord in counts){
-                    store.wordFreq[sWord] = store.wordFreq[sWord] || 0;
-                    store.wordFreq[sWord] += counts[sWord];
+                for (var word in counts){
+                    console.log("adding word")
+                    store.wordFreq[word] = store.wordFreq[word] || 0;
+                    store.wordFreq[word] += counts[word];
                 }
             }
+            console.log("counts: ", counts);
+
         }
 
         function updateMentionFreq(store, newTweets){

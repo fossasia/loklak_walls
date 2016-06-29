@@ -20,20 +20,20 @@ function BubbleCtrl($http, $stateParams, AnalyticService, socket) { // jshint ig
 			if(bubblesVm.statuses.length === 0) {
 				console.log("no new tweets");
 			} else {
-			AnalyticService.updateWordFreq(bubblesVm, res.data.statuses);
-			AnalyticService.updateMentionFreq(bubblesVm, res.data.statuses);
+				AnalyticService.updateWordFreq(bubblesVm, res.data.statuses);
+				AnalyticService.updateMentionFreq(bubblesVm, res.data.statuses);
 
 			// process all for hashtagfreq
 
 			// AnalyticService.updateHashtagDateFreq(bubblesVm, bubblesVm.statuses, 7);
 			// console.log(bubblesVm)
-	   		}
-		}, 
-		function(err){ console.log("error",err); }
+		}
+	}, 
+	function(err){ console.log("error",err); }
 	);
 
-    socket.on('addNewTweets' + $stateParams.user + $stateParams.id, function(tweetArr){
-    	console.log("adding new tweet", tweetArr[0])
+	socket.on('addNewTweets' + $stateParams.user + $stateParams.id, function(tweetArr){
+		console.log("adding new tweet", tweetArr[0])
         // bubblesVm.statuses.splice(0,0,tweetArr[0]);
         // AnalyticService.updateHashtagDateFreq(bubblesVm, bubblesVm.statuses, 7);
         // var newTweets;
@@ -41,8 +41,8 @@ function BubbleCtrl($http, $stateParams, AnalyticService, socket) { // jshint ig
         // 	newTweets = data;
         // 	bubblesVm.statuses = data;
         // } else {
-        // 	newTweets = analyticService.getNewTweets(data);
-        // 	bubblesVm.statuses = newTweets.concat(bubblesVm.statuses);
+        // 	var newTweets = analyticService.getNewTweets(data);
+    	bubblesVm.statuses = tweetArr.concat(bubblesVm.statuses);
         // }           
 
         AnalyticService.updateWordFreq(bubblesVm, tweetArr);
