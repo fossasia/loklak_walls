@@ -58,6 +58,7 @@ function mapLayoutDirective(MapPopUpTemplateService, $interval, $location, MapCr
                     zoom = queryParams.zoom;
                 }
             }
+
             var map = L.map(attrs.id).setView([centerLat, centerLng], zoom);
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 maxZoom: 18,
@@ -101,8 +102,8 @@ function mapLayoutDirective(MapPopUpTemplateService, $interval, $location, MapCr
 
                 scope.data.forEach(function(ele) {
                     if (!contains(ele)) {
-                        if (ele.location_mark) {
-                            console.log(ele)
+                        if (ele.location_mark.length>0) {
+
                             //console.log(ele.location_mark);
                             var text = MapPopUpTemplateService.genStaticTwitterStatus(ele);
                             var tweetIcon = L.icon({

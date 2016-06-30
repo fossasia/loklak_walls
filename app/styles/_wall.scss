@@ -50,9 +50,26 @@
 }
 
 .wall-preview {
-    background-color: #aaa;
-    border: 22px solid #C8C8C8;
-    border-radius: 5%;
+    border-top: 2em solid rgba(230, 230, 230, 0.7);
+    box-shadow: 0 0.1em 1em 0 rgba(0, 0, 0, 0.3);
+    position: relative;
+    border-radius: 3px 3px 0 0;
+    border-bottom: 1em solid rgba(230, 230, 230, 0.7);
+    border-left: 1em solid rgba(230, 230, 230, 0.7);
+    border-right: 1em solid rgba(230, 230, 230, 0.7);
+    border-radius: 2%;
+    &:before{
+        display: block;
+        position: absolute;
+        content: '';
+        top: -1.25em;
+        left: 1em;
+        width: 0.5em;
+        height: 0.5em;
+        border-radius: 50%;
+        background-color: #f44;
+        box-shadow: 0 0 0 2px #f44, 1.5em 0 0 2px #9b3, 3em 0 0 2px #fb5;
+    }
     .wall-preview-header {
         height: 100px;
         display: flex;
