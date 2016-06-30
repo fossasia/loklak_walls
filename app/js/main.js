@@ -48,7 +48,8 @@ angular.element(document).ready(function() {
     'naif.base64',
     'nya.bootstrap.select',
     'ng-sweet-alert',
-    'ngMessages'
+    'ngMessages',
+    'ngMaterial'
   ];
 
   // mount on window for testing

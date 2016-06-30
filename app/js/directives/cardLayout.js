@@ -22,12 +22,17 @@ directivesModule.directive('card', ['$timeout', function($timeout) {
                     }
                 }
             };
+            console.log($scope)
         },
         link: function(scope, element, attrs) {
+            scope.leaderboardenabled = attrs.leaderboardenabled === "true";
+            console.log(scope)
         	if(attrs.leaderboardenabled === "true"){
-        		element.find('.card-content-text').css("font-size","2.3vh");
+        		element.find('.card-content-text').css("font-size","2.0vh");
         		element.find('.card-content-text').css("line-height","1.3em");
         		element.find('.metadata').css("font-size","1.8vh");
+                $(".md-subhead").css("font-size", "2.0vh");
+                $(".md-subhead").css("line-height", "1.3em");
         	}
             $timeout(function() { //timeout is important
                 var i = element.find('.tweet-image'); //find our image

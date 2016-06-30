@@ -430,7 +430,7 @@
         }
     }
     .content-container {
-        width: 95%;
+        width: 97%;
         margin-top: 10px;
         border-radius: 6px;
         padding: 0;
@@ -604,47 +604,54 @@
             padding: 5px;
             position: relative;
             margin: 0px;
-            .name {
-                &:hover {
-                    color: $search-twitter-blue;
-                }
-            }
-            .tweet-image {
-                max-width: 100%;
-                max-height: calc(33vh - 70px);
-                padding-right: 10px;
-            }
-            .card-content-text {
-                word-wrap: break-word;
-                color: #292f33;
-                font-size: 2.8vh;
-                line-height: 1.5em;
-                .card-hashtag {
-                    color: #55ACEE;
-                }
-                .card-hashtag-current {
-                    font-weight: bold;
-                }
-            }
-            .metadata {
-                position: absolute;
-                width: 100%;
-                .avatar {
-                    float: left;
-                    height: 30px;
-                    max-width: 30px;
-                    border-radius: 2px;
-                    margin-right: 5px;
-                }
-                bottom: 0;
-                font-size: 2.1vh;
-                color: #8899A6;
-                line-height: 1.2em;
-                font-weight: normal;
-                font-style: italic;
-            }
         }
     }
+}
+
+
+.name {
+    &:hover {
+    color: $search-twitter-blue;
+    }
+}
+
+md-card {
+    border-radius: 5px;
+}
+
+.tweet-image {
+    max-width: 100%;
+    padding: 5px;
+    border-radius: 10px !important;
+}
+.card-content-text {
+    word-wrap: break-word;
+    color: #292f33;
+    font-size: 2.8vh;
+    line-height: 1.5em;
+    margin: 3px;
+    .card-hashtag {
+        color: #55ACEE;
+    }
+    .card-hashtag-current {
+        font-weight: bold;
+    }
+}
+.metadata {
+    margin-top: 16px;
+    width: 100%;
+    .avatar {
+        float: left;
+        max-width: 69px;
+        border-radius: 7px;
+        margin: 0px 10px 6px 6px;
+    }
+    bottom: 0;
+    font-size: 2.1vh;
+    color: #8899A6;
+    line-height: 1.2em;
+    font-weight: normal;
+    font-style: italic;
 }
 
 
