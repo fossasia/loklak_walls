@@ -206,6 +206,8 @@ var moment = require('moment');
         // var dataParams = encodeURIComponent(angular.toJson($scope.newWallOptions));
         $('#wall-modal').modal('toggle');
 
+        $scope.currentUser = $rootScope.root.currentUser;
+
         if($rootScope.root.isLoggedIn) {
             // $interval.cancel($rootScope.modPostPromise);
 
@@ -293,6 +295,7 @@ $scope.resetLogo = function() {
 
     // TODO: remove tweets with same userWallId
     $scope.deleteWall = function(index) {
+        $scope.currentUser=$rootScope.root.currentUser;
         // $interval.cancel($rootScope.modPostPromise);
         $http.delete('/api/tweets/'+$scope.currentUser._id+$scope.userWalls[index].id, index)
         // .then(function(data){console.log(data)});

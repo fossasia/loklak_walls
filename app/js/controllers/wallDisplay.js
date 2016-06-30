@@ -51,7 +51,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
             }
         }
 
-        if (vm.wallOptions.layoutStyle === '4') {
+        if (vm.wallOptions.layoutStyle === 4) {
             if (term === "") {
                 term = "/location";
             } else {
@@ -135,13 +135,13 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
             console.log(vm.wallOptions)
             if (vm.wallOptions.id) {
                 if (vm.wallOptions.layoutStyle === 1) {
-                    maxStatusCount = 10; //linear
+                    maxStatusCount = 20; //linear
                 } else if (vm.wallOptions.layoutStyle === 2) {
-                    maxStatusCount = 20; //masonry
+                    maxStatusCount = 30; //masonry
                 } else if (vm.wallOptions.layoutStyle === 3) {
                     maxStatusCount = 1; //single
                 } else if (vm.wallOptions.layoutStyle === 4) {
-                    maxStatusCount = 10; //map
+                    maxStatusCount = 20; //map
                 }
 
                 // On INIT
@@ -316,6 +316,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
 
     vm.update2 = function(refreshTime) {
         return $timeout(function() {
+        console.log(refreshTime);
 
             socket.emit('checkDup', {userWallId:userWallId, socketId:socketId});
 
@@ -325,11 +326,11 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
     function successCb(data) {
         console.log('search data', data);
         if (data.statuses) {
-            if (data.statuses.length <= 0) {
+            if (data.statuses.length === 0) {
                 vm.showEmpty = true;
                 tweetTimeout = vm.update2(refreshTime + 10000); // start next poll 10s more previous
+
             } else {
-                console.log('moderation', vm.wallOptions)
 
                 // If manual moderation, query loklak server, 
                 // set all approval to false, then add to store.
@@ -349,6 +350,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
                 if(latestCreatedAtDate===null){
                     var toPost = {};
                     toPost.tweetArr = data.statuses;
+                    console.log("posting", toPost.tweetArr)
                     toPost.userWallId = userWallId;
 
                     $http.post(posturl, toPost).then(function(result){
