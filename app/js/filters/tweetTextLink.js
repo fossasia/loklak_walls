@@ -11,6 +11,6 @@ filtersModule.filter('tweetTextLink', function() {
         if (!input) {
           return "";
         }
-        return Autolinker.link(input);
+        return Autolinker.link(input, {truncate: 25});
     };
 });
