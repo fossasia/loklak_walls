@@ -76,22 +76,17 @@ var moment = require('moment');
     };
 
     $scope.tabSelected = function(index) {
-        if(index === -1){
-            $scope.selectedTab = 0;
+        $scope.selectedTab = index;
+        if (index === 2) {
+            $scope.showNext = false;
+            $scope.showStart = true;
+        } else if (index === 3){
+            $scope.showNext = false;
+            $scope.showStart = false;
         } else {
-            $scope.selectedTab = index;
-            if (index === 2) {
-                $scope.showNext = false;
-                $scope.showStart = true;
-            } else if (index === 3){
-                $scope.showNext = false;
-                $scope.showStart = false;
-            } else {
-                $scope.showNext = true;
-                $scope.showStart = false;
-            }
+            $scope.showNext = true;
+            $scope.showStart = false;
         }
-
     };
 
     initWallOptions();
@@ -388,6 +383,7 @@ $scope.pollWallTweets = function(){
         initWallOptions();
         $('#wall-modal').modal('toggle');
         $('#selectTab a[href="#info"]').tab('show') // Select tab by name
+        $scope.isEditing=-1;
     };
 
     var init = function() {
