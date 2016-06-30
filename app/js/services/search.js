@@ -25,6 +25,7 @@ function SearchService($q, $http, $rootScope, AppSettings) {
         params: {q: term, minified: true},
         timeout: $rootScope.httpCanceler.promise
       }).success(function(data) {
+        console.log(data)
           deferred.resolve(data);
       }).error(function(err, status) {
           evalNumberOfFailure(status);

@@ -20,7 +20,7 @@ function mapLayoutDirective(MapPopUpTemplateService, $interval, $location, MapCr
         //template : '<p>{{data[0].text}}</p>',
         link: function(scope, element, attrs) {
             var curr = 0;
-            var tweetsArrayLength = 20;
+            var tweetsArrayLength = 50;
             var tweetsArray = [];
             var cycle = attrs.cycletweets;
             var intervalId;
@@ -94,6 +94,7 @@ function mapLayoutDirective(MapPopUpTemplateService, $interval, $location, MapCr
 
             scope.$watchCollection('data', function() {
                 var cleanRun = 0;
+                console.log(scope.data)
                 setTimeout(function() {
                     map.invalidateSize();
                 }, 1000);
@@ -101,6 +102,7 @@ function mapLayoutDirective(MapPopUpTemplateService, $interval, $location, MapCr
                 scope.data.forEach(function(ele) {
                     if (!contains(ele)) {
                         if (ele.location_mark) {
+                            console.log(ele)
                             //console.log(ele.location_mark);
                             var text = MapPopUpTemplateService.genStaticTwitterStatus(ele);
                             var tweetIcon = L.icon({
@@ -148,6 +150,7 @@ function mapLayoutDirective(MapPopUpTemplateService, $interval, $location, MapCr
                     }
                 }
                 setTimeout(function() {
+                    console.log(tweetsArray)
                     tweetsArray[0].marker.openPopup();
                 }, 1000);
             });
