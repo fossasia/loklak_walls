@@ -9,7 +9,7 @@
             <div class="modal-body wall-modal-body">
                 <div class="row">
                     <div class="col-xs-2 tabs-list" style="position:fixed;">
-                        <ul class="nav nav-tabs tabs-left">
+                        <ul class="nav nav-tabs tabs-left" id="selectTab">
                             <li ng-click="tabSelected(0)" class="active"><a href="#info" data-toggle="tab"><i class="fa fa-align-left fa-2x"></i><br><h4>INFO</h4></a></li>
                             <li ng-click="tabSelected(1)"><a href="#content" data-toggle="tab"><i class="fa fa-filter fa-2x"></i><br><h4>CONTENT</h4></a></li>
                             <li ng-click="tabSelected(2)"><a href="#design" data-toggle="tab"><i class="fa fa-paint-brush fa-2x"></i><br><h4>DESIGN</h4></a></li>
@@ -108,7 +108,6 @@
                                                     <toggle-switch class="wall-toggle-switch" on-label="YES" off-label="NO" ng-model="newWallOptions.cycle">
                                                     </toggle-switch>
                                                 </div>
-                                                <hr>
                                                 <div ng-if="newWallOptions.cycle==true" class="form-group row">
                                                     <h4 class="col-xs-9">Cycle Delay Time
                                                             <br><small>When there are no new posts, show a tweet for how many seconds?</small></h4>
@@ -187,6 +186,7 @@
                                                         </toggle-switch>
                                                     </div>
                                                     <h4>Coming Soon</h4>
+                                                    <hr>
                                                     <div class="form-group row wall-exclude-toggles">
                                                         <h4 class="col-xs-9">Hide retweets
                                                             <br><small>Retweets will not be shown, but they WILL be counted in the stats and leaderboards.</small></h4>

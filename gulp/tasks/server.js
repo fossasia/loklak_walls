@@ -92,7 +92,10 @@ gulp.task('server', function() {
     // Pre-cond: no one else polling / previous poller leaves
     socket.on('addPollingWalls', function(userWallId){
       pollingWalls[userWallId] = socket.id;
-      clientIds[socket.id].push(userWallId);
+      var clientWalls = clientIds[socket.id];
+      if(clientWalls.indexOf(userWallId) === -1){
+        clientWalls.push(userWallId);
+      }
     })
 
     // Leave and remove wallId so that another poll can pass
@@ -102,6 +105,7 @@ gulp.task('server', function() {
       clientWallPoll.forEach(function(wallId){
         pollingWalls[wallId] = null;
       })
+      delete clientIds[socket.id];
     })
 
 

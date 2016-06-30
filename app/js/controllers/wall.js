@@ -13,7 +13,6 @@ var moment = require('moment');
 
     var vm = this;
     var term = '';
-    // var $rootScope.modPostPromise; // For cancelling the $interval polling
     var searchParams;
     var latestCreatedAtDate = null;
     var maxStatusCount;
@@ -160,114 +159,6 @@ var moment = require('moment');
         }
     });
 
-    // sets searchParams from newWallOptions
-    function calculateTerm() {
-        var term = "",
-        i;
-        console.log('new wall options', $scope.newWallOptions)
-        if ($scope.newWallOptions.id) {
-            if ($scope.newWallOptions.layoutStyle === 1) {
-                maxStatusCount = 10; //linear
-            } else if ($scope.newWallOptions.layoutStyle === 2) {
-                maxStatusCount = 20; //masonry
-            } else if ($scope.newWallOptions.layoutStyle === 3) {
-                maxStatusCount = 1; //single
-            } else if ($scope.newWallOptions.layoutStyle === 4) {
-                maxStatusCount = 10; //map
-            }
-        }
-        for (i = 0; i < $scope.newWallOptions.all.length; i++) {
-            term = term + ' ' + $scope.newWallOptions.all[i].text;
-        }
-
-        for (i = 0; i < $scope.newWallOptions.none.length; i++) {
-            term = term + ' -' + $scope.newWallOptions.none[i].text;
-        }
-
-        if ($scope.newWallOptions.any.length > 0) {
-            term = term + ' ' + $scope.newWallOptions.any[0].text;
-            for (i = 1; i < $scope.newWallOptions.any.length; i++) {
-                term = term + ' OR ' + $scope.newWallOptions.any[i].text;
-            }
-        }
-        if ($scope.newWallOptions.mainHashtag) {
-            if (term) {
-                term = term + ' OR ' + $scope.newWallOptions.mainHashtag;
-            } else {
-                term = $scope.newWallOptions.mainHashtag;
-            }
-        }
-
-        if ($scope.newWallOptions.layoutStyle === '4') {
-            if (term === "") {
-                term = "/location";
-            } else {
-                term = term + " /location";
-            }
-        }
-
-        if ($scope.newWallOptions.images) {
-            if ($scope.newWallOptions.images === "only") {
-                term = term + ' /image';
-            } else if ($scope.newWallOptions.images === "none") {
-                term = term + ' -/image';
-            }
-        }
-
-        if ($scope.newWallOptions.videos) {
-            if ($scope.newWallOptions.videos === "only") {
-                term = term + ' /video';
-            } else if ($scope.newWallOptions.videos === "none") {
-                term = term + ' -/video';
-            }
-        }
-
-        if ($scope.newWallOptions.audio) {
-            if ($scope.newWallOptions.audio === "only") {
-                term = term + ' /audio';
-            } else if ($scope.newWallOptions.audio === "none") {
-                term = term + ' -/audio';
-            }
-        }
-
-        if ($scope.newWallOptions.profanity) {
-            if ($scope.newWallOptions.profanity === true) {
-                term = term + ' -/profanity';
-            }
-        }
-
-        if (!$scope.newWallOptions.blockRetweets) {
-            term = term + ' include:retweets';
-        }
-
-        if ($scope.newWallOptions.chosenLocation) {
-            term = term + ' near:' + $scope.newWallOptions.chosenLocation;
-        }
-
-        if ($scope.newWallOptions.sinceDate) {
-            term = term + ' since:' + moment($scope.newWallOptions.sinceDate).format('YYYY-MM-DD_HH:mm');
-        }
-
-        if ($scope.newWallOptions.untilDate) {
-            term = term + ' until:' + moment($scope.newWallOptions.untilDate).format('YYYY-MM-DD_HH:mm');
-        }
-
-        //clean up
-        term = term.trim();
-        if (term.substring(0, 2) === 'OR') {
-            term = term.substring(2).trim();
-        }
-
-        console.log(term);
-        searchParams.q = term;
-        searchParams.count = maxStatusCount;
-        if ($scope.newWallOptions.cycle) {
-            if ($scope.newWallOptions.cyclePostLimit > searchParams.count) {
-                searchParams.count = $scope.newWallOptions.cyclePostLimit;
-            }
-        }
-        searchParams.fromWall = true;
-    }
     $scope.proceed = function() {
         if ($scope.selectedTab === 1 && $scope.newWallOptions.cycle && !$scope.newWallOptions.cyclePostLimit || ($scope.newWallOptions.cyclePostLimit < 1) || ($scope.newWallOptions.cyclePostLimit > 100)) {
             alert("Invalid cycle post limit! Please enter a value between 1 and 100. We have set it to the recommended value.");
@@ -335,7 +226,6 @@ var moment = require('moment');
                     app: 'wall',
                     id: $scope.userWalls[$scope.isEditing].id
                 }, function(result) {
-                    // calculateTerm(); // sets searchParams for searchLoklakServer 
                     // initWallOptions();
 
                     AppsService.query({
@@ -377,93 +267,17 @@ var moment = require('moment');
                     }
                     $scope.wallsPresent = true;
 
-                    // calculateTerm(); // sets searchParams for searchLoklakServer 
-
-                    // // Start the interval POST call
-
-                    // var posturl = '/api/tweets/'+ $rootScope.root.currentUser._id + '/' + $scope.userWalls[latestWallIdx].id;
-                    // var userWallId = $rootScope.root.currentUser._id + $scope.userWalls[latestWallIdx].id
-
-                    // var searchLoklakServer = function(){
-                    //     console.log('searchParams', searchParams)
-
-                    //     // Check if have any other users in user's room
-                    //     // If only user instance in room, start search,
-                    //     // else check if other user instances are polling for the same wall 
-
-                    //     SearchService.initData(searchParams).then(function(data) {
-                    //         // console.log('after search', data)
-                    //         console.log('options', $scope.newWallOptions);
-                    //         // If manual moderation, query loklak server, 
-                    //         // set all approval to false, then add to store.
-                    //         if(!$scope.newWallOptions.moderation){
-                    //             data.statuses.map(function(tweet){
-                    //                 tweet.userWallId = userWallId;
-                    //                 tweet.approval = true;                                    
-                    //             })
-                    //         } else {
-                    //             console.log("Manual moderation")
-                    //             data.statuses.map(function(tweet){
-                    //                 tweet.userWallId = userWallId;
-                    //                 tweet.approval = false;
-                    //             })
-                    //         }
-
-                    //         console.log('statuses received from search', data.statuses)
-                    //         // MANUAL MOD - add all to mongo if first poll, else filter then add and update most recent date
-                    //         if(latestCreatedAtDate===null){
-                    //             var toPost = {};
-                    //             toPost.tweetArr = data.statuses;
-                    //             toPost.userWallId = userWallId;
-
-                    //             $http.post(posturl, toPost).then(function(result){
-                    //                 console.log(result.data.message);
-                    //                 if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
-                    //                 console.log("latest", latestCreatedAtDate)
-
-                    //                 $scope.pollWallTweets();
-
-                    //             }, function(err){ 
-                    //                 console.log(err); 
-                    //             })
-
-                    //         } else {
-                    //             data.statuses = data.statuses.filter(function(status){
-                    //                 return status.created_at > latestCreatedAtDate;
-                    //             }) 
-                    //             var toPost = {};
-                    //             toPost.tweetArr = data.statuses;
-                    //             toPost.userWallId = userWallId;
-
-                    //             $http.post(posturl, toPost).then(function(result){
-                    //                 console.log(result.data.message);
-                    //                 if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
-                    //                 console.log("latest", latestCreatedAtDate)
-
-                    //             }, function(err){ 
-                    //                 console.log(err); 
-                    //             })
-                    //         }
-
-                    //     })
-                    // }
-
-                    // searchLoklakServer();
-                    // $rootScope.modPostPromise = $interval(function(){
-                    //     searchLoklakServer();
-                    // }, 30000);
-
                     // Reset wall options
                     initWallOptions();
                     window.open('/' + $scope.currentUser._id + '/wall/' + result.id);
                     $scope.userWalls[latestWallIdx].showLoading = false;
 
                 });
-}
+        }
 
-} else {
-    alert("Please sign in first");
-}
+    } else {
+        alert("Please sign in first");
+    }
 };
 
 
@@ -528,88 +342,9 @@ $scope.resetLogo = function() {
                 $scope.statuses.splice(idx,0,el);
             })
         })
-
-        // Stop previous poll and Start poll for current wall to $scope.statuses, for 30s
-        // $interval.cancel(modGetPromise);
-        // $scope.pollWallTweets();
-
-        // Stop previous interval POST
-        // $interval.cancel($rootScope.modPostPromise);
-        // calculateTerm(); // sets searchParams for searchLoklakServer
-
-        // Start selected wall's interval POST
-        // var posturl = '/api/tweets/'+ $rootScope.root.currentUser._id + '/' + $scope.userWalls[index].id;
-        // var userWallId = $rootScope.root.currentUser._id + $scope.userWalls[index].id
-        
-        // var searchLoklakServer = function(){
-        //     console.log('searchParams', searchParams)
-
-        //     SearchService.initData(searchParams).then(function(data) {
-        //         // console.log('after search', data)
-        //         console.log('options', $scope.newWallOptions);
-        //         // If manual moderation, query loklak server, 
-        //         // set all approval to false, then add to store.
-        //         if(!$scope.newWallOptions.moderation){
-        //             data.statuses.map(function(tweet){
-        //                 tweet.userWallId = userWallId;
-        //                 tweet.approval = true;                                    
-        //             })
-        //         } else {
-        //             console.log("Manual moderation")
-        //             data.statuses.map(function(tweet){
-        //                 tweet.userWallId = userWallId;
-        //                 tweet.approval = false;
-        //             })
-        //         }
-
-        //         console.log('statuses received from search', data.statuses)
-        //         // MANUAL MOD - add all to mongo if first poll, else filter then add and update most recent date
-        //         if(latestCreatedAtDate===null){
-        //             var toPost = {};
-        //             toPost.tweetArr = data.statuses;
-        //             toPost.userWallId = userWallId;
-
-        //             $http.post(posturl, toPost).then(function(result){
-        //                 console.log(result.data.message);
-        //                 if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
-        //                 console.log("latest", latestCreatedAtDate)
-
-        //                 $scope.pollWallTweets();
-
-        //             }, function(err){ 
-        //                 console.log(err); 
-        //             })
-
-        //         } else {
-        //             data.statuses = data.statuses.filter(function(status){
-        //                 return status.created_at > latestCreatedAtDate;
-        //             }) 
-        //             var toPost = {};
-        //             toPost.tweetArr = data.statuses;
-        //             toPost.userWallId = userWallId;
-
-        //             $http.post(posturl, toPost).then(function(result){
-        //                 console.log(result.data.message);
-        //                 if(data.statuses.length > 0 ) latestCreatedAtDate = (data.statuses[0].created_at);
-        //                 console.log("latest", latestCreatedAtDate)
-
-        //             }, function(err){ 
-        //                 console.log(err); 
-        //             })
-        //         }
-
-        //     })
-        // }
-        // searchLoklakServer();
-        // $rootScope.modPostPromise = $interval(function(){
-        //     searchLoklakServer();
-        // }, 30000);
-
 };
 
 $scope.pollWallTweets = function(){
-
-    console.log($scope.userWalls)
 
     var userWallTweetsUrl="";
     if($scope.isEditing !== -1){
@@ -649,14 +384,14 @@ $scope.pollWallTweets = function(){
     $scope.openModal = function() {
         initWallOptions();
         $('#wall-modal').modal('toggle');
-        $('.nav-tabs').first().find('a').trigger('click');
+        $('#selectTab a[href="#info"]').tab('show') // Select tab by name
     };
 
     var init = function() {
         searchParams = {};
-        if ($scope.isLoggedIn) {
+        $http.get('/api/currentuser').success(function(data){
             $scope.userWalls = AppsService.query({
-                user: $scope.currentUser._id,
+                user: data._id,
                 app: 'wall'
             }, function(result) {
                 if ($scope.userWalls.length === 0) {
@@ -664,7 +399,7 @@ $scope.pollWallTweets = function(){
                     console.log("No walls");
                 }
             });
-        }
+        })
     };
 
     init();

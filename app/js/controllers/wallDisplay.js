@@ -378,31 +378,6 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
                     })
                 }
 
-                if (vm.statuses.length <= 0) {
-                    // get subset of data tweet array if current array is empty
-                    vm.statuses = data.statuses.splice(0, searchParams.count);
-                } else {
-                    for (var i = data.statuses.length - 1; i > -1; i--) {
-                        if (vm.wallOptions.cycle) {
-                        // tweets are moving cyclicly in array
-                            if (!contains(vm.statuses, data.statuses[i])) {
-                                // if different tweet, remove oldest top
-                                console.log("triggered");
-                                removeLeastRecentTweet(); // cycle through & remove oldest
-                                $interval.cancel(cycleInterval);
-                                cycleInterval = undefined;
-                                vm.statuses.unshift(data.statuses[i]); // add new tweet to front of array
-                                cycleInterval = vm.cycleTweets();
-                            }
-                        } else {
-                            // from oldest tweet of data, if newer than current newest
-                            if (data.statuses[i].created_at > vm.statuses[0].created_at) {
-                                vm.statuses.unshift(data.statuses[i]); // add tweet to front, pop the current oldest
-                                vm.statuses.pop();
-                            }
-                        }
-                    }
-                }
                 // Refresh Time set at 5 to 30s, see getRefreshTime()
                 var newRefreshTime = getRefreshTime(data.search_metadata.period);
                 tweetTimeout = vm.update2(newRefreshTime);
@@ -653,10 +628,35 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
     });
 
     socket.on('addNewTweets' + userWallId, function(tweetArr){
-        console.log("adding to vm.statuses")
-        tweetArr.forEach(function(el,idx){
-            vm.statuses.splice(idx,0,el);
-        })
+        // console.log("adding to vm.statuses")
+        // tweetArr.forEach(function(el,idx){
+        //     vm.statuses.splice(idx,0,el);
+        // })
+        if (vm.statuses.length <= 0) {
+            // get subset of data tweet array if current array is empty
+            vm.statuses = tweetArr.splice(0, searchParams.count);
+        } else {
+            for (var i = tweetArr.length - 1; i > -1; i--) {
+                if (vm.wallOptions.cycle) {
+                // tweets are moving cyclicly in array
+                    if (!contains(vm.statuses, tweetArr[i])) {
+                        // if different tweet, remove oldest top
+                        console.log("triggered");
+                        removeLeastRecentTweet(); // cycle through & remove oldest
+                        $interval.cancel(cycleInterval);
+                        cycleInterval = undefined;
+                        vm.statuses.unshift(tweetArr[i]); // add new tweet to front of array
+                        cycleInterval = vm.cycleTweets();
+                    }
+                } else {
+                    // from oldest tweet of data, if newer than current newest
+                    if (tweetArr[i].created_at > vm.statuses[0].created_at) {
+                        vm.statuses.unshift(tweetArr[i]); // add tweet to front, pop the current oldest
+                        vm.statuses.pop();
+                    }
+                }
+            }
+        }
     })
 
     $scope.$on('$destroy', function() {

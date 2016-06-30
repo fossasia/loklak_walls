@@ -22,7 +22,7 @@
    },
    {
      'title': 'Wall',
-     'link' : '/wall',
+     'link' : '/walls',
      'icon' : 'fa fa-list'
    },
    {
@@ -35,8 +35,6 @@
    root.fullscreenDisabled = true;
    root.sidebarEnabled = false;
 
-   $rootScope.modPostPromise=null;
-
    $rootScope.$on('cfpLoadingBar:started', function() {
     angular.element('#loklak-nav-logo').hide();
   });
@@ -46,10 +44,10 @@
   });
 
   $rootScope.modPostPromise; // For cancelling the $interval polling
-
+  
     // check if authenticated
     $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){
-  
+
       if (toState.authenticate || toState.verify ){
           // User isn’t authenticated
           AuthService.currentUser().success(function(data){
@@ -72,7 +70,6 @@
               })
             }else if(!data._id){
               $state.transitionTo("Home");
-              SweetAlert.alert("Error", "Please log in.")
               event.preventDefault();
             }
 
@@ -89,6 +86,7 @@
         $rootScope.root.currentView = toState.title;
       }
       $rootScope.root.pageTitle = pageTitle;
+
     });
 
     $rootScope.root = root;
