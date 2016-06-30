@@ -206,6 +206,8 @@ var moment = require('moment');
         // var dataParams = encodeURIComponent(angular.toJson($scope.newWallOptions));
         $('#wall-modal').modal('toggle');
 
+        $scope.currentUser = $rootScope.root.currentUser;
+
         if($rootScope.root.isLoggedIn) {
             // $interval.cancel($rootScope.modPostPromise);
 
