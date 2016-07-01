@@ -66,6 +66,8 @@ var moment = require('moment');
         $scope.newWallOptions.videos = false;
         $scope.newWallOptions.headerColour = '#3c8dbc';
         $scope.newWallOptions.headerForeColour = '#FFFFFF';
+        $scope.newWallOptions.wallBgColour = '#696969';
+        $scope.newWallOptions.cardBgColour = '#696969';
         $scope.newWallOptions.headerPosition = 'Top';
         $scope.newWallOptions.layoutStyle = 1;
         $scope.newWallOptions.moderation = false;
@@ -112,6 +114,12 @@ var moment = require('moment');
     $scope.$watch('newWallOptions.headerColour', function() {
         if ($scope.newWallOptions.headerColour) {
             $scope.newWallOptions.headerForeColour = colourCalculator(hexToRgb($scope.newWallOptions.headerColour));
+        }
+    });
+
+    $scope.$watch('newWallOptions.cardBgColour', function() {
+        if ($scope.newWallOptions.cardBgColour) {
+            $scope.newWallOptions.cardForeColour = colourCalculator(hexToRgb($scope.newWallOptions.cardBgColour));
         }
     });
 
@@ -235,7 +243,6 @@ var moment = require('moment');
                             $scope.wallsPresent = false;
                             console.log("No walls");
                         }
-
                     });
                     // $scope.userWalls[$scope.isEditing].showLoading = false;
                     // $window.open('/' + $scope.currentUser._id + '/wall/' + $scope.userWalls[$scope.isEditing].id, '_blank');
@@ -263,14 +270,14 @@ var moment = require('moment');
                     }
                     $scope.wallsPresent = true;
 
-                    // Reset wall options
-                    initWallOptions();
+                    // Open new wall
                     window.open('/' + $scope.currentUser._id + '/wall/' + result.id);
                     $scope.userWalls[latestWallIdx].showLoading = false;
 
                 });
         }
         // Reset isEditing to -1
+        initWallOptions();
         $scope.isEditing = -1;
 
     } else {
@@ -409,7 +416,6 @@ $scope.pollWallTweets = function(){
         //     $interval.cancel($rootScope.modPostPromise);
         // }
         socket.removeAllListeners();
-
     });
 
     angular.element(document).bind("keydown", function(event) {

@@ -400,6 +400,7 @@
 
 .wall-container {
     background: #F5F8FA;
+    padding-bottom: 100%;
     // Helper classes
     .abs-center-y {
         position: absolute;
@@ -424,7 +425,6 @@
         -webkit-transform: translate(-50%, -50%);
     }
     // Generals
-    padding: 0;
     .input-container {
         margin-top: 10px;
         width: 95%;
@@ -467,7 +467,7 @@
     background: white;
     padding: 9px 24px;
     margin-bottom: 4px;
-    border-bottom: 1px solid $search-grey-border;
+    border-radius: 6px;
     &:first-child {
         border-top-left-radius: 6px;
         border-right-left-radius: 6px;
@@ -927,4 +927,18 @@ label.info {
 
 img.Emoji.Emoji--forText {
     width: 33px;
+}
+
+td > a {
+    color: #ffffff;
+}
+
+.metadata>a {
+    text-decoration: underline;
+    color: inherit;
+}
+
+.linear-content-text > a {
+    color: inherit;
+    text-decoration: underline;
 }

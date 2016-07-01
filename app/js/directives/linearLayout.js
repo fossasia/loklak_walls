@@ -10,6 +10,8 @@ function linearLayoutDirective() {
   return {
     scope: {
     	data: '=',
+    	cardbgcolor:'=',
+    	cardtxtcolor:'=',
     },
     templateUrl: 'wall/templates/linear.html',
   };

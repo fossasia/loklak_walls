@@ -2547,15 +2547,16 @@ a:focus {
 /* NAV TABS */
 .nav-tabs-custom {
   margin-bottom: 20px;
-  background: #fff;
+  background: #464646;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 3px;
 }
 .nav-tabs-custom > .nav-tabs {
   margin: 0;
-  border-bottom-color: #f4f4f4;
+  border-bottom-color: #444;
   border-top-right-radius: 3px;
   border-top-left-radius: 3px;
+  text-align: center;
 }
 .nav-tabs-custom > .nav-tabs > li {
   border-top: 3px solid transparent;
@@ -2564,7 +2565,7 @@ a:focus {
   width: 32%;
 }
 .nav-tabs-custom > .nav-tabs > li > a {
-  color: #444;
+  color: #ebe6e6;
   border-radius: 0 !important;
 }
 .nav-tabs-custom > .nav-tabs > li > a,
@@ -2585,13 +2586,13 @@ a:focus {
 }
 .nav-tabs-custom > .nav-tabs > li.active > a,
 .nav-tabs-custom > .nav-tabs > li.active:hover > a {
-  background-color: #fff;
-  color: #444;
+  background-color: #696969;
+  color: #e7e7e7;
 }
 .nav-tabs-custom > .nav-tabs > li.active > a {
   border-top-color: transparent;
-  border-left-color: #f4f4f4;
-  border-right-color: #f4f4f4;
+  border-left-color: #656565;
+  border-right-color: #656565;
 }
 .nav-tabs-custom > .nav-tabs > li:first-of-type {
   margin-left: 0;
@@ -2627,7 +2628,8 @@ a:focus {
   margin-right: 5px;
 }
 .nav-tabs-custom > .tab-content {
-  background: #fff;
+  // background: #fff;
+  background: #696969;
   padding: 10px;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
