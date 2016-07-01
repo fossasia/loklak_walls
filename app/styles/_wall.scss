@@ -15,7 +15,8 @@
 /*Wall creation */
 
 .layoutRadio {
-    margin: 12px;
+    margin-left: -12%;
+    margin-bottom: 18%;
 }
 
 .layoutRadio > input {
@@ -25,6 +26,7 @@
 
 .layoutRadio > input + img {
     /* IMAGE STYLES */
+    width: 125%;
     cursor: pointer;
     border: 4px solid transparent;
     &:hover {
@@ -43,6 +45,7 @@
     border-radius: 2px;
     border-color: #CABFBF !important;
     vertical-align: middle;
+    margin-top: 7px;
 }
 
 .wall-preview-container {
@@ -50,13 +53,12 @@
 }
 
 .wall-preview {
+    margin-top: 15px;
     border-top: 2em solid rgba(230, 230, 230, 0.7);
     box-shadow: 0 0.1em 1em 0 rgba(0, 0, 0, 0.3);
     position: relative;
     border-radius: 3px 3px 0 0;
     border-bottom: 1em solid rgba(230, 230, 230, 0.7);
-    border-left: 1em solid rgba(230, 230, 230, 0.7);
-    border-right: 1em solid rgba(230, 230, 230, 0.7);
     border-radius: 2%;
     &:before{
         display: block;
@@ -91,17 +93,17 @@
 }
 
 .design-box {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .wall-creation-form {
-    max-width: 75%;
+    // max-width: 75%;
     line-height: 200%;
     font-size: 16px;
 }
 
 .wall-creation-form > * input[type="text"] {
-    width: 50%;
+    // width: 50%;
 }
 
 .tabs-left > li {
@@ -156,7 +158,7 @@
 
 .wall-float-container {
     // padding-bottom: 10px;
-    margin-top: -30px;
+    // margin-top: -30px;
 }
 
 .wall-tag-input {
@@ -205,8 +207,9 @@
     border: 1px solid #98bc68;
     border-radius: 5px;
     margin-top: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 27px;
     display: block;
+    width: 95%;
 }
 
 .wall-not-contains-header {
@@ -225,6 +228,7 @@
     border: 1px solid #b35e51;
     border-radius: 5px;
     margin-top: 10px;
+    width: 95%;
 }
 
 .wall-preview-logo {
@@ -320,7 +324,7 @@
 }
 
 .wall-location-input {
-    margin-top: 10px;
+    margin-top: 22px;
     width: 160px;
 }
 
@@ -744,13 +748,13 @@ md-card {
         height: 25vh;
     }
     .histogram-gradient {
-        background: -webkit-linear-gradient(transparent, #F5F8FA);
+        /* background: -webkit-linear-gradient(transparent, #F5F8FA); */
         /* For Safari 5.1 to 6.0 */
-        background: -o-linear-gradient(transparent, #F5F8FA);
+        /* background: -o-linear-gradient(transparent, #F5F8FA); */
         /* For Opera 11.1 to 12.0 */
-        background: -moz-linear-gradient(transparent, #F5F8FA);
+        /* background: -moz-linear-gradient(transparent, #F5F8FA); */
         /* For Firefox 3.6 to 15 */
-        background: linear-gradient(transparent, #F5F8FA);
+        /* background: linear-gradient(transparent, #F5F8FA); */
         /* Standard syntax */
         /*background-color: #F5F8FA`;*/
         height: 2vh;
@@ -861,6 +865,8 @@ md-card {
     }
 }
 
+/*Styles for wall creation modal*/
+
 .rejected {
     background-color: rgba(255,87,34,0.2);
 }
@@ -872,4 +878,53 @@ md-card {
 i.thumbnail-icon {
     font-size: 18px;
     margin-top: -3px;
+}
+
+.nav-tabs > li > a:hover {
+    border-color: #ddd rgb(238, 238, 238) #ddd #ddd;
+}
+
+.tabs-left > li > a {
+    transition: 0.5s;
+}
+
+.md-datepicker-input-mask {
+    height: 40px;
+    width: 309px !important;;
+}
+
+.md-datepicker-calendar-pane.md-pane-open {
+    width: 310px !important;
+    z-index: 10000;
+}
+
+.md-calendar-month-label {
+    font-weight: 800 !important;
+}
+
+.md-datepicker-triangle-button.md-button.md-icon-button {
+    height: 100%;
+    margin-top: 6px;
+}
+
+md-icon.md-datepicker-calendar-icon {
+    height: 29px;
+}
+label.info {
+    font-size: 23px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    &.hashtag {
+    transform: initial !important;
+    top: 36px !important;
+    }
+}
+
+.modalHr{
+    margin-right: 5%;
+}
+
+
+img.Emoji.Emoji--forText {
+    width: 33px;
 }

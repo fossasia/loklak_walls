@@ -1859,11 +1859,12 @@ a:focus {
 .box-header {
   color: #444;
   display: block;
-  padding: 10px;
+  padding: 10px 0 0 0;
   position: relative;
 }
 .box-header.with-border {
   border-bottom: 1px solid #f4f4f4;
+  padding: 12px;
 }
 .collapsed-box .box-header.with-border {
   border-bottom: none;
@@ -1913,7 +1914,7 @@ a:focus {
   border-top-right-radius: 0;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
-  padding: 10px;
+  padding: 0 10px 10px 24px;
 }
 .no-header .box-body {
   border-top-right-radius: 3px;
@@ -2303,6 +2304,7 @@ a:focus {
   background: white;
   cursor: inherit;
   display: block;
+  margin-top: 10px;
 }
 .btn-default {
   background-color: #f4f4f4;
