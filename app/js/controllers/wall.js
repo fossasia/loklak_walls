@@ -231,7 +231,7 @@ var moment = require('moment');
                     app: 'wall',
                     id: $scope.userWalls[$scope.isEditing].id
                 }, function(result) {
-                    // initWallOptions();
+                    initWallOptions();
 
                     AppsService.query({
                         user: $scope.currentUser._id,
@@ -269,6 +269,7 @@ var moment = require('moment');
                         }
                     }
                     $scope.wallsPresent = true;
+                    initWallOptions();
 
                     // Open new wall
                     window.open('/' + $scope.currentUser._id + '/wall/' + result.id);
@@ -277,7 +278,6 @@ var moment = require('moment');
                 });
         }
         // Reset isEditing to -1
-        initWallOptions();
         $scope.isEditing = -1;
 
     } else {
