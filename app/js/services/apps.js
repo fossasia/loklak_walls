@@ -26,12 +26,6 @@ function AppsService($q, $http, $resource) {
 
         save: {
             method: 'POST',
-            transformRequest: function(data) {
-                delete data.user;
-                delete data.app;
-                delete data.showLoading;
-                return JSON.stringify(data);
-            },
             params: {
                 user: '@user',
                 app: '@app',
@@ -40,12 +34,6 @@ function AppsService($q, $http, $resource) {
         },
         update: {
             method: 'PUT',
-            transformRequest: function(data) {
-                delete data.user;
-                delete data.app;
-                delete data.showLoading;
-                return JSON.stringify(data);
-            },
             params: {
                 user: '@user',
                 app: '@app',
