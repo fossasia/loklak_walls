@@ -23,7 +23,7 @@
         <!-- Twitter screen_name -->
         <span class="md-subhead" style="color: #8899A6;">
              <span class="user-data ">
-                <a class="name" ng-href="{{'./search?q=from:' + data.user.screen_name}}">{{data.user.name}} </a>
+                <a class="name" ng-href="{{'./search?q=from:' + data.user.screen_name}}">{{data.user.name | tweetScreenName}} </a>
                 <i class="fa fa-twitter"></i>
                 <span class="md-subhead screen-name">{{ "@" + data.user.screen_name}}</span>
                 <br>

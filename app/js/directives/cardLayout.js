@@ -22,11 +22,9 @@ directivesModule.directive('card', ['$timeout', function($timeout) {
                     }
                 }
             };
-            console.log($scope)
         },
         link: function(scope, element, attrs) {
             scope.leaderboardenabled = attrs.leaderboardenabled === "true";
-            console.log(scope)
         	if(attrs.leaderboardenabled === "true"){
         		element.find('.card-content-text').css("font-size","2.0vh");
         		element.find('.card-content-text').css("line-height","1.3em");

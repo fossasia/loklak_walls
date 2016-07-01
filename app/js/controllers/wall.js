@@ -235,7 +235,6 @@ var moment = require('moment');
                             $scope.wallsPresent = false;
                             console.log("No walls");
                         }
-                        $scope.isEditing = -1;
 
                     });
                     // $scope.userWalls[$scope.isEditing].showLoading = false;
@@ -271,6 +270,8 @@ var moment = require('moment');
 
                 });
         }
+        // Reset isEditing to -1
+        $scope.isEditing = -1;
 
     } else {
         alert("Please sign in first");
@@ -418,6 +419,7 @@ $scope.pollWallTweets = function(){
                 $scope.isEditing = -1;
                 $scope.selectedTab=0;
             });
+            $('#wall-modal').modal('toggle');
         }
     });
 
