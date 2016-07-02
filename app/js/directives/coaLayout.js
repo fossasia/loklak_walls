@@ -10,6 +10,8 @@ function centerOfAttractionLayout() {
   return {
     scope: {
     	data: '=',
+    	cardbgcolor:'=',
+    	cardtxtcolor:'=',
     },
     templateUrl: 'wall/templates/coa.html',
   };

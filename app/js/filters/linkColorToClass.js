@@ -1,12 +1,10 @@
-
 'use strict';
 
 var filtersModule = require('./_index.js');
-var Autolinker = require('autolinker');
+
 /**
  * @ngInject
  */
-
  function hexToRgb(hex) {
  	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
  	return result ? {
@@ -25,18 +23,8 @@ var Autolinker = require('autolinker');
  	}
  }
 
- filtersModule.filter('tweetTextLink', function() {
-
- 	return function(input, cardBgColour) {
-
- 		var textClassName = colourCalculator(hexToRgb(cardBgColour));
-
- 		if (!input) {
- 			return "";
- 		}
- 		return Autolinker.link(input, {
- 			truncate: 25,
- 			className: textClassName,
- 		});
+ filtersModule.filter('linkColorToClass', function () {
+ 	return function(input) {
+		return colourCalculator(hexToRgb(input));
  	};
  });

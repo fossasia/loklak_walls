@@ -66,8 +66,8 @@ var moment = require('moment');
         $scope.newWallOptions.videos = false;
         $scope.newWallOptions.headerColour = '#3c8dbc';
         $scope.newWallOptions.headerForeColour = '#FFFFFF';
-        $scope.newWallOptions.wallBgColour = '#696969';
-        $scope.newWallOptions.cardBgColour = '#696969';
+        $scope.newWallOptions.wallBgColour = '#ecf0f5';
+        $scope.newWallOptions.cardBgColour = '#ffffff';
         $scope.newWallOptions.headerPosition = 'Top';
         $scope.newWallOptions.layoutStyle = 1;
         $scope.newWallOptions.moderation = false;
@@ -318,6 +318,7 @@ $scope.resetLogo = function() {
             //$scope.userWalls[index].showLoading = false;
         });
         $scope.isEditing = -1;
+        $scope.selectedTab(-1);
     };
 
     $scope.editWall = function(index) {
@@ -423,9 +424,8 @@ $scope.pollWallTweets = function(){
             $scope.$apply(function() {
                 $scope.tweetModalShow = false;   
                 $scope.isEditing = -1;
-                $scope.selectedTab=0;
+                $scope.selectedTab = 0;
             });
-            $('#wall-modal').modal('toggle');
         }
     });
 

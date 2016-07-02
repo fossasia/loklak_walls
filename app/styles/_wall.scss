@@ -934,11 +934,19 @@ td > a {
 }
 
 .metadata>a {
-    text-decoration: underline;
     color: inherit;
 }
 
-.linear-content-text > a {
-    color: inherit;
-    text-decoration: underline;
+a {
+    &.linkLight {
+        color: #6abdff;
+    }
+    &.linkDark {
+        color: #607d8b;
+    }
+}
+
+.leaderBoardEnabled {
+    font-size: 2vh;
+    line-height: 1.3em;
 }
