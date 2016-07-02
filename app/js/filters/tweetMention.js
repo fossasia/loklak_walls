@@ -25,7 +25,7 @@ var filtersModule = require('./_index.js');
 
 function tweetMentionFilter() {
 	return function(input, cardBgColour) {
-		var textClassName = colourCalculator(hexToRgb(cardBgColour));
+ 		var textClassName = cardBgColour ? colourCalculator(hexToRgb(cardBgColour)) : '';
 
 		// input = input.replace('</a>', '');
 		var mentionReg = /\B\@([_a-z0-9\-]+)/gim;

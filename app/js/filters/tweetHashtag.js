@@ -26,7 +26,7 @@ var filtersModule = require('./_index.js');
  filtersModule.filter('tweetHashtag', function () {
  	return function(input, cardBgColour) {
 
-		var textClassName = colourCalculator(hexToRgb(cardBgColour));
+ 		var textClassName = cardBgColour ? colourCalculator(hexToRgb(cardBgColour)) : '';
  		var aTag = '<a class="external-hashtag '+textClassName+'" rel="external" href="./search?q=%23$1">#$1</a>&nbsp;';
  		var hashtagReg = /#([^#^\ ^@.]+)[\s,;]*/gi;
  		return input.replace(hashtagReg, aTag);

@@ -328,6 +328,8 @@ $scope.resetLogo = function() {
 
         $scope.statuses = [];   
         $scope.newWallOptions = $scope.userWalls[index];
+        $scope.newWallOptions.sinceDate = new Date($scope.newWallOptions.sinceDate);
+        $scope.newWallOptions.untilDate = new Date($scope.newWallOptions.untilDate);
 
         // Remove previous index's listener
         if($scope.lastEdited > -1){

@@ -29,7 +29,7 @@ var Autolinker = require('autolinker');
 
  	return function(input, cardBgColour) {
 
- 		var textClassName = colourCalculator(hexToRgb(cardBgColour));
+ 		var textClassName = cardBgColour ? colourCalculator(hexToRgb(cardBgColour)) : '';
 
  		if (!input) {
  			return "";
