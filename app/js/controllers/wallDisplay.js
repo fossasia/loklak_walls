@@ -204,6 +204,9 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
             vm.statuses=res.data.statuses;
             if(vm.statuses.length>0) {
                 latestCreatedAtDate = vm.statuses[0].created_at;
+                vm.showEmpty = false;
+            } else {
+                vm.showEmpty = true;
             }
         });
         searchParams = {};
@@ -327,9 +330,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         console.log('search data', data);
         if (data.statuses) {
             if (data.statuses.length === 0) {
-                vm.showEmpty = true;
                 tweetTimeout = vm.update2(refreshTime + 10000); // start next poll 10s more previous
-
             } else {
 
                 // If manual moderation, query loklak server, 

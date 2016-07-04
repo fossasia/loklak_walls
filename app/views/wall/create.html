@@ -17,7 +17,7 @@
                 <strong>You haven't created any walls yet.</strong>
             </div>
             <div ng-if="userWalls.length>0" class="row wall-thumbnail-container">
-                <div ng-repeat="wallObj in userWalls" data="wallObj" delete-wall="deleteWall($index)" edit-wall="editWall($index)" screen-name="screen_name" user-id="current_id()" wallthumbnail>
+                <div ng-repeat="wallObj in userWalls track by $index" data="wallObj" delete-wall="deleteWall($index)" edit-wall="editWall($index)" screen-name="screen_name" user-id="current_id()" wallthumbnail>
                 </div>
             </ul>
         </section>

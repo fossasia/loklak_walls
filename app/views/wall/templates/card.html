@@ -1,5 +1,5 @@
 <!-- <div class="card-container masonry-brick" ng-class="getClass()"> -->
-<md-card ng-attr-id="{{data.id_str}}" class=" masonry-brick" style="width:{{leaderboardenabled? '30%' : '23%'}}">
+<md-card ng-attr-id="{{data.id_str}}" class=" masonry-brick" style="width:{{leaderboardenabled? '30%' : '23%'}}; background-color:{{cardbgcolor}};">
     <md-card-title>
     <!-- Main content -->
         <!-- Instagram picture -->
@@ -11,7 +11,7 @@
         <!-- Twitter text -->
         <md-card-title-text>
             <span class="md-headline">
-                <div class="card-content-text"  ng-bind-html="data.text | tweetTextLink | tweetMention | tweetHashtag |  toTrusted"></div>
+                <div class="card-content-text" style="color:{{cardtxtcolor}}" ng-bind-html="data.text | tweetTextLink:cardbgcolor | tweetMention:cardbgcolor | tweetHashtag:cardbgcolor | toTrusted"></div>
             </span>
         </md-card-title-text>
         <!-- Twitter display picture -->
@@ -22,8 +22,8 @@
         </md-card-title-media>
         <!-- Twitter screen_name -->
         <span class="md-subhead" style="color: #8899A6;">
-             <span class="user-data ">
-                <a class="name" ng-href="{{'./search?q=from:' + data.user.screen_name}}">{{data.user.name}} </a>
+             <span class="user-data" style="color:{{cardtxtcolor}}" >
+                <a class="name {{cardbgcolor | linkColorToClass}}" ng-href="{{'./search?q=from:' + data.user.screen_name}}">{{data.user.name | tweetScreenName}} </a>
                 <i class="fa fa-twitter"></i>
                 <span class="md-subhead screen-name">{{ "@" + data.user.screen_name}}</span>
                 <br>

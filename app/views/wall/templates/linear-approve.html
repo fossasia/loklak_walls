@@ -16,7 +16,7 @@
         </div> -->
         <!-- Metadata -->
         <div class="metadata" ng-class="data.images.length>0?'col-xs-9':'col-xs-12'">
-            <a class="name" ng-href="{{'./search?q=from:' + data.user.screen_name}}">{{data.user.name}}</a>
+            <a class="name" ng-href="{{'./search?q=from:' + data.user.screen_name}}">{{data.user.name | tweetScreenName}}</a>
             <span class="screen-name">{{ "@" + data.user.screen_name}}</span>
             <span><i class="fa fa-twitter"></i></span> •
             <span am-time-ago="data.created_at"></span>

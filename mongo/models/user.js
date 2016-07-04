@@ -21,6 +21,9 @@ var UserSchema = new Schema({
       profanity: Boolean,
       images: Boolean,
       videos: Boolean,
+      cardBgColour: String,
+      cardForeColour: String,
+      wallBgColour: String,
       headerColour: String,
       headerForeColour: String,
       headerPosition: String,
@@ -34,6 +37,7 @@ var UserSchema = new Schema({
       eventName: String,
       moderation: Boolean,
       sinceDate: Date,
+      untilDate: Date,
       mainHashtagText: String,
       mainHashtag: String,
       id: String

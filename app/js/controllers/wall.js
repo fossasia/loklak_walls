@@ -66,6 +66,8 @@ var moment = require('moment');
         $scope.newWallOptions.videos = false;
         $scope.newWallOptions.headerColour = '#3c8dbc';
         $scope.newWallOptions.headerForeColour = '#FFFFFF';
+        $scope.newWallOptions.wallBgColour = '#ecf0f5';
+        $scope.newWallOptions.cardBgColour = '#ffffff';
         $scope.newWallOptions.headerPosition = 'Top';
         $scope.newWallOptions.layoutStyle = 1;
         $scope.newWallOptions.moderation = false;
@@ -112,6 +114,12 @@ var moment = require('moment');
     $scope.$watch('newWallOptions.headerColour', function() {
         if ($scope.newWallOptions.headerColour) {
             $scope.newWallOptions.headerForeColour = colourCalculator(hexToRgb($scope.newWallOptions.headerColour));
+        }
+    });
+
+    $scope.$watch('newWallOptions.cardBgColour', function() {
+        if ($scope.newWallOptions.cardBgColour) {
+            $scope.newWallOptions.cardForeColour = colourCalculator(hexToRgb($scope.newWallOptions.cardBgColour));
         }
     });
 
@@ -223,7 +231,7 @@ var moment = require('moment');
                     app: 'wall',
                     id: $scope.userWalls[$scope.isEditing].id
                 }, function(result) {
-                    // initWallOptions();
+                    initWallOptions();
 
                     AppsService.query({
                         user: $scope.currentUser._id,
@@ -235,8 +243,6 @@ var moment = require('moment');
                             $scope.wallsPresent = false;
                             console.log("No walls");
                         }
-                        $scope.isEditing = -1;
-
                     });
                     // $scope.userWalls[$scope.isEditing].showLoading = false;
                     // $window.open('/' + $scope.currentUser._id + '/wall/' + $scope.userWalls[$scope.isEditing].id, '_blank');
@@ -263,14 +269,16 @@ var moment = require('moment');
                         }
                     }
                     $scope.wallsPresent = true;
-
-                    // Reset wall options
                     initWallOptions();
+
+                    // Open new wall
                     window.open('/' + $scope.currentUser._id + '/wall/' + result.id);
                     $scope.userWalls[latestWallIdx].showLoading = false;
 
                 });
         }
+        // Reset isEditing to -1
+        $scope.isEditing = -1;
 
     } else {
         alert("Please sign in first");
@@ -310,6 +318,7 @@ $scope.resetLogo = function() {
             //$scope.userWalls[index].showLoading = false;
         });
         $scope.isEditing = -1;
+        $scope.selectedTab(-1);
     };
 
     $scope.editWall = function(index) {
@@ -319,6 +328,8 @@ $scope.resetLogo = function() {
 
         $scope.statuses = [];   
         $scope.newWallOptions = $scope.userWalls[index];
+        $scope.newWallOptions.sinceDate = new Date($scope.newWallOptions.sinceDate);
+        $scope.newWallOptions.untilDate = new Date($scope.newWallOptions.untilDate);
 
         // Remove previous index's listener
         if($scope.lastEdited > -1){
@@ -408,7 +419,6 @@ $scope.pollWallTweets = function(){
         //     $interval.cancel($rootScope.modPostPromise);
         // }
         socket.removeAllListeners();
-
     });
 
     angular.element(document).bind("keydown", function(event) {
@@ -416,7 +426,7 @@ $scope.pollWallTweets = function(){
             $scope.$apply(function() {
                 $scope.tweetModalShow = false;   
                 $scope.isEditing = -1;
-                $scope.selectedTab=0;
+                $scope.selectedTab = 0;
             });
         }
     });
