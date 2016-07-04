@@ -98,7 +98,7 @@ module.exports.updateTweet = function (req, res) {
     }
 }
 
-// Remove from store
+// Remove all tweets matching the userwallId from store
 module.exports.deleteTweet = function (req, res) { 
     if (!req.isAuthenticated()) {
         console.log("not Authenticated");
