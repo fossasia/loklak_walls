@@ -90,6 +90,7 @@
     "bootstrap": "^3.3.4",
     "browserify-shim": "^3.8.9",
     "chart.js": "^1.0.2",
+    "cron": "^1.1.0",
     "gulp-nodemon": "^2.0.3",
     "jquery": "^2.1.4",
     "jquery-browserify": "^1.8.1",

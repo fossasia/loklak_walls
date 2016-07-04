@@ -82,7 +82,7 @@ var moment = require('moment');
         if (index === 2) {
             $scope.showNext = false;
             $scope.showStart = true;
-        } else if (index === 3){
+        } else if (index >= 3){
             $scope.showNext = false;
             $scope.showStart = false;
         } else {
@@ -181,7 +181,7 @@ var moment = require('moment');
                 } else if ($scope.selectedTab === 2) {
                     $scope.showNext = false;
                     $scope.showStart = true;
-                } else if ($scope.selectedTab === 3){
+                } else if ($scope.selectedTab >= 3){
                     $scope.showNext = false;
                     $scope.showStart = false;
                 }

@@ -10,10 +10,12 @@
                 <div class="row">
                     <div class="col-xs-2 tabs-list" style="position:fixed;">
                         <ul class="nav nav-tabs tabs-left" id="selectTab">
+                            <!-- tabSelected for next / start btns -->
                             <li ng-click="tabSelected(0)" class="active"><a href="#info" data-toggle="tab"><i class="fa fa-align-left fa-2x"></i><br><h4>INFO</h4></a></li>
                             <li ng-click="tabSelected(1)"><a href="#content" data-toggle="tab"><i class="fa fa-filter fa-2x"></i><br><h4>CONTENT</h4></a></li>
                             <li ng-click="tabSelected(2)"><a href="#design" data-toggle="tab"><i class="fa fa-paint-brush fa-2x"></i><br><h4>DESIGN</h4></a></li>
-                            <li ng-show="newWallOptions.moderation"ng-click="tabSelected(3)"><a href="#moderation" data-toggle="tab"><i class="fa fa-ban fa-2x"></i><br><h4>MODERATION</h4></a></li>
+                            <li ng-show="newWallOptions.moderation"ng-click="tabSelected(3)"><a href="#moderation" data-toggle="tab"><i class="fa fa-ban fa-2x"></i><br><h4>MODERATE</h4></a></li>
+                            <li ng-click="tabSelected(4)"><a href="#announcements" data-toggle="tab"><i class="fa fa-bullhorn fa-2x"></i><br><h4>ANNOUNCE</h4></a></li>
                         </ul>
                     </div>
                     <div class="col-xs-offset-2">
@@ -352,6 +354,15 @@
                                             <div ng-repeat="status in statuses track by $index" linear-approve open="wall.open" toggle="wall.toggle" data="status"></div>
                                         </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="announcements">
+                                <div class="box-body">
+                                    <div class="row wall-preview-container">
+                                     <div class="row">
+                                        <div ng-repeat="announce in announces track by $index" linear-announce data="announce"></div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>
