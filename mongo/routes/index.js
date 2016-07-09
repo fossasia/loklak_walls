@@ -79,7 +79,8 @@ router.put   ('/tweets/:tweetId', auth, ctrlTweetStore.updateTweet);
 router.delete('/tweets/:userWallId', auth, ctrlTweetStore.deleteTweet); // delete all tweets on wall delete
 
 // ANNOUNCEMENT API ====================
-router.get   ('/announces/:userWallId', ctrlAnnounceStore.getAllAnnouncesById);				 // for display
+router.get   ('/announces/current/:userWallId', ctrlAnnounceStore.getCurrentAnnounce);		 // for wallDisplay
+router.get   ('/announces/:userWallId', ctrlAnnounceStore.getAllAnnouncesById);				 // for dashboard
 router.get   ('/announces/:userWallId/:announceId', auth, ctrlAnnounceStore.getAnnounceById);// for edit
 router.post  ('/announces/:userWallId', auth, ctrlAnnounceStore.storeAnnounce);				 // for save & edit
 // router.put   ('/announces/:announceId', auth, ctrlAnnounceStore.updateAnnounce);			 // unused edit

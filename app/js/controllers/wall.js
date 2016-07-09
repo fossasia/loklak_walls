@@ -39,10 +39,8 @@ var moment = require('moment');
     // for submitting annoucement
     $scope.addAnnounce = function(){
         var userWallId = $rootScope.root.currentUser._id + $scope.userWalls[$scope.isEditing].id;
-        console.log(userWallId, $scope.newAnnounce)
         $http.post('/api/announces/' + userWallId, $scope.newAnnounce)
         .success(function(data) {
-            console.log(data);
             // clear form
             $scope.newAnnounce = {
                 duration: 15,
@@ -393,7 +391,9 @@ $scope.resetLogoAnnounce = function() {
         })
 
         $http.get('/api/announces/' + userWallId).then(function(res){
-            $scope.announces=res.data.announces;
+            if(res.data.announces.length>0){
+                $scope.announces=res.data.announces;
+            }
         });
 
         // Insert sorted by start date
@@ -411,7 +411,9 @@ $scope.resetLogoAnnounce = function() {
             }
             if(len === 0){
                 $scope.announces.splice(idx,0,announce);
+                return;
             }
+            $scope.announces.push(announce);
 
         })
 };

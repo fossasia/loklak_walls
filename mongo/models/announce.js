@@ -10,6 +10,7 @@ var AnnouceSchema = new Schema({
   duration: Number,
   logo: {},
   cronJobId: String,
+  current: Boolean,
 });
 mongoose.model('Announce', AnnouceSchema);
 

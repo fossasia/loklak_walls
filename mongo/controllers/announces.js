@@ -4,13 +4,26 @@ var io = require(__dirname + '/../../gulp/tasks/server.js');
 var CronJob = require('cron').CronJob;
 var shortid = require('shortid')
 
+// Get current announcement for wall display
+// announces/current/:userWallId
+module.exports.getCurrentAnnounce = function(req, res){
+    Announce
+    .find({
+        userWallId: req.params.userWallId,
+        current: true
+    })
+    .exec(function(err, announce){
+        console.log(announce)
+        res.json({announce:announce})
+    })
+}
+
 // Get all announcement for dashboard
 // /announces/:userWallId
 
 module.exports.getAllAnnouncesById = function(req,res){
     Announce
     .find({userWallId: req.params.userWallId})
-    .limit(50)
     .sort({startDateTime: 1})
     .exec(function(err, announces){
         // console.log('first', announces[0]);
@@ -29,7 +42,7 @@ module.exports.getAnnounceById = function (req, res) {
         Announce
         .findById(req.params.announceId)
         .exec(function(err, announce) {
-            console.log(announce);
+            // console.log(announce);
             res.jsonp({announce: announce});
         });
     }
@@ -40,13 +53,11 @@ module.exports.getAnnounceById = function (req, res) {
 
 var cronJobMap = {};
 module.exports.storeAnnounce = function (req, res) {
-
+    var userWallId = req.params.userWallId;
     var announcement = req.body;
+
     if(announcement._id){
         // update
-
-        io.emit('replace' + announcement.userWallId, announcement);
-
         Announce
         .findByIdAndUpdate(announcement._id, {$set: announcement})
         .exec(function(err, Announce) {
@@ -54,33 +65,48 @@ module.exports.storeAnnounce = function (req, res) {
                 console.log(err);
             }
             if(cronJobMap[announcement.cronJobId]){
-                cronJobMap[announcement.cronJobId].stop();
                 cronJobMap[announcement.cronJobId] = new CronJob(new Date(announcement.startDateTime), function(){
-                    console.log('started');
+                    Announce.findOneAndUpdate({userWallId: userWallId, current: true}, { $set: {current: false}}, {new: true},
+                    function(err, announce){
+                        // Update wall displays w/ the most recent announcement
+                        Announce.findOneAndUpdate({_id:datum._id}, 
+                            {$set: {current: true}}, {new: true},function(err, doc){console.log(err);});
+                        io.emit("putCurrentAnnounce" + userWallId, datum);
+                    })
                 },null,true);
             }
 
-            console.log("RESULT: " + Announce);
             res.json({Announce: Announce});
         });
 
     } else {
         // insert
         var newAnnounceId = shortid.generate();
-        cronJobMap[newAnnounceId] = new CronJob(new Date(announcement.startDateTime), function(){
-            console.log('started');
-        },null,true);
+        
         announcement.cronJobId = newAnnounceId;
         announcement.userWallId = req.params.userWallId;
+        announcement.current = false;
 
         var newAnnounce = new Announce(announcement);
         newAnnounce.save(function(err,datum){
-            if(err!==null){
+            if(err !== null){
                 console.log("err", err);  
             } else{
                 console.log("adding new announcement", datum);
                 // EMIT POST EVENT to add tweets with ._id
-                io.emit("addNewAnnounce" + datum.userWallId, datum);
+                io.emit("addNewAnnounce" + userWallId, datum);
+
+                // Add cron job to trigger announcement at given date
+                cronJobMap[newAnnounceId] = new CronJob(new Date(announcement.startDateTime), function(){
+                    // console.log('switching previous to false')
+                    Announce.findOneAndUpdate({userWallId: userWallId, current: true}, { $set: {current: false}}, {new: true},
+                    function(err, announce){
+                        // Update wall displays w/ the most recent announcement
+                        Announce.findOneAndUpdate({_id:datum._id}, 
+                            {$set: {current: true}}, {new: true},function(err, doc){console.log(err);});
+                        io.emit("putCurrentAnnounce" + userWallId, datum);
+                    })
+                },null,true);
             }
         })
         
@@ -126,6 +152,15 @@ module.exports.deleteAllAnnounce = function (req, res) {
         console.log("not Authenticated");
         res.status(401).jsonp([]);
     } else {
+
+        Announce
+        .find({userWallId: req.params.userWallId})
+        .exec(function(err, announces){
+            announces.forEach(function(announce){
+                delete cronJobMap[announce.cronJobId];
+            })
+        })
+
         Announce
         .remove({userWallId: req.params.userWallId})
         .exec(function(err){
@@ -141,10 +176,12 @@ module.exports.deleteAnnounce = function (req, res) {
         res.status(401).jsonp([]);
     } else {
         Announce
-        .findByIdAndRemove(req.params.announceId, function(err){
+        .findById(req.params.announceId, function(err, announce){
             if(err){
                 console.log("error:", err);
             } else {
+                delete cronJobMap[announce.cronJobId];
+                announce.remove();
                 res.json({message: "deleted"})
             }
         });
