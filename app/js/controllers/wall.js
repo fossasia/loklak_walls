@@ -27,14 +27,10 @@ var moment = require('moment');
     $scope.isLoggedIn= $rootScope.root.isLoggedIn;
     $scope.currentUser= $rootScope.root.currentUser;
     $scope.statuses= [];
-    $scope.newAnnounce= {};
-    $scope.announces=[{
-      _id: "1",
-      userWallId: "test", 
-      header: "test", 
-      subHeader: "test", 
-      text: "test", 
-    }]
+    $scope.newAnnounce= {
+        duration: 15,
+    };
+    $scope.announces=[];
 
     
     // for thumbnail url
@@ -47,10 +43,28 @@ var moment = require('moment');
         $http.post('/api/announces/' + userWallId, $scope.newAnnounce)
         .success(function(data) {
             console.log(data);
+            // clear form
+            $scope.newAnnounce = {
+                duration: 15,
+            };
         }).error(function() {
             SweetAlert.alert("Please try again", {title: "Error Adding Annoucement!"});
         });
 
+    }
+
+    $scope.editAnnounce = function(announce){
+        $scope.newAnnounce = announce;
+        $scope.newAnnounce.startDateTime = new Date(announce.startDateTime);
+    }
+
+    $scope.deleteAnnounce = function(announce){
+        var userWallId = $rootScope.root.currentUser._id + $scope.userWalls[$scope.isEditing].id;
+        var idx = $scope.announces.map(function(ann){ return ann._id; }).indexOf(announce._id);
+        if (idx > -1) {
+            $scope.announces.splice(idx, 1);
+            $http.delete('/api/announces/'+ userWallId + '/' + announce._id);
+        }
     }
     /*
      * Location UI component
@@ -314,15 +328,20 @@ $scope.resetDate = function() {
 
 $scope.resetLogo = function() {
     $scope.newWallOptions.logo = null;
-        //$scope.$apply();
-    };
+    //$scope.$apply();
+};
 
-    // TODO: remove tweets with same userWallId
+$scope.resetLogoAnnounce = function() {
+    $scope.newAnnounce.logo = null;
+    //$scope.$apply();
+};
+
     $scope.deleteWall = function(index) {
         $scope.currentUser=$rootScope.root.currentUser;
         // $interval.cancel($rootScope.modPostPromise);
         $http.delete('/api/tweets/'+$scope.currentUser._id+$scope.userWalls[index].id, index)
         // .then(function(data){console.log(data)});
+        $http.delete('/api/announces/'+$scope.currentUser._id+$scope.userWalls[index].id)
 
         //console.log(index);
         $scope.userWalls[index].showLoading = true;
@@ -339,7 +358,7 @@ $scope.resetLogo = function() {
             //$scope.userWalls[index].showLoading = false;
         });
         $scope.isEditing = -1;
-        $scope.selectedTab(-1);
+        $scope.tabSelected(-1);
     };
 
     $scope.editWall = function(index) {
@@ -362,15 +381,38 @@ $scope.resetLogo = function() {
 
 
         // POLL MODERATION DATA FROM DB, THEN LISTEN FOR SOCKET.IO EVENTS
-        var userWallIdURL = '/api/tweets/' + currentUserId + wallId;
-        $http.get(userWallIdURL).then(function(res){
+        var userWallId =  currentUserId + wallId;
+        $http.get('/api/tweets/' + userWallId).then(function(res){
             $scope.statuses=res.data.statuses;
         });
 
-        socket.on('addNewTweets' + currentUserId + wallId, function(tweetArr){
+        socket.on('addNewTweets' + userWallId, function(tweetArr){
             tweetArr.forEach(function(el,idx){
                 $scope.statuses.splice(idx,0,el);
             })
+        })
+
+        $http.get('/api/announces/' + userWallId).then(function(res){
+            $scope.announces=res.data.announces;
+        });
+
+        // Insert sorted by start date
+        socket.on('addNewAnnounce' + currentUserId + wallId, function(announce){
+            var idx = 0,
+                len = $scope.announces.length,
+                announceStart = new Date(announce.startDateTime);
+            while(idx<len){
+                var currentAnnounceStart = new Date($scope.announces[idx].startDateTime);
+                if(announceStart <= currentAnnounceStart){
+                    $scope.announces.splice(idx,0,announce);
+                    return;
+                }
+                idx++;
+            }
+            if(len === 0){
+                $scope.announces.splice(idx,0,announce);
+            }
+
         })
 };
 

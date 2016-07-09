@@ -950,13 +950,21 @@ a {
     line-height: 1.3em;
 }
 
+
+// For Material Design Date-Time Picker
 .md-dialog-container{
     z-index: 1050 !important;
     background-color: rgba(0, 0, 0, 0.34);
 }
+
 md-dialog{
     opacity: 1 !important;
     md-dialog-content{
         padding: 0 !important;
     }
+}
+
+img.announce-thumbnail-logo {
+    max-height: 124px;
+    width: auto;
 }

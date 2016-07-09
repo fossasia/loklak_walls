@@ -376,7 +376,7 @@
                                             <div class="col-md-12">
                                               <md-input-container style="width:100%">
                                                   <label style="top: initial;">Subheader</label>
-                                                  <textarea ng-model="newAnnounce.subheader" md-maxlength="150" rows="5" md-select-on-focus></textarea>
+                                                  <textarea ng-model="newAnnounce.subheader" md-maxlength="150" md-select-on-focus></textarea>
                                               </md-input-container>
                                             </div>
                                             </div>
@@ -391,17 +391,28 @@
                                             <div class="col-md-6">
                                                 <md-input-container style="width:100%">
                                                   <label style="top: initial;">Duration /minutes</label>
-                                                  <input required type="number" step="1" name="duration" ng-model="newAnnounce.duration" min="1" max="4999" 
+                                                  <input required type="number" step="5" name="duration" ng-model="newAnnounce.duration" min="0" max="4999" 
                                                   id="announceDateTime">
                                                 </md-input-container>
                                             </div>
                                             </div>
-                                            <md-button ng-hide="(!showNext) && ((step1.eventNameInput.$invalid) || (step1.hashtagInput.$invalid))" class="md-raised" ng-click="addAnnounce()" style="font-size: 12px;">Submit</md-button>
 
+                                                <div class="form-group" style="margin-top: 24px;">
+                                                    <label class="info"><h4>Announcement logo</h4></label>
+                                                    <br>
+                                                    <div class="btn btn-default btn-file">
+                                                        <input type='file' ng-model='newAnnounce.logo' accept="image/*" maxsize="500" base-sixty-four-input>Choose Image
+                                                    </div>
+                                                    <img class="announce-thumbnail-logo" ng-if="newAnnounce.logo" ng-src="data:{{newAnnounce.logo.filetype}};base64,{{newAnnounce.logo.base64}}" /><span ng-show="invalidFile">File must not exceed 500 KB.</span>
+                                                    <button ng-if="newAnnounce.logo" ng-click="resetLogoAnnounce()" class=" btn btn-danger">Clear</button>
+                                                </div>
+                                                <div style="padding: 42px 0 0 60px;">
+                                                    <a class="btn btn-lg btn-loklak-blue" ng-hide="(!showNext) && ((step1.eventNameInput.$invalid) || (step1.hashtagInput.$invalid))" class="md-raised" ng-click="addAnnounce()" >Submit</a>
+                                                </div>
                                         </div>
                                         <div class="col-md-6">
                                             <h3>Your Announcements</h3>
-                                            <div ng-repeat="announce in announces track by $index" linear-announce data="announce"></div>
+                                            <div ng-repeat="announce in announces track by $index" linear-announce data="announce" edit-announce="editAnnounce(announce)" delete-announce="deleteAnnounce(announce)"></div>
                                         </div>
                                      
                                     </div>
@@ -416,7 +427,7 @@
                 <div style="float:left;" class="col-xs-offset-2">
                     <a ng-show="showNext" ng-click="proceed()" type="submit" style="margin-left: 15px;" class="btn btn-lg btn-loklak-blue">Next Step</a>
                     <!-- <a ng-click="proceed()" type="submit" class="btn btn-primary">Save and Close</a> -->
-                    <a ng-show="showStart" ng-disabled="!(newWallOptions.eventName && newWallOptions.mainHashtagText)" type="submit" class="btn btn-lg btn-loklak-blue" style="margin-left: 15px;"ng-click="!(newWallOptions.eventName && newWallOptions.mainHashtagText) || start()">Save twitter wall</a>
+                    <a ng-show="showStart" ng-disabled="!(newWallOptions.eventName && newWallOptions.mainHashtagText)" type="submit" class="btn btn-lg btn-loklak-blue" style="margin-left: 15px;"ng-click="!(newWallOptions.eventName && newWallOptions.mainHashtagText) || start()">Start twitter wall</a>
                     <span ng-show="(!showNext) && ((step1.eventNameInput.$invalid) || (step1.hashtagInput.$invalid))" style="color:red;">Enter an event name and your event's main hashtag</span>
                 </div>
             </div>

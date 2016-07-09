@@ -8,6 +8,7 @@ var AnnouceSchema = new Schema({
   subheader: String,
   startDateTime: Date,
   duration: Number,
+  logo: {},
   cronJobId: String,
 });
 mongoose.model('Announce', AnnouceSchema);

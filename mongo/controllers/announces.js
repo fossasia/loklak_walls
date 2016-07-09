@@ -11,7 +11,7 @@ module.exports.getAllAnnouncesById = function(req,res){
     Announce
     .find({userWallId: req.params.userWallId})
     .limit(50)
-    .sort({created_at: -1})
+    .sort({startDateTime: 1})
     .exec(function(err, announces){
         // console.log('first', announces[0]);
         res.json({announces: announces});
@@ -41,27 +41,51 @@ module.exports.getAnnounceById = function (req, res) {
 var cronJobMap = {};
 module.exports.storeAnnounce = function (req, res) {
 
-    var announcement = req.body;    
-    var newAnnounceId = shortid.generate();
-    cronJobMap[newAnnounceId] = new CronJob(new Date(announcement.startDateTime), function(){
-        console.log('started');
-    },null,true);
-    announcement.cronJobId = newAnnounceId;
-    announcement.userWallId = req.params.userWallId;
-    console.log(cronJobMap)
+    var announcement = req.body;
+    if(announcement._id){
+        // update
 
-    var newAnnounce = new Announce(announcement);
-    newAnnounce.save(function(err,datum){
-        if(err!==null){
-            console.log("err", err);  
-        } else{
-            console.log("adding new announcement", datum);
-            // EMIT POST EVENT to add tweets with ._id
-            io.emit("addNewAnnounce" + datum.userWallId, datum);
-        }
-    })
-    
-    res.jsonp({message: "inserted"});
+        io.emit('replace' + announcement.userWallId, announcement);
+
+        Announce
+        .findByIdAndUpdate(announcement._id, {$set: announcement})
+        .exec(function(err, Announce) {
+            if(err){
+                console.log(err);
+            }
+            if(cronJobMap[announcement.cronJobId]){
+                cronJobMap[announcement.cronJobId].stop();
+                cronJobMap[announcement.cronJobId] = new CronJob(new Date(announcement.startDateTime), function(){
+                    console.log('started');
+                },null,true);
+            }
+
+            console.log("RESULT: " + Announce);
+            res.json({Announce: Announce});
+        });
+
+    } else {
+        // insert
+        var newAnnounceId = shortid.generate();
+        cronJobMap[newAnnounceId] = new CronJob(new Date(announcement.startDateTime), function(){
+            console.log('started');
+        },null,true);
+        announcement.cronJobId = newAnnounceId;
+        announcement.userWallId = req.params.userWallId;
+
+        var newAnnounce = new Announce(announcement);
+        newAnnounce.save(function(err,datum){
+            if(err!==null){
+                console.log("err", err);  
+            } else{
+                console.log("adding new announcement", datum);
+                // EMIT POST EVENT to add tweets with ._id
+                io.emit("addNewAnnounce" + datum.userWallId, datum);
+            }
+        })
+        
+        res.jsonp({message: "inserted"});
+    }
 }
 
 // Update approval status to it's opposite
@@ -106,6 +130,7 @@ module.exports.deleteAllAnnounce = function (req, res) {
         .remove({userWallId: req.params.userWallId})
         .exec(function(err){
             console.log("err", err);
+            res.json({message: "deleted"})
         });
     }
 }
@@ -116,9 +141,12 @@ module.exports.deleteAnnounce = function (req, res) {
         res.status(401).jsonp([]);
     } else {
         Announce
-        .findByIdAndRemove(req.params.announceId)
-        .exec(function(err){
-            console.log(err);
+        .findByIdAndRemove(req.params.announceId, function(err){
+            if(err){
+                console.log("error:", err);
+            } else {
+                res.json({message: "deleted"})
+            }
         });
     }
 }
