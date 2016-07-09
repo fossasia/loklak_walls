@@ -9,7 +9,7 @@ var moment = require('moment');
 /**
  * @ngInject
  */
- function WallCtrl($scope, $rootScope, $timeout, AppsService, HelloService, SearchService, AuthService, $http, $interval, socket) {
+ function WallCtrl($scope, $rootScope, $timeout, AppsService, HelloService, SearchService, AuthService, $http, $interval, socket, SweetAlert) {
 
     var vm = this;
     var term = '';
@@ -25,12 +25,33 @@ var moment = require('moment');
     $scope.showStart = false;
     $scope.selectedTab = 0;
     $scope.isLoggedIn= $rootScope.root.isLoggedIn;
-    $scope.currentUser=$rootScope.root.currentUser;
-    $scope.statuses=[];
+    $scope.currentUser= $rootScope.root.currentUser;
+    $scope.statuses= [];
+    $scope.newAnnounce= {};
+    $scope.announces=[{
+      _id: "1",
+      userWallId: "test", 
+      header: "test", 
+      subHeader: "test", 
+      text: "test", 
+    }]
+
     
     // for thumbnail url
     $scope.current_id = function(){ return $rootScope.root.currentUser._id; }
 
+    // for submitting annoucement
+    $scope.addAnnounce = function(){
+        var userWallId = $rootScope.root.currentUser._id + $scope.userWalls[$scope.isEditing].id;
+        console.log(userWallId, $scope.newAnnounce)
+        $http.post('/api/announces/' + userWallId, $scope.newAnnounce)
+        .success(function(data) {
+            console.log(data);
+        }).error(function() {
+            SweetAlert.alert("Please try again", {title: "Error Adding Annoucement!"});
+        });
+
+    }
     /*
      * Location UI component
      * If user input > 3 chars, suggest location
@@ -433,4 +454,4 @@ $scope.pollWallTweets = function(){
 
 }
 
-controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', '$http', '$interval', 'socket', WallCtrl]);
+controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', '$http', '$interval', 'socket', 'SweetAlert', WallCtrl]);

@@ -916,7 +916,6 @@ label.info {
     font-weight: 400;
     &.hashtag {
     transform: initial !important;
-    top: 36px !important;
     }
 }
 
@@ -927,8 +926,8 @@ label.info {
 
 img.Emoji.Emoji--forText {
     width: 33px;
-}
 
+}
 td > a {
     color: #ffffff;
 }
@@ -949,4 +948,15 @@ a {
 .leaderBoardEnabled {
     font-size: 2vh;
     line-height: 1.3em;
+}
+
+.md-dialog-container{
+    z-index: 1050 !important;
+    background-color: rgba(0, 0, 0, 0.34);
+}
+md-dialog{
+    opacity: 1 !important;
+    md-dialog-content{
+        padding: 0 !important;
+    }
 }

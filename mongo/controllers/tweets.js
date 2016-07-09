@@ -10,7 +10,7 @@ module.exports.getAllTweetsById = function(req,res){
     .limit(50)
     .sort({created_at: -1})
     .exec(function(err, tweetArr){
-        console.log('first', tweetArr[0]);
+        // console.log('first', tweetArr[0]);
         res.json({statuses: tweetArr});
     })
 }

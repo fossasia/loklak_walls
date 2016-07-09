@@ -1,22 +1,26 @@
 var mongoose = require('mongoose');
 var Announce = mongoose.model('Announce');
 var io = require(__dirname + '/../../gulp/tasks/server.js');
+var CronJob = require('cron').CronJob;
+var shortid = require('shortid')
 
-// /announces/:userWallId
 // Get all announcement for dashboard
+// /announces/:userWallId
+
 module.exports.getAllAnnouncesById = function(req,res){
     Announce
     .find({userWallId: req.params.userWallId})
     .limit(50)
     .sort({created_at: -1})
     .exec(function(err, announces){
-        console.log('first', announces[0]);
+        // console.log('first', announces[0]);
         res.json({announces: announces});
     })
 }
 
-// /announces/:userWallId/:announceId
 // for editing one announcement
+// /announces/:userWallId/:announceId
+
 module.exports.getAnnounceById = function (req, res) {
     if (!req.isAuthenticated()) {
         console.log("not Authenticated");
@@ -31,19 +35,29 @@ module.exports.getAnnounceById = function (req, res) {
     }
 }
 
-// Saves tweet array
-// req.body has properties: .announce, .userWallId
+// Saves announce array
+// /announces/:userWallId
+
+var cronJobMap = {};
 module.exports.storeAnnounce = function (req, res) {
 
-    var newAnnounce = new Announce(req.body.announce);
+    var announcement = req.body;    
+    var newAnnounceId = shortid.generate();
+    cronJobMap[newAnnounceId] = new CronJob(new Date(announcement.startDateTime), function(){
+        console.log('started');
+    },null,true);
+    announcement.cronJobId = newAnnounceId;
+    announcement.userWallId = req.params.userWallId;
+    console.log(cronJobMap)
+
+    var newAnnounce = new Announce(announcement);
     newAnnounce.save(function(err,datum){
         if(err!==null){
             console.log("err", err);  
         } else{
-
-            console.log("adding new tweet")
+            console.log("adding new announcement", datum);
             // EMIT POST EVENT to add tweets with ._id
-            io.emit("addNewTweets"+req.body.userWallId, datum);
+            io.emit("addNewAnnounce" + datum.userWallId, datum);
         }
     })
     
