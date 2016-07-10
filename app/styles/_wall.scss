@@ -384,6 +384,8 @@
 
 .wall-header-eventname {
     padding: 0;
+    font-size: 6vh;
+    font-family: Roboto, Arial, sans-serif;
 }
 
 .wall-body {
@@ -967,4 +969,16 @@ md-dialog{
 img.announce-thumbnail-logo {
     max-height: 124px;
     width: auto;
+}
+
+.watermark{
+    &:hover{
+        opacity: 1;
+    }
+    font-size: 16px;
+    font-weight: 600;
+    font-family: Roboto, sans-serif, Arial;
+    text-transform: uppercase;
+    opacity: 0.25;
+    transition: 0.5s;
 }

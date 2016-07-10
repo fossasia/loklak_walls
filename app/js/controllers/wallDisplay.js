@@ -16,7 +16,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
     vm = this;
     vm.invalidId = false;
     vm.statuses = [];
-    vm.currentAnnoucement=null;
+    vm.currentAnnounce=[];
     var cycleInterval, 
         tweetTimeout,
         leaderboardInterval;
@@ -211,8 +211,8 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
             }
         });
         $http.get('/api/announces/current/' + userWallId).then(function(res){
-            if(res.data.announce.length>0){
-                vm.currentAnnoucement = res.data.announce[0];
+            if(res.data.announces && res.data.announces.length>0){
+                vm.currentAnnounce = res.data.announces;
             }
         })
         searchParams = {};
@@ -668,8 +668,10 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         }
     })
 
-    socket.on('putCurrentAnnounce' + userWallId, function(res){
-        vm.currentAnnoucement = res;
+    socket.on('putCurrentAnnounce' + userWallId, function(){
+        $http.get('/api/announces/current/' + userWallId).then(function(res){
+            vm.currentAnnounce = res.data.announces;
+        })
     })
 
     $scope.$on('$destroy', function() {

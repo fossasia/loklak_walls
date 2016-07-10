@@ -2,7 +2,8 @@ var mongoose = require('mongoose');
 var Announce = mongoose.model('Announce');
 var io = require(__dirname + '/../../gulp/tasks/server.js');
 var CronJob = require('cron').CronJob;
-var shortid = require('shortid')
+var shortid = require('shortid');
+var moment = require('moment');
 
 // Get current announcement for wall display
 // announces/current/:userWallId
@@ -12,9 +13,10 @@ module.exports.getCurrentAnnounce = function(req, res){
         userWallId: req.params.userWallId,
         current: true
     })
-    .exec(function(err, announce){
-        console.log(announce)
-        res.json({announce:announce})
+    .sort({startDateTime: 1})
+    .exec(function(err, announces){
+        // console.log(announces)
+        res.json({announces:announces});
     })
 }
 
@@ -60,19 +62,30 @@ module.exports.storeAnnounce = function (req, res) {
         // update
         Announce
         .findByIdAndUpdate(announcement._id, {$set: announcement})
-        .exec(function(err, Announce) {
+        .exec(function(err, announce) {
             if(err){
                 console.log(err);
             }
             if(cronJobMap[announcement.cronJobId]){
                 cronJobMap[announcement.cronJobId] = new CronJob(new Date(announcement.startDateTime), function(){
-                    Announce.findOneAndUpdate({userWallId: userWallId, current: true}, { $set: {current: false}}, {new: true},
-                    function(err, announce){
-                        // Update wall displays w/ the most recent announcement
-                        Announce.findOneAndUpdate({_id:datum._id}, 
-                            {$set: {current: true}}, {new: true},function(err, doc){console.log(err);});
-                        io.emit("putCurrentAnnounce" + userWallId, datum);
-                    })
+                    // Update wall displays w/ the most recent announcement
+                    Announce.findOneAndUpdate({_id:announce._id}, {$set: {current: true}}, {new: true},
+                        function(err, doc){
+                            console.log(err);
+                            io.emit("putCurrentAnnounce" + userWallId);
+                        }
+                    );
+                },null,true);
+                // Add cron job to trigger announcement at given date
+                var endTime = moment(announcement.startDateTime).add(announcement.duration,'m').toDate();
+                cronJobMap[newAnnounceId + 'del'] = new CronJob(endTime, function(){
+                // console.log('switching previous to false')
+                    Announce.findOneAndUpdate({_id:announce._id}, { $set: {current: false}}, {new: true},
+                        function(err,doc){
+                            console.log(err);
+                            io.emit("putCurrentAnnounce" + userWallId);
+                        }
+                    );
                 },null,true);
             }
 
@@ -98,18 +111,31 @@ module.exports.storeAnnounce = function (req, res) {
 
                 // Add cron job to trigger announcement at given date
                 cronJobMap[newAnnounceId] = new CronJob(new Date(announcement.startDateTime), function(){
-                    // console.log('switching previous to false')
-                    Announce.findOneAndUpdate({userWallId: userWallId, current: true}, { $set: {current: false}}, {new: true},
-                    function(err, announce){
-                        // Update wall displays w/ the most recent announcement
-                        Announce.findOneAndUpdate({_id:datum._id}, 
-                            {$set: {current: true}}, {new: true},function(err, doc){console.log(err);});
-                        io.emit("putCurrentAnnounce" + userWallId, datum);
-                    })
+                    // Update wall displays w/ the most recent announcement
+                    Announce.findOneAndUpdate({_id:datum._id}, {$set: {current: true}}, {new: true},
+                        function(err, doc){
+                            console.log(err);
+                            io.emit("putCurrentAnnounce" + userWallId);
+                        }
+                    );
                 },null,true);
+
+                // Add cron job to trigger announcement at given date
+                var endTime = moment(announcement.startDateTime).add(announcement.duration,'m').toDate();
+                cronJobMap[newAnnounceId + 'del'] = new CronJob(endTime, function(){
+                // console.log('switching previous to false')
+                    Announce.findOneAndUpdate({_id:datum._id}, { $set: {current: false}}, {new: true},
+                        function(err,doc){
+                            console.log(err);
+                            io.emit("putCurrentAnnounce" + userWallId);
+                        }
+                    );
+                },null,true);
+
+
             }
         })
-        
+        console.log(cronJobMap)
         res.jsonp({message: "inserted"});
     }
 }
@@ -181,8 +207,10 @@ module.exports.deleteAnnounce = function (req, res) {
                 console.log("error:", err);
             } else {
                 delete cronJobMap[announce.cronJobId];
+                delete cronJobMap[announce.cronJobId + 'del'];
                 announce.remove();
                 res.json({message: "deleted"})
+                io.emit("putCurrentAnnounce" + userWallId);
             }
         });
     }

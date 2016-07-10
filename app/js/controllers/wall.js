@@ -337,9 +337,10 @@ $scope.resetLogoAnnounce = function() {
     $scope.deleteWall = function(index) {
         $scope.currentUser=$rootScope.root.currentUser;
         // $interval.cancel($rootScope.modPostPromise);
-        $http.delete('/api/tweets/'+$scope.currentUser._id+$scope.userWalls[index].id, index)
+        $http.delete('/api/tweets/'+$scope.currentUser._id+$scope.userWalls[index].id, index);
         // .then(function(data){console.log(data)});
-        $http.delete('/api/announces/'+$scope.currentUser._id+$scope.userWalls[index].id)
+        $http.delete('/api/announces/'+$scope.currentUser._id+$scope.userWalls[index].id);
+        $scope.wallOptions.announces=[];
 
         //console.log(index);
         $scope.userWalls[index].showLoading = true;
@@ -391,9 +392,7 @@ $scope.resetLogoAnnounce = function() {
         })
 
         $http.get('/api/announces/' + userWallId).then(function(res){
-            if(res.data.announces.length>0){
-                $scope.announces=res.data.announces;
-            }
+            $scope.announces=res.data.announces;
         });
 
         // Insert sorted by start date

@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
-<link rel="stylesheet" type="text/css" href="css/angular-chart.css">
+<link rel="stylesheet" type="text/css" href="/css/angular-chart.css">
+<link rel="stylesheet" type="text/css" href="/css/angular-material.min.css">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 <style>
 .custom .leaflet-popup-tip,
@@ -11,23 +12,40 @@
     right: 100px;
 }
 </style>
+<style type="text/css">
+#timeline .timeline-item .timeline-content::before {
+    border-right: 7px solid {{wall.wallOptions.headerColour}};
+}
+#timeline:before {
+    background: {{wall.wallOptions.headerColour}};
+}
+
+</style>
 <div>
     <div ng-style="{'background-color': wall.wallOptions.headerColour}" ng-class="getHeaderClass()">
-        <div ng-style="{'color': wall.wallOptions.headerForeColour} " class="hashtag col-md-4">{{wall.wallOptions.mainHashtag}}</div>
-        <div ng-style="{'color': wall .wallOptions.headerForeColour} " class="event-name col-md-4">
-            <div><img ng-if="wall.wallOptions.logo" class="wall-preview-logo" data-ng-src="data:{{wall.wallOptions.logo.filetype}};base64,{{wall.wallOptions.logo.base64}}">
-                <div ng-hide="!wall.wallOptions.showEventName" class="wall-header-eventname">{{wall.wallOptions.eventName}}</div>
+
+        <div ng-style="{'color': wall.wallOptions.headerForeColour}" class="hashtag col-md-4">
+            <span class="wall-header-eventname">{{wall.wallOptions.mainHashtag}}</span>
+        </div>
+        <div ng-style="{'color': wall.wallOptions.headerForeColour}" class="event-name col-md-4">
+            <img ng-if="wall.wallOptions.logo" class="wall-preview-logo" data-ng-src="data:{{wall.wallOptions.logo.filetype}};base64,{{wall.wallOptions.logo.base64}}">
+            <div ng-hide="!wall.wallOptions.showEventName" class="wall-header-eventname">
+                {{wall.wallOptions.eventName}}
             </div>
         </div>
-        <div class="banner col-md-3"><a ng-hide="!wall.wallOptions.showLoklakLogo" ng-style="{'color': wall.wallOptions.headerForeColour} " href="/">Powered by Loklak.net</a></div>
-        <div class="banner col-md-1">
+        <div class="banner col-md-3">
+            <small class="watermark">
+                <a ng-hide="!wall.wallOptions.showLoklakLogo" ng-style="{'color': wall.wallOptions.headerForeColour} " href="/">Powered by Loklak</a>
+            </small>
+        </div>
+        <div class="banner col-md-1 watermark">
             <!-- <i ng-style="{'color': wall.wallOptions.headerForeColour} " data-toggle="modal" data-target="#wall-modal" class="fa fa-fw fa-gear"></i> -->
             <i ng-style="{'color': wall.wallOptions.headerForeColour} " ng-hide="wall.fullscreenEnabled" ng-click="fullscreen()" class="fa fa-fw fa-arrows-alt"></i>
         </div>
     </div>
     <div ng-style="{'background-color': wall.wallOptions.wallBgColour}" class="wall-container container-fluid">
         <div class="container content-container wall-body">
-            <div ng-switch on="wall.wallOptions.layoutStyle" ng-show="wall.statuses.length>0" ng-class="wall.wallOptions.showStatistics?'col-md-8':'col-md-12'" masonry>
+            <div ng-switch on="wall.wallOptions.layoutStyle" ng-show="wall.statuses.length>0" ng-class="wall.wallOptions.showStatistics || wall.currentAnnoucement?'col-md-8':'col-md-12'" masonry>
                 <!-- 1. Linear -->
                 <div ng-switch-when="1" ng-animate ng-enter ng-enter-pending ng-repeat="status in wall.statuses" 
                 linear open="wall.open" data="status" 
@@ -49,7 +67,7 @@
                     <div data="wall.statuses" id="map" maplayout style="margin-left:-48px; margin-top:-10px;" ng-style="wall.wallOptions.showStatistics?{}:{'margin-right':'-48px'}" cycleTweets="{{wall.wallOptions.cycle}}"></div>
                 </div>
             </div>
-            <div ng-if="wall.wallOptions.showStatistics && wall.statuses.length>0" class="col-md-4">
+            <div ng-if="wall.wallOptions.showStatistics && wall.statuses.length>0 && wall.currentAnnounce.length===0" class="col-md-4">
                 <div class="row leaderboard-container">
                     <img class="histogram-loader" ng-hide="wall.topTwitterersData" src="images/loading.gif">
                     <div class="nav-tabs-custom" style="margin: 0 15px;" ng-mouseover="stopLeaderboardTimer()" ng-mouseleave="startLeaderboardTimer()">
@@ -130,6 +148,35 @@
                     </div>
                 </div>
             </div>
+            <div ng-if="wall.currentAnnounce.length>0" class="col-md-4">
+
+                <h2 class="project-name">Annoucements</h2>
+                <div id="timeline">
+                    <div class="timeline-item" ng-repeat="announcement in wall.currentAnnounce">
+                        <div class="timeline-icon" style="background:{{wall.wallOptions.headerColour}}">
+
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                            width="21px" height="20px" viewBox="0 0 21 20" enable-background="new 0 0 21 20" xml:space="preserve">
+                                <path fill="#FFFFFF" d="M19.998,6.766l-5.759-0.544c-0.362-0.032-0.676-0.264-0.822-0.61l-2.064-4.999
+                                c-0.329-0.825-1.5-0.825-1.83,0L7.476,5.611c-0.132,0.346-0.462,0.578-0.824,0.61L0.894,6.766C0.035,6.848-0.312,7.921,0.333,8.499
+                                l4.338,3.811c0.279,0.246,0.395,0.609,0.314,0.975l-1.304,5.345c-0.199,0.842,0.708,1.534,1.468,1.089l4.801-2.822
+                                c0.313-0.181,0.695-0.181,1.006,0l4.803,2.822c0.759,0.445,1.666-0.23,1.468-1.089l-1.288-5.345
+                                c-0.081-0.365,0.035-0.729,0.313-0.975l4.34-3.811C21.219,7.921,20.855,6.848,19.998,6.766z"/>
+                            </svg>
+
+                        </div>
+                        <div class="timeline-content">
+                            <h3 style="background:{{wall.wallOptions.headerColour}}">
+                                {{announcement.header}}
+                            </h3>
+                            <br>
+                            <p>{{announcement.subheader}}</p>
+                        </div>
+                    </div>
+                </div>
+                  
+                  
+            </div>
             <div ng-show="wall.statuses.length<=0 && !wall.showEmpty && !wall.invalidId" class="col-md-12">
                 <div class="loading-redirect" style="text-align: center;"><span id="bull1">&bull;</span><span id="bull2">&bull;</span><span id="bull3">&bull;</span></div>
                 <h2 id="redirect-text">Loading your tweet wall...</h2>
@@ -144,4 +191,4 @@
         </div>
     </div>
 </div>
-<div ng-include="'wall/wallCreationModal.html'"></div>
+<!-- <div ng-include="'wall/wallCreationModal.html'"></div> -->

@@ -1,0 +1,128 @@
+@import "http://fonts.googleapis.com/css?family=Dosis:300,400,500,600,700";
+
+// Variables
+$bg-body: #f9f9f9;
+
+$red: #ee4d4d;
+$blue: #2b2e48;
+$primary-color: $blue;
+$secondary-color: $red;
+
+
+// Typography
+$base-font: helvetica, arial, tahoma, verdana;
+$base-font-title: "Dosis", arial, tahoma, verdana;
+
+$base-font-color: #726f77;
+
+// Timeline
+$timeline-color: $primary-color;
+
+
+.project-name {
+  text-align: center;
+  padding: 10px 0;
+  text-transform: uppercase;
+}
+
+@mixin prefix($prop, $val) {
+    @each $prefix in '-webkit-', '-moz-', '-ms-', '' {
+        #{$prefix}#{$prop}: $val;
+    }
+}
+
+// Timeline
+#timeline {
+    position: relative;
+    margin: 30px;
+    top: -45px;
+    width: 90%;
+
+    &:before {
+        content:"";
+        width: 3px;
+        height: 100%;
+        background: $timeline-color;
+        left: 0;
+        top: 53px;
+        position: absolute;
+    }
+
+    &:after {
+        content: "";
+        clear: both;
+        display: table;
+        width: 100%;
+    }
+    
+    .timeline-item {
+        margin-bottom: 0;
+        position: relative;
+        @extend %clearfix;
+
+        .timeline-icon {
+            background: $timeline-color;
+            width: 50px;
+            height: 50px;
+            position: relative;
+            top: 52px;
+            left: 0;
+            overflow: hidden;
+            margin-left: -23px;
+            @include prefix(border-radius, 50%);
+
+            svg {
+                position: relative;
+                top: 14px;
+                left: 14px;
+            }
+        }
+
+        .timeline-content {
+            width: 90%;
+            background: #fff;
+            padding: 20px;
+            float: right;
+
+            @include prefix(box-shadow, 0 3px 0 rgba(0,0,0,0.1));
+            @include prefix(border-radius, 5px);
+            @include prefix(transition, all .3s ease);
+
+            h3 {
+                padding: 15px;
+                        background: $timeline-color;
+
+                color: #fff;
+                margin: -20px -20px 0 -20px;
+                font-weight: 300;
+                @include prefix(border-radius, 3px 3px 0 0);
+            }
+
+            &:before {
+                content: '';
+                position: absolute;
+                left: 10%;
+                width: 0; 
+                height: 0; 
+                margin-left: -6px;
+                border-top: 7px solid transparent;
+                border-bottom: 7px solid transparent; 
+                border-left: 0;
+                border-right: 7px solid $timeline-color;
+            }
+
+            &.right {
+                float: right;
+
+                &:before {
+                    content: '';
+                    right: 45%;
+                    left: 10%;
+                    margin-left: -6px;
+                    border-left: 0;
+                    border-right: 7px solid $timeline-color;
+                }
+            }
+        }
+    }
+}
