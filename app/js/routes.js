@@ -17,8 +17,8 @@
     url: '/profile',
     controller: 'ProfileCtrl as profile',
     templateUrl: 'profile.html',
-    title: 'profile',
-
+    title: 'Profile',
+    authenticate: true
   })
   .state('About', {
     url: '/about',
@@ -40,11 +40,13 @@
     reloadOnSearch: false
   })
   .state('Wall', {
-    url: '/wall',
+    url: '/walls',
     templateUrl: 'wall/create.html',
     controller: 'WallCtrl as wall',
-    title: 'Wall'
+    title: 'Wall',
+    verify: true
   })
+  // // wall creation modal is ng-included in create.html
   // .state('WallCreate', {
   //   url: '/wall/create',
   //   templateUrl: 'wall/create.html',
@@ -59,12 +61,24 @@
   onEnter: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=false;}],
   onExit: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=true;}]
 })
-.state('Statistics', {
-  url: '/statistics?q&since&until',
-  controller: 'StatisticsCtrl as statistics',
-  templateUrl: 'statistics.html',
+.state('StatisticsDisplay', {
+  url: '/:user/statistics/:id',
+  templateUrl: 'wall/statistics.html',
+  controller: 'StatisticsCtrl as stats',
   title: 'Statistics'
 })
+.state('StatisticsBubble', {
+  url: '/:user/bubbles/:id',
+  templateUrl: 'wall/bubbles.html',
+  controller: 'BubbleCtrl as stats',
+  title: 'BubbleChart'
+})
+// .state('Statistics', {
+//   url: '/statistics?q&since&until',
+//   controller: 'StatisticsCtrl as statistics',
+//   templateUrl: 'statistics.html',
+//   title: 'Statistics'
+// })
 .state('SingleTweet', {
   url: '/tweet?q',
   controller: 'SingleTweetCtrl as singleTweet',
@@ -89,7 +103,7 @@
   controller: 'DataConnectCtrl as dataConnect',
   title: 'My Connections'
 })
-.state('Analyze', {
+.state('Report', {
   url: '/report',
   templateUrl: 'analyze/analyze.html',
   controller: 'AnalyzeCtrl as Analyze',
@@ -103,7 +117,7 @@
   onExit: ['$rootScope',function($rootScope){$rootScope.root.fullscreenDisabled=true;}]
 });
 
-  // $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/');
 
   cfpLoadingBarProvider.includeBar = false;
   cfpLoadingBarProvider.includeSpinner = true;

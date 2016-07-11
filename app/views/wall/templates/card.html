@@ -1,29 +1,40 @@
-<div class="card-container" ng-class="getClass()">
-    <div ng-attr-id="{{data.id_str}}" class="card card-simple">
-        <div class="card-content row">
-            <!-- Main content -->
-            <div ng-if="data.images.length>0" class="col-xs-4" style="padding:0px;">
+<!-- <div class="card-container masonry-brick" ng-class="getClass()"> -->
+<md-card ng-attr-id="{{data.id_str}}" class=" masonry-brick" style="width:{{leaderboardenabled? '30%' : '23%'}}; background-color:{{cardbgcolor}};">
+    <md-card-title>
+    <!-- Main content -->
+        <!-- Instagram picture -->
+        <md-card-title-media>
+            <div class="md-media-sm card-media" ng-if="data.images.length>0">
                 <img class="tweet-image" alt="" ng-if="data.images.length>0" ng-src="{{data.images[0] | instaFilter}}">
             </div>
-            <div ng-class="data.images.length>0?'col-xs-8':'col-xs-12'" style="padding:0px;height:100%;">
-                <div class="card-content-text"  ng-bind-html="data.text | tweetTextLink | tweetMention | tweetHashtag |  toTrusted"></div>
-                <div class="metadata">
-                    <img class="avatar spinner" onError="this.onerror=null;this.src='/images/anon_200x200.png';" ng-src="{{data.user.profile_image_url_https | biggerProfileImage}}" alt="user-images">
-                    <div class="user-data">
-                        <a class="name" ng-href="{{'./search?q=from:' + data.user.screen_name}}">{{data.user.name}}</a> <span><i class="fa fa-twitter"></i></span> • 
-                        <span am-time-ago="data.created_at"></span>
-                        <br><span class="screen-name">{{ "@" + data.user.screen_name}}</span>
-                        
-                    </div>
-                </div>
+        </md-card-title-media>
+        <!-- Twitter text -->
+        <md-card-title-text>
+            <span class="md-headline">
+                <div class="card-content-text" style="color:{{cardtxtcolor}}" ng-bind-html="data.text | tweetTextLink:cardbgcolor | tweetMention:cardbgcolor | tweetHashtag:cardbgcolor | toTrusted"></div>
+            </span>
+        </md-card-title-text>
+        <!-- Twitter display picture -->
+        <md-card-title-media>
+            <div class="md-media-lg card-media metadata">                                            
+                <img class="avatar spinner" onError="this.onerror=null;this.src='/images/anon_200x200.png';" ng-src="{{data.user.profile_image_url_https | biggerProfileImage}}" alt="user-images">
             </div>
-            
-            <!-- Images -->
-            <!--         <div data-ng-click="open(data.id_str);" ng-class="{'images-wrapper': true, 'showdetail': showdetail}" ng-if="data.images_count"> -->
-            <!-- Metadata <--></-->
-            <!-- </div>
-        <div class="row"> -->
-            
-        </div>
-    </div>
-</div>
+        </md-card-title-media>
+        <!-- Twitter screen_name -->
+        <span class="md-subhead" style="color: #8899A6;">
+             <span class="user-data" style="color:{{cardtxtcolor}}" >
+                <a class="name {{cardbgcolor | linkColorToClass}}" ng-href="{{'./search?q=from:' + data.user.screen_name}}">{{data.user.name | tweetScreenName}} </a>
+                <i class="fa fa-twitter"></i>
+                <span class="md-subhead screen-name">{{ "@" + data.user.screen_name}}</span>
+                <br>
+                <span am-time-ago="data.created_at"></span>
+            </span> 
+        </span>
+
+    </md-card-title>
+    <!-- Images -->
+    <!--         <div data-ng-click="open(data.id_str);" ng-class="{'images-wrapper': true, 'showdetail': showdetail}" ng-if="data.images_count"> -->
+    <!-- Metadata <--></-->
+    <!-- </div>
+    <div class="row"> -->
+</md-card>

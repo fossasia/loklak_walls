@@ -20,7 +20,7 @@ function mapLayoutDirective(MapPopUpTemplateService, $interval, $location, MapCr
         //template : '<p>{{data[0].text}}</p>',
         link: function(scope, element, attrs) {
             var curr = 0;
-            var tweetsArrayLength = 20;
+            var tweetsArrayLength = 50;
             var tweetsArray = [];
             var cycle = attrs.cycletweets;
             var intervalId;
@@ -58,6 +58,7 @@ function mapLayoutDirective(MapPopUpTemplateService, $interval, $location, MapCr
                     zoom = queryParams.zoom;
                 }
             }
+
             var map = L.map(attrs.id).setView([centerLat, centerLng], zoom);
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 maxZoom: 18,
@@ -94,13 +95,15 @@ function mapLayoutDirective(MapPopUpTemplateService, $interval, $location, MapCr
 
             scope.$watchCollection('data', function() {
                 var cleanRun = 0;
+                console.log(scope.data)
                 setTimeout(function() {
                     map.invalidateSize();
                 }, 1000);
 
                 scope.data.forEach(function(ele) {
                     if (!contains(ele)) {
-                        if (ele.location_mark) {
+                        if (ele.location_mark.length>0) {
+
                             //console.log(ele.location_mark);
                             var text = MapPopUpTemplateService.genStaticTwitterStatus(ele);
                             var tweetIcon = L.icon({
@@ -148,6 +151,7 @@ function mapLayoutDirective(MapPopUpTemplateService, $interval, $location, MapCr
                     }
                 }
                 setTimeout(function() {
+                    console.log(tweetsArray)
                     tweetsArray[0].marker.openPopup();
                 }, 1000);
             });

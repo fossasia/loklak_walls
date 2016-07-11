@@ -9,29 +9,35 @@ var moment = require('moment');
 /**
  * @ngInject
  */
-function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloService, SearchService, AuthService) {
+ function WallCtrl($scope, $rootScope, $timeout, AppsService, HelloService, SearchService, AuthService, $http, $interval, socket) {
 
     var vm = this;
     var term = '';
+    var searchParams;
+    var latestCreatedAtDate = null;
+    var maxStatusCount;
+
     $scope.isEditing = -1;
+    $scope.lastEdited = -1;
     $scope.wallsPresent = true;
     $scope.invalidFile = false;
     $scope.showNext = true;
+    $scope.showStart = false;
     $scope.selectedTab = 0;
     $scope.isLoggedIn= $rootScope.root.isLoggedIn;
     $scope.currentUser=$rootScope.root.currentUser;
-
+    $scope.statuses=[];
+    
     // for thumbnail url
     $scope.current_id = function(){ return $rootScope.root.currentUser._id; }
-    console.log($scope.isLoggedIn);
-    
+
     /*
      * Location UI component
      * If user input > 3 chars, suggest location
      * clicking on suggested location assign value to the according model
      */
 
-    $scope.$watch('newWallOptions.chosenLocation', function() {
+     $scope.$watch('newWallOptions.chosenLocation', function() {
         if (document.activeElement.className.indexOf("wall-location-input") > -1) {
             if ($scope.newWallOptions.chosenLocation && $scope.newWallOptions.chosenLocation.length >= 3) {
                 SearchService.getLocationSuggestions($scope.newWallOptions.chosenLocation).then(function(data) {
@@ -48,7 +54,7 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
         }
     });
 
-    vm.setLocation = function(locationTerm) {
+     vm.setLocation = function(locationTerm) {
         $scope.newWallOptions.chosenLocation = locationTerm;
         vm.hasSuggestions = false;
     };
@@ -60,8 +66,11 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
         $scope.newWallOptions.videos = false;
         $scope.newWallOptions.headerColour = '#3c8dbc';
         $scope.newWallOptions.headerForeColour = '#FFFFFF';
+        $scope.newWallOptions.wallBgColour = '#ecf0f5';
+        $scope.newWallOptions.cardBgColour = '#ffffff';
         $scope.newWallOptions.headerPosition = 'Top';
         $scope.newWallOptions.layoutStyle = 1;
+        $scope.newWallOptions.moderation = false;
         $scope.newWallOptions.showLoading = false;
         $scope.newWallOptions.showStatistics = true;
         $scope.newWallOptions.showLoklakLogo = true;
@@ -72,8 +81,13 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
         $scope.selectedTab = index;
         if (index === 2) {
             $scope.showNext = false;
+            $scope.showStart = true;
+        } else if (index === 3){
+            $scope.showNext = false;
+            $scope.showStart = false;
         } else {
             $scope.showNext = true;
+            $scope.showStart = false;
         }
     };
 
@@ -100,6 +114,12 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
     $scope.$watch('newWallOptions.headerColour', function() {
         if ($scope.newWallOptions.headerColour) {
             $scope.newWallOptions.headerForeColour = colourCalculator(hexToRgb($scope.newWallOptions.headerColour));
+        }
+    });
+
+    $scope.$watch('newWallOptions.cardBgColour', function() {
+        if ($scope.newWallOptions.cardBgColour) {
+            $scope.newWallOptions.cardForeColour = colourCalculator(hexToRgb($scope.newWallOptions.cardBgColour));
         }
     });
 
@@ -155,13 +175,18 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
                 $timeout(function() {
                     $('.nav-tabs > .active').next('li').find('a').trigger('click');
                 });
-                if ($scope.selectedTab === 2) {
+                if($scope.selectedTab <= 1){
+                    $scope.showNext = true;
+                    $scope.showStart = false;
+                } else if ($scope.selectedTab === 2) {
                     $scope.showNext = false;
+                    $scope.showStart = true;
+                } else if ($scope.selectedTab === 3){
+                    $scope.showNext = false;
+                    $scope.showStart = false;
                 }
             }
-
         }
-
     };
 
 
@@ -172,48 +197,48 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
     };
 
     $scope.lostCyclePostsFocus = function() {
-        // if(!$scope.newWallOptions.cycleDelayTime || ($scope.newWallOptions.cycleDelayTime<1) || ($scope.newWallOptions.cycleDelayTime>100)){
+        // if(!$scope.newWallOptions.DelayTime || ($scope.DelayTime<1) || ($scope.newWallOptions.cycleDelayTime>100)){
         //     $scope.newWallOptions.cycleDelayTime = 5;
         // }
     };
 
     $scope.start = function() {
         //construct term
-        delete $scope.newWallOptions.link;
-        var dataParams = encodeURIComponent(angular.toJson($scope.newWallOptions));
+
+        // delete $scope.newWallOptions.link;
+        // var dataParams = encodeURIComponent(angular.toJson($scope.newWallOptions));
         $('#wall-modal').modal('toggle');
-        // if ($rootScope.root.twitterSession) {
-        if ($rootScope.root.isLoggedIn) {
-            
+
+        $scope.currentUser = $rootScope.root.currentUser;
+
+        if($rootScope.root.isLoggedIn) {
+            // $interval.cancel($rootScope.modPostPromise);
+
             // new wall options
             var saveData = new AppsService({
                 user: $scope.currentUser._id,
                 app: 'wall'
             });
+
             for (var k in $scope.newWallOptions) {
                 saveData[k] = $scope.newWallOptions[k];
             }
-            
-            if ($scope.isEditing !== -1) {
-                console.log("updating", $scope.userWalls[$scope.isEditing]);
-                
-                // $scope.userWalls[$scope.isEditing].showLoading = true;
-                // for (k in $scope.newWallOptions) {
-                //     if ($scope.newWallOptions.hasOwnProperty(k)) {
-                //         $scope.userWalls[$scope.isEditing][k] = $scope.newWallOptions[k];
-                //     }
-                // }
-                //$scope.userWalls[$scope.isEditing].internal.showLoading = true;
+
+            // Update wall options
+            if ($scope.isEditing !== -1) { 
                 $scope.userWalls[$scope.isEditing].$update({
                     user: $rootScope.root.currentUser._id,
                     app: 'wall',
                     id: $scope.userWalls[$scope.isEditing].id
                 }, function(result) {
-                    console.log("result", result.id);
-                    $scope.userWalls = AppsService.query({
+                    initWallOptions();
+
+                    AppsService.query({
                         user: $scope.currentUser._id,
                         app: 'wall'
                     }, function(result) {
+                        console.log("result", result);
+                        $scope.userWalls = result;
                         if ($scope.userWalls.length === 0) {
                             $scope.wallsPresent = false;
                             console.log("No walls");
@@ -223,43 +248,61 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
                     // $window.open('/' + $scope.currentUser._id + '/wall/' + $scope.userWalls[$scope.isEditing].id, '_blank');
                     // $scope.userWalls[$scope.isEditing].internal = {};
                     // $scope.userWalls[$scope.isEditing].internal.showLoading = false;
-                    initWallOptions();
-                    $scope.isEditing = -1;
                 });
-            } else {
-                $scope.userWalls.push(saveData);
-                $scope.userWalls[$scope.userWalls.length - 1].showLoading = true;
 
-                var result = saveData.$save(function(result) {
+            // Add new wall options
+        } else { 
+            $scope.userWalls.push(saveData);
+            var latestWallIdx = $scope.userWalls.length - 1;
+
+            $scope.userWalls[latestWallIdx].showLoading = true;
+
+            var result = saveData.$save(function(result) {
+                console.log('latestWallIdx' , latestWallIdx)
+
+                    // Update the wall dashboard thumbnail
                     $scope.newWallOptions.id = result.id;
-                    console.log("result", result);
+                    console.log("save result", result);
                     for (var k in $scope.newWallOptions) {
                         if ($scope.newWallOptions.hasOwnProperty(k)) {
-                            $scope.userWalls[$scope.userWalls.length - 1][k] = $scope.newWallOptions[k];
+                            $scope.userWalls[latestWallIdx][k] = $scope.newWallOptions[k];
                         }
                     }
                     $scope.wallsPresent = true;
                     initWallOptions();
-                    $window.open('/' + $scope.currentUser._id + '/wall/' + result.id, '_blank');
-                    // $scope.userWalls[$scope.userWalls.length - 1].showLoading = true;
+
+                    // Open new wall
+                    window.open('/' + $scope.currentUser._id + '/wall/' + result.id);
+                    $scope.userWalls[latestWallIdx].showLoading = false;
+
                 });
-            }
-        } else {
-            alert("Please sign in first");
         }
-    };
+        // Reset isEditing to -1
+        $scope.isEditing = -1;
 
-    $scope.resetDate = function() {
-        $scope.newWallOptions.sinceDate = null;
-        $scope.newWallOptions.untilDate = null;
-    };
+    } else {
+        alert("Please sign in first");
+    }
+};
 
-    $scope.resetLogo = function() {
-        $scope.newWallOptions.logo = null;
+
+$scope.resetDate = function() {
+    $scope.newWallOptions.sinceDate = null;
+    $scope.newWallOptions.untilDate = null;
+};
+
+$scope.resetLogo = function() {
+    $scope.newWallOptions.logo = null;
         //$scope.$apply();
     };
 
+    // TODO: remove tweets with same userWallId
     $scope.deleteWall = function(index) {
+        $scope.currentUser=$rootScope.root.currentUser;
+        // $interval.cancel($rootScope.modPostPromise);
+        $http.delete('/api/tweets/'+$scope.currentUser._id+$scope.userWalls[index].id, index)
+        // .then(function(data){console.log(data)});
+
         //console.log(index);
         $scope.userWalls[index].showLoading = true;
         $scope.userWalls[index].$delete({
@@ -274,27 +317,91 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
             }
             //$scope.userWalls[index].showLoading = false;
         });
+        $scope.isEditing = -1;
+        $scope.selectedTab(-1);
     };
 
     $scope.editWall = function(index) {
-        //console.log(index);
+        console.log("Editing wall #", index);
+        var currentUserId = $rootScope.root.currentUser._id;
+        var wallId = $scope.userWalls[index].id
+
+        $scope.statuses = [];   
         $scope.newWallOptions = $scope.userWalls[index];
+        $scope.newWallOptions.sinceDate = new Date($scope.newWallOptions.sinceDate);
+        $scope.newWallOptions.untilDate = new Date($scope.newWallOptions.untilDate);
+
+        // Remove previous index's listener
+        if($scope.lastEdited > -1){
+            socket.removeListener('addNewTweets' + currentUserId + $scope.userWalls[$scope.lastEdited].id);
+        }
+
         $scope.isEditing = index;
         $('#wall-modal').modal('toggle');
-    };
+
+
+        // POLL MODERATION DATA FROM DB, THEN LISTEN FOR SOCKET.IO EVENTS
+        var userWallIdURL = '/api/tweets/' + currentUserId + wallId;
+        $http.get(userWallIdURL).then(function(res){
+            $scope.statuses=res.data.statuses;
+        });
+
+        socket.on('addNewTweets' + currentUserId + wallId, function(tweetArr){
+            tweetArr.forEach(function(el,idx){
+                $scope.statuses.splice(idx,0,el);
+            })
+        })
+};
+
+$scope.pollWallTweets = function(){
+
+    var userWallTweetsUrl="";
+    if($scope.isEditing !== -1){
+        userWallTweetsUrl = '/api/tweets/'+ $rootScope.root.currentUser._id + $scope.userWalls[$scope.isEditing].id;
+    }else{
+        userWallTweetsUrl = '/api/tweets/'+ $rootScope.root.currentUser._id +$scope.userWalls[$scope.userWalls.length-1].id;
+    }
+
+    function getAllTweets(){
+        $http.get(userWallTweetsUrl).then(function(result){
+                // addNewTweets(result.data.tweetArr);
+                $scope.statuses = result.data.statuses;
+                latestCreatedAtDate = $scope.statuses.length>0 ? $scope.statuses[0].created_at : null;
+            })
+    }
+
+    function addNewTweets(newStatuses){
+            // if current moderation empty or, all new data statuses are newer prepend whole array to tweet store array
+            if($scope.statuses.length===0 ){
+                $scope.statuses = newStatuses;
+            } else {
+                var idx =0;
+                var dataMostRecent = newStatuses.length > 0 ? newStatuses[idx].created_at : null;
+                var storeMostRecent = $scope.statuses[0].created_at;
+                // else prepend only new tweets to localStorage tweets array in desc order
+                while(dataMostRecent !== null && dataMostRecent > storeMostRecent && idx < newStatuses.length){
+                    $scope.statuses.splice(idx, 0, newStatuses[idx]);
+                    dataMostRecent = newStatuses[++idx].created_at;
+                }
+            }
+        }
+
+        getAllTweets();
+        // modGetPromise = $interval(getAllTweets, 30000);
+    }
 
     $scope.openModal = function() {
         initWallOptions();
         $('#wall-modal').modal('toggle');
+        $('#selectTab a[href="#info"]').tab('show') // Select tab by name
+        $scope.isEditing=-1;
     };
 
     var init = function() {
-
-        if ($scope.isLoggedIn) {
-            // var auth = HelloService('twitter').getAuthResponse();
-            // $scope.screen_name = auth.screen_name;
+        searchParams = {};
+        $http.get('/api/currentuser').success(function(data){
             $scope.userWalls = AppsService.query({
-                user: $scope.currentUser._id,
+                user: data._id,
                 app: 'wall'
             }, function(result) {
                 if ($scope.userWalls.length === 0) {
@@ -302,29 +409,28 @@ function WallCtrl($scope, $rootScope, $window, $timeout, AppsService, HelloServi
                     console.log("No walls");
                 }
             });
-        }
+        })
     };
-    // 
-    // HelloService.on('auth.login', function(auth) {
-    //     $scope.screen_name = auth.authResponse.screen_name;
-    //     $scope.userWalls = AppsService.query({
-    //         user: auth.authResponse.screen_name,
-    //         app: 'wall'
-    //     }, function(result) {
-    //         if ($scope.userWalls.length === 0) {
-    //             $scope.wallsPresent = false;
-    //             console.log("No walls");
-    //         }
-    //     });
-    // });
-    // 
-    // HelloService.on('auth.logout', function() {
-    //     //clear wall list
-    //     $scope.userWalls = [];
-    // });
 
     init();
 
+    $scope.$on('$destroy', function() {
+        // if ($rootScope.modPostPromise) {
+        //     $interval.cancel($rootScope.modPostPromise);
+        // }
+        socket.removeAllListeners();
+    });
+
+    angular.element(document).bind("keydown", function(event) {
+        if (event.keyCode === 27) {
+            $scope.$apply(function() {
+                $scope.tweetModalShow = false;   
+                $scope.isEditing = -1;
+                $scope.selectedTab = 0;
+            });
+        }
+    });
+
 }
 
-controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$window', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', WallCtrl]);
+controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', '$http', '$interval', 'socket', WallCtrl]);

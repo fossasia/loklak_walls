@@ -20,11 +20,16 @@ angular.module('chartjs-directive', []).
         var options = {
           type:   attrs.type   || "Line",
           width:  attrs.width  || baseWidth,
-          height: attrs.height || baseHeight
+          height: attrs.height || baseHeight,
         };
         canvas.width = options.width;
         canvas.height = options.height;
-        chart = new Chart(context);
+
+        chart = new Chart(context,{
+          options: {
+            scaleFontColor: '#fff'
+          }
+        });
 
         scope.$watch(function(){ return element.attr('type'); }, function(value){
           if (!value) {

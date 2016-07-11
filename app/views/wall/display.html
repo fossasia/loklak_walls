@@ -25,18 +25,31 @@
             <i ng-style="{'color': wall.wallOptions.headerForeColour} " ng-hide="wall.fullscreenEnabled" ng-click="fullscreen()" class="fa fa-fw fa-arrows-alt"></i>
         </div>
     </div>
-    <div class="wall-container container-fluid">
-        <div class="container content-container wall-body" ng-style="((wall.wallOptions.layoutStyle==2)&&(wall.statuses.length>0))?{'margin-left':'-5px'}:{}">
-            <div ng-switch on="wall.wallOptions.layoutStyle" ng-show="wall.statuses.length>0" ng-class="wall.wallOptions.showStatistics?'col-md-8':'col-md-12'">
-                <div ng-switch-when="1" ng-animate ng-enter ng-enter-pending ng-repeat="status in wall.statuses" linear open="wall.open" data="status" class="animate-repeat"></div>
-                <div ng-switch-when="2" class="animate-repeat" ng-repeat="status in wall.statuses" card open="wall.open" data="status" leaderboardEnabled="{{wall.wallOptions.showStatistics}}"></div>
-                <div ng-switch-when="3" class="animate-repeat" ng-repeat="status in wall.statuses" coa open="wall.open" data="status"></div>
+    <div ng-style="{'background-color': wall.wallOptions.wallBgColour}" class="wall-container container-fluid">
+        <div class="container content-container wall-body">
+            <div ng-switch on="wall.wallOptions.layoutStyle" ng-show="wall.statuses.length>0" ng-class="wall.wallOptions.showStatistics?'col-md-8':'col-md-12'" masonry>
+                <!-- 1. Linear -->
+                <div ng-switch-when="1" ng-animate ng-enter ng-enter-pending ng-repeat="status in wall.statuses" 
+                linear open="wall.open" data="status" 
+                cardbgcolor="wall.wallOptions.cardBgColour" cardtxtcolor="wall.wallOptions.cardForeColour"
+                class="animate-repeat"></div>
+                <!-- 2. Masonry -->
+                <div ng-switch-when="2"  ng-repeat="status in wall.statuses" 
+                card open="wall.open" data="status" 
+                cardbgcolor="wall.wallOptions.cardBgColour" cardtxtcolor="wall.wallOptions.cardForeColour"
+                leaderboardEnabled="{{wall.wallOptions.showStatistics}}"></div>
+                <!-- <div ng-switch-when="2" class="animate-repeat" masonry ng-repeat="status in wall.statuses" card open="wall.open" data="status" leaderboardEnabled="{{wall.wallOptions.showStatistics}}"></div> -->
+                <!-- 3. Single -->
+                <div ng-switch-when="3" class="animate-repeat" ng-repeat="status in wall.statuses" 
+                coa open="wall.open" data="status"
+                cardbgcolor="wall.wallOptions.cardBgColour" cardtxtcolor="wall.wallOptions.cardForeColour"
+                ></div>
+                <!-- 4. Map -->
                 <div ng-switch-when="4">
                     <div data="wall.statuses" id="map" maplayout style="margin-left:-48px; margin-top:-10px;" ng-style="wall.wallOptions.showStatistics?{}:{'margin-right':'-48px'}" cycleTweets="{{wall.wallOptions.cycle}}"></div>
                 </div>
             </div>
             <div ng-if="wall.wallOptions.showStatistics && wall.statuses.length>0" class="col-md-4">
-                <h4>LEADERBOARD</h4>
                 <div class="row leaderboard-container">
                     <img class="histogram-loader" ng-hide="wall.topTwitterersData" src="images/loading.gif">
                     <div class="nav-tabs-custom" style="margin: 0 15px;" ng-mouseover="stopLeaderboardTimer()" ng-mouseleave="startLeaderboardTimer()">
@@ -104,8 +117,8 @@
                 </div>
                 <div class="row histogram-container" ng-style="wall.wallOptions.headerPosition == 'Bottom'?{'bottom':'120px'}:{}">
                     <div class="row histogram-gradient"></div>
-                    <div class="box box-default" style="margin: 0 15px;">
-                        <div class="box-header with-border">
+                    <div class="box box-default" style="margin: 0 15px; background-color: #8f8e8e;">
+                        <div class="box-header with-border" style="color: #ebe6e6;background-color: rgb(70, 70, 70);">
                             <h3 class="box-title">TWEETS FREQUENCY</h3>
                         </div>
                         <div class="box-body">

@@ -15,7 +15,8 @@
 /*Wall creation */
 
 .layoutRadio {
-    margin: 12px;
+    margin-left: -12%;
+    margin-bottom: 18%;
 }
 
 .layoutRadio > input {
@@ -25,6 +26,7 @@
 
 .layoutRadio > input + img {
     /* IMAGE STYLES */
+    width: 125%;
     cursor: pointer;
     border: 4px solid transparent;
     &:hover {
@@ -43,6 +45,7 @@
     border-radius: 2px;
     border-color: #CABFBF !important;
     vertical-align: middle;
+    margin-top: 7px;
 }
 
 .wall-preview-container {
@@ -50,9 +53,25 @@
 }
 
 .wall-preview {
-    background-color: #aaa;
-    border: 22px solid #C8C8C8;
-    border-radius: 5%;
+    margin-top: 15px;
+    border-top: 2em solid rgba(230, 230, 230, 0.7);
+    box-shadow: 0 0.1em 1em 0 rgba(0, 0, 0, 0.3);
+    position: relative;
+    border-radius: 3px 3px 0 0;
+    border-bottom: 1em solid rgba(230, 230, 230, 0.7);
+    border-radius: 2%;
+    &:before{
+        display: block;
+        position: absolute;
+        content: '';
+        top: -1.25em;
+        left: 1em;
+        width: 0.5em;
+        height: 0.5em;
+        border-radius: 50%;
+        background-color: #f44;
+        box-shadow: 0 0 0 2px #f44, 1.5em 0 0 2px #9b3, 3em 0 0 2px #fb5;
+    }
     .wall-preview-header {
         height: 100px;
         display: flex;
@@ -74,17 +93,17 @@
 }
 
 .design-box {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .wall-creation-form {
-    max-width: 75%;
+    // max-width: 75%;
     line-height: 200%;
     font-size: 16px;
 }
 
 .wall-creation-form > * input[type="text"] {
-    width: 50%;
+    // width: 50%;
 }
 
 .tabs-left > li {
@@ -94,7 +113,7 @@
 
 .tabs-left > li > a {
     text-align: center;
-    padding: 20% 0;
+    padding: 18% 0;
 }
 
 .wall-modal {
@@ -139,7 +158,7 @@
 
 .wall-float-container {
     // padding-bottom: 10px;
-    margin-top: -30px;
+    // margin-top: -30px;
 }
 
 .wall-tag-input {
@@ -188,8 +207,9 @@
     border: 1px solid #98bc68;
     border-radius: 5px;
     margin-top: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 27px;
     display: block;
+    width: 95%;
 }
 
 .wall-not-contains-header {
@@ -208,6 +228,7 @@
     border: 1px solid #b35e51;
     border-radius: 5px;
     margin-top: 10px;
+    width: 95%;
 }
 
 .wall-preview-logo {
@@ -303,7 +324,7 @@
 }
 
 .wall-location-input {
-    margin-top: 10px;
+    margin-top: 22px;
     width: 160px;
 }
 
@@ -379,6 +400,7 @@
 
 .wall-container {
     background: #F5F8FA;
+    padding-bottom: 100%;
     // Helper classes
     .abs-center-y {
         position: absolute;
@@ -403,7 +425,6 @@
         -webkit-transform: translate(-50%, -50%);
     }
     // Generals
-    padding: 0;
     .input-container {
         margin-top: 10px;
         width: 95%;
@@ -413,7 +434,7 @@
         }
     }
     .content-container {
-        width: 95%;
+        width: 97%;
         margin-top: 10px;
         border-radius: 6px;
         padding: 0;
@@ -444,15 +465,15 @@
     display: block;
     height: 100%;
     background: white;
-    padding: 20px 12px;
-    margin-bottom: 25px;
-    border-bottom: 1px solid $search-grey-border;
+    padding: 9px 24px;
+    margin-bottom: 4px;
+    border-radius: 6px;
     &:first-child {
         border-top-left-radius: 6px;
         border-right-left-radius: 6px;
     }
     .avatar {
-        height: 130px;
+        height: 100px;
         max-width: 130px;
         float: left;
         border-radius: 6px;
@@ -587,47 +608,54 @@
             padding: 5px;
             position: relative;
             margin: 0px;
-            .name {
-                &:hover {
-                    color: $search-twitter-blue;
-                }
-            }
-            .tweet-image {
-                max-width: 100%;
-                max-height: calc(33vh - 70px);
-                padding-right: 10px;
-            }
-            .card-content-text {
-                word-wrap: break-word;
-                color: #292f33;
-                font-size: 2.8vh;
-                line-height: 1.5em;
-                .card-hashtag {
-                    color: #55ACEE;
-                }
-                .card-hashtag-current {
-                    font-weight: bold;
-                }
-            }
-            .metadata {
-                position: absolute;
-                width: 100%;
-                .avatar {
-                    float: left;
-                    height: 30px;
-                    max-width: 30px;
-                    border-radius: 2px;
-                    margin-right: 5px;
-                }
-                bottom: 0;
-                font-size: 2.1vh;
-                color: #8899A6;
-                line-height: 1.2em;
-                font-weight: normal;
-                font-style: italic;
-            }
         }
     }
+}
+
+
+.name {
+    &:hover {
+    color: $search-twitter-blue;
+    }
+}
+
+md-card {
+    border-radius: 5px;
+}
+
+.tweet-image {
+    max-width: 100%;
+    padding: 5px;
+    border-radius: 10px !important;
+}
+.card-content-text {
+    word-wrap: break-word;
+    color: #292f33;
+    font-size: 2.8vh;
+    line-height: 1.5em;
+    margin: 3px;
+    .card-hashtag {
+        color: #55ACEE;
+    }
+    .card-hashtag-current {
+        font-weight: bold;
+    }
+}
+.metadata {
+    margin-top: 16px;
+    width: 100%;
+    .avatar {
+        float: left;
+        max-width: 69px;
+        border-radius: 7px;
+        margin: 0px 10px 6px 6px;
+    }
+    bottom: 0;
+    font-size: 2.1vh;
+    color: #8899A6;
+    line-height: 1.2em;
+    font-weight: normal;
+    font-style: italic;
 }
 
 
@@ -720,13 +748,13 @@
         height: 25vh;
     }
     .histogram-gradient {
-        background: -webkit-linear-gradient(transparent, #F5F8FA);
+        /* background: -webkit-linear-gradient(transparent, #F5F8FA); */
         /* For Safari 5.1 to 6.0 */
-        background: -o-linear-gradient(transparent, #F5F8FA);
+        /* background: -o-linear-gradient(transparent, #F5F8FA); */
         /* For Opera 11.1 to 12.0 */
-        background: -moz-linear-gradient(transparent, #F5F8FA);
+        /* background: -moz-linear-gradient(transparent, #F5F8FA); */
         /* For Firefox 3.6 to 15 */
-        background: linear-gradient(transparent, #F5F8FA);
+        /* background: linear-gradient(transparent, #F5F8FA); */
         /* Standard syntax */
         /*background-color: #F5F8FA`;*/
         height: 2vh;
@@ -744,8 +772,10 @@
 
 .wall-thumbnail {
     &:hover {
-        border: 1px solid $search-twitter-blue;
+        border: 1px solid rgba(85, 172, 238, 0.49);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
+    transition: 0.3s ease-in-out;
     display: inline-block;
     margin-right: 20px;
     margin-bottom: 30px;
@@ -797,26 +827,126 @@
             padding-bottom: 15%;
         }
         .wall-thumbnail-footer {
-            color: black;
+            color: #3c8dbc;
             text-align: center;
-            padding-top: 10%;
+            padding-top: 8%;
             width: 250px;
             margin-left: 0px;
             border-top: 1px solid $search-grey-border;
-            div {
-                border-left: 1px solid $search-grey-border;
+            div.col-xs-4 {
                 text-align: center;
+                &.border{
+                    border-left: 1px solid $search-grey-border;
+                }
+                &:hover {
+                    cursor: pointer;
+                    color: $search-light-black;
+                    transition: 0.5s;
+                }
                 span {
-                    &:hover {
-                        text-decoration: underline;
-                        cursor: pointer;
-                        color: $search-light-black;
-                    }
+                    padding: 16px;
                     i {
                         margin-right: 5px;
+                    }
+                }
+                a {
+                    padding: 16px;
+                    i {
+                        margin-right: 5px;
+                    }
+                    &:hover {
+                        cursor: pointer;
+                        color: $search-light-black;
+                        transition: 0.5s;
                     }
                 }
             }
         }
     }
+}
+
+/*Styles for wall creation modal*/
+
+.rejected {
+    background-color: rgba(255,87,34,0.2);
+}
+
+.approved {
+    background-color: rgba(139,195,74,0.2);
+}
+
+i.thumbnail-icon {
+    font-size: 18px;
+    margin-top: -3px;
+}
+
+.nav-tabs > li > a:hover {
+    border-color: #ddd rgb(238, 238, 238) #ddd #ddd;
+}
+
+.tabs-left > li > a {
+    transition: 0.5s;
+}
+
+.md-datepicker-input-mask {
+    height: 40px;
+    width: 309px !important;;
+}
+
+.md-datepicker-calendar-pane.md-pane-open {
+    width: 310px !important;
+    z-index: 10000;
+}
+
+.md-calendar-month-label {
+    font-weight: 800 !important;
+}
+
+.md-datepicker-triangle-button.md-button.md-icon-button {
+    height: 100%;
+    margin-top: 6px;
+}
+
+md-icon.md-datepicker-calendar-icon {
+    height: 29px;
+}
+label.info {
+    font-size: 23px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    &.hashtag {
+    transform: initial !important;
+    top: 36px !important;
+    }
+}
+
+.modalHr{
+    margin-right: 5%;
+}
+
+
+img.Emoji.Emoji--forText {
+    width: 33px;
+}
+
+td > a {
+    color: #ffffff;
+}
+
+.metadata>a {
+    color: inherit;
+}
+
+a {
+    &.linkLight {
+        color: #6abdff;
+    }
+    &.linkDark {
+        color: #607d8b;
+    }
+}
+
+.leaderBoardEnabled {
+    font-size: 2vh;
+    line-height: 1.3em;
 }

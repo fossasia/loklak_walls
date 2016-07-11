@@ -3,6 +3,7 @@
   "jasmine": true,
   "browser": true,
   "esnext": true,
+  "devel": true,
   "bitwise": true,
   "curly": true,
   "eqeqeq": true,

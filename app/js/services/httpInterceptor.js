@@ -18,7 +18,7 @@ function tokenInjectorService($window) {
             //     }
             // }
             
-            config.headers['Authorization'] = 'Bearer '+ $window.localStorage['jwt-token'];
+            // config.headers['Authorization'] = 'Bearer '+ $window.localStorage['jwt-token'];
             return config;
         }
     };
