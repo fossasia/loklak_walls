@@ -29,6 +29,7 @@ var moment = require('moment');
     $scope.statuses= [];
     $scope.newAnnounce= {
         duration: 15,
+        faIconClassName: ""
     };
     $scope.announces=[];
 
@@ -392,27 +393,34 @@ $scope.resetLogoAnnounce = function() {
         })
 
         $http.get('/api/announces/' + userWallId).then(function(res){
-            $scope.announces=res.data.announces;
+            $scope.announces = res.data.announces;
         });
+
+        socket.on('putCurrentAnnounce' + currentUserId + wallId, function(){
+            $http.get('/api/announces/current/' + userWallId).then(function(res){
+                $scope.announces = res.data.announces;
+            });
+        });
+
 
         // Insert sorted by start date
         socket.on('addNewAnnounce' + currentUserId + wallId, function(announce){
             var idx = 0,
                 len = $scope.announces.length,
                 announceStart = new Date(announce.startDateTime);
-            while(idx<len){
-                var currentAnnounceStart = new Date($scope.announces[idx].startDateTime);
-                if(announceStart <= currentAnnounceStart){
-                    $scope.announces.splice(idx,0,announce);
-                    return;
-                }
-                idx++;
-            }
             if(len === 0){
-                $scope.announces.splice(idx,0,announce);
-                return;
+                $scope.announces.push(announce);
+            } else {
+                while(idx<len){
+                    var currentAnnounceStart = new Date($scope.announces[idx].startDateTime);
+                    if(announceStart <= currentAnnounceStart){
+                        $scope.announces.splice(idx,0,announce);
+                        return;
+                    }
+                    idx++;
+                }
+                $scope.announces.push(announce);
             }
-            $scope.announces.push(announce);
 
         })
 };

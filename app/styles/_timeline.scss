@@ -22,7 +22,7 @@ $timeline-color: $primary-color;
 .project-name {
   text-align: center;
   padding: 10px 0;
-  text-transform: uppercase;
+  border-radius: 9px;
 }
 
 @mixin prefix($prop, $val) {
@@ -41,6 +41,7 @@ $timeline-color: $primary-color;
     &:before {
         content:"";
         width: 3px;
+        opacity: 0.75;
         height: 100%;
         background: $timeline-color;
         left: 0;
@@ -125,4 +126,10 @@ $timeline-color: $primary-color;
             }
         }
     }
+}
+
+.firstAnnounce{
+    padding-top: 12px;
+    font-size: 24px !important;
+
 }

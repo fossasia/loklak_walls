@@ -67,6 +67,11 @@ module.exports.storeAnnounce = function (req, res) {
                 console.log(err);
             }
             if(cronJobMap[announcement.cronJobId]){
+                var announceCron = cronJobMap[announce.cronJobId];
+                var announceCronStop = cronJobMap[announce.cronJobId + 'del'];
+                if(announceCron) announceCron.stop();
+                if(announceCronStop) announceCronStop.stop();
+
                 cronJobMap[announcement.cronJobId] = new CronJob(new Date(announcement.startDateTime), function(){
                     // Update wall displays w/ the most recent announcement
                     Announce.findOneAndUpdate({_id:announce._id}, {$set: {current: true}}, {new: true},
@@ -76,7 +81,7 @@ module.exports.storeAnnounce = function (req, res) {
                         }
                     );
                 },null,true);
-                // Add cron job to trigger announcement at given date
+                // Add cron job to stop displaying announcement at given date
                 var endTime = moment(announcement.startDateTime).add(announcement.duration,'m').toDate();
                 cronJobMap[newAnnounceId + 'del'] = new CronJob(endTime, function(){
                 // console.log('switching previous to false')
@@ -120,7 +125,7 @@ module.exports.storeAnnounce = function (req, res) {
                     );
                 },null,true);
 
-                // Add cron job to trigger announcement at given date
+                // Add cron job to stop displaying announcement at given date
                 var endTime = moment(announcement.startDateTime).add(announcement.duration,'m').toDate();
                 cronJobMap[newAnnounceId + 'del'] = new CronJob(endTime, function(){
                 // console.log('switching previous to false')
@@ -183,20 +188,26 @@ module.exports.deleteAllAnnounce = function (req, res) {
         .find({userWallId: req.params.userWallId})
         .exec(function(err, announces){
             announces.forEach(function(announce){
-                delete cronJobMap[announce.cronJobId];
+                var announceCron = cronJobMap[announce.cronJobId];
+                var announceCronStop = cronJobMap[announce.cronJobId + 'del'];
+                if(announceCron) announceCron.stop();
+                if(announceCronStop) announceCronStop.stop();
+                delete announceCron;
+                delete announceCronStop;
             })
+            Announce
+            .remove({userWallId: req.params.userWallId})
+            .exec(function(err){
+                console.log("err", err);
+                res.json({message: "deleted"})
+            });
         })
 
-        Announce
-        .remove({userWallId: req.params.userWallId})
-        .exec(function(err){
-            console.log("err", err);
-            res.json({message: "deleted"})
-        });
     }
 }
 
 module.exports.deleteAnnounce = function (req, res) { 
+    var userWallId = req.params.userWallId;
     if (!req.isAuthenticated()) {
         console.log("not Authenticated");
         res.status(401).jsonp([]);
@@ -206,8 +217,13 @@ module.exports.deleteAnnounce = function (req, res) {
             if(err){
                 console.log("error:", err);
             } else {
-                delete cronJobMap[announce.cronJobId];
-                delete cronJobMap[announce.cronJobId + 'del'];
+                var announceCron = cronJobMap[announce.cronJobId];
+                var announceCronStop = cronJobMap[announce.cronJobId + 'del'];
+                // console.log(announceCron, announceCronStop)
+                if(announceCron) announceCron.stop();
+                if(announceCronStop) announceCronStop.stop();
+                delete announceCron;
+                delete announceCronStop;
                 announce.remove();
                 res.json({message: "deleted"})
                 io.emit("putCurrentAnnounce" + userWallId);

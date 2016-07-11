@@ -1,7 +1,10 @@
-<md-card ng-attr-id="{{data._id}}" >
+<md-card ng-attr-id="{{data._id}}" style="{{data.current ? 'background:#bdffe9':'background:#dedede'}}">
 <md-card-title>
     <md-card-title-text>
-        <p class="md-headline" style="word-break: break-all; width: 90%;">{{data.header}}</p>
+
+        <p class="md-headline" style="word-break: break-all; width: 90%;">
+            <i ng-if="data.faIconClassName" class="fa {{data.faIconClassName}}"></i>&nbsp;{{data.header}}
+        </p>
         <p class="md-subhead" style="word-break: break-all; width: 90%;">{{data.subheader}}</p>
     </md-card-title-text>
 
@@ -13,7 +16,7 @@
 
 <md-card-content layout="row" layout-align="space-between">
     <div style="width: 75%;" >
-        <p>Starts at -  {{moment(data.startDateTime).format("ddd, MMM Do, h:mm a")}}</p>
+        <p>Displays on -  {{moment(data.startDateTime).format("ddd, MMM Do, h:mm a")}}</p>
         <p>Duration -  {{data.duration}} min</p>
     </div>
     <md-card-actions style="margin-right: -5px;" layout="row" layout-align="end end">

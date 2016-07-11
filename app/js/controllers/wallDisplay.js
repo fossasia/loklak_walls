@@ -686,7 +686,8 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         }
         socket.removeListener('toggle');
         socket.removeListener('addNewTweets' + userWallId);
-        socket.removeListener('checkDupSuccess'+userWallId+socketId);
+        socket.removeListener('checkDupSuccess'+ userWallId + socketId);
+        socket.removeListener('putCurrentAnnounce' + userWallId);
     });
 
 }

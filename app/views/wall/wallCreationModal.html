@@ -320,13 +320,13 @@
 
                                         <div class="col-md-7 wall-preview animate-switch-container" ng-switch on="newWallOptions.headerPosition">
                                             <div ng-switch-when="Top" ng-style="{'background-color': newWallOptions.headerColour} " class="row wall-preview-header">
-                                                <div ng-style="{'color': newWallOptions.headerForeColour} " class="preview-hashtag col-md-4">{{newWallOptions.mainHashtag}}</div>
-                                                <div ng-style="{'color': newWallOptions.headerForeColour} " class="preview-event-name col-md-4">
+                                                <div ng-style="{'color': newWallOptions.headerForeColour, 'font-size': '4vh', 'font-family': 'Roboto, sans-serif'}" class="preview-hashtag col-md-4">{{newWallOptions.mainHashtag}}</div>
+                                                <div ng-style="{'color': newWallOptions.headerForeColour}" class="preview-event-name col-md-4">
                                                     <div><img class="wall-preview-logo" ng-if="newWallOptions.logo" data-ng-src="data:{{newWallOptions.logo.filetype}};base64,{{newWallOptions.logo.base64}}">
-                                                        <div ng-hide="!newWallOptions.showEventName" class="wall-header-eventname">{{newWallOptions.eventName}}</div>
+                                                        <div ng-hide="!newWallOptions.showEventName" class="wall-header-eventname" style="font-size:4vh; ">{{newWallOptions.eventName}}</div>
                                                     </div>
                                                 </div>
-                                                <div ng-hide="!newWallOptions.showLoklakLogo" ng-style="{'color': newWallOptions.headerForeColour} " class="preview-banner col-md-4">Loklak</div>
+                                                <div ng-hide="!newWallOptions.showLoklakLogo" ng-style="{'color': newWallOptions.headerForeColour,'font-weight': '800','opacity': '0.3','font-size': '1.5vh'} " class="preview-banner col-md-4">POWERED BY LOKLAK</div>
                                             </div>
                                             <div class="row animate-switch-container" ng-switch on="newWallOptions.layoutStyle">
                                                 <img ng-switch-when="1" class="img-responsive animate-switch" ng-src="{{newWallOptions.showStatistics?'/images/leaderboardlinear-layout.jpg':'/images/linear-layout.jpg'}}" alt="">
@@ -381,19 +381,25 @@
                                             </div>
                                             </div>
                                             <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <md-input-container style="width:100%">
                                                   <label style="top: initial;">Start Date & Time</label>
                                                   <input mdc-datetime-picker="" date="true" time="true" type="text" max-date="dateTimeEnd" ng-model="newAnnounce.startDateTime" class=" md-input" format = "ddd, MMM Do, h:mm a"
                                                   id="announceDateTime">
                                                 </md-input-container>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <md-input-container style="width:100%">
                                                   <label style="top: initial;">Duration /minutes</label>
                                                   <input required type="number" step="5" name="duration" ng-model="newAnnounce.duration" min="0" max="4999" 
                                                   id="announceDateTime">
                                                 </md-input-container>
+                                            </div>
+                                            <div class="col-md-4">
+                                              <md-input-container style="width:100%">
+                                                  <label style="top: initial;">Timeline Icon (FontAwesome)</label>
+                                                  <input ng-model="newAnnounce.faIconClassName" type="text" placeholder="eg: fa-star">
+                                              </md-input-container>
                                             </div>
                                             </div>
 
