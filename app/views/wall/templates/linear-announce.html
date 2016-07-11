@@ -1,0 +1,32 @@
+<md-card ng-attr-id="{{data._id}}" style="{{data.current ? 'background:#bdffe9':'background:#dedede'}}">
+<md-card-title>
+    <md-card-title-text>
+
+        <p class="md-headline" style="word-break: break-all; width: 90%;">
+            <i ng-if="data.faIconClassName" class="fa {{data.faIconClassName}}"></i>&nbsp;{{data.header}}
+        </p>
+        <p class="md-subhead" style="word-break: break-all; width: 90%;">{{data.subheader}}</p>
+    </md-card-title-text>
+
+    <md-card-title-media>
+        <div class="md-media-sm card-media">
+        <img class="announce-thumbnail-logo" ng-if="data.logo" ng-src="data:{{data.logo.filetype}};base64,{{data.logo.base64}}" /></div>
+    </md-card-title-media>
+</md-card-title>
+
+<md-card-content layout="row" layout-align="space-between">
+    <div style="width: 75%;" >
+        <p>Displays on -  {{moment(data.startDateTime).format("ddd, MMM Do, h:mm a")}}</p>
+        <p>Duration -  {{data.duration}} min</p>
+    </div>
+    <md-card-actions style="margin-right: -5px;" layout="row" layout-align="end end">
+        <md-button class="md-icon-button md-primary" aria-label="Edit" ng-click="editAnnounce(data)">
+            <i class="fa fa-pencil thumbnail-icon"></i>
+        </md-button>
+        <md-button class="md-icon-button " aria-label="Delete" ng-click="deleteAnnounce(data)">
+            <i class="fa fa-trash thumbnail-icon"></i>
+        </md-button>
+    </md-card-actions>
+</md-card-content>
+
+</md-card>

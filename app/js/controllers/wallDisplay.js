@@ -16,6 +16,7 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
     vm = this;
     vm.invalidId = false;
     vm.statuses = [];
+    vm.currentAnnounce=[];
     var cycleInterval, 
         tweetTimeout,
         leaderboardInterval;
@@ -198,8 +199,8 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         vm.showEmpty = false;
         // allStatuses = [];
         // nextStatuses = [];
-        var userWallIdURL = '/api/tweets/' + $stateParams.user + $stateParams.id;
-        $http.get(userWallIdURL).then(function(res){
+        var userWallId =  $stateParams.user + $stateParams.id;
+        $http.get('/api/tweets/' + userWallId).then(function(res){
             console.log(res.data.statuses)
             vm.statuses=res.data.statuses;
             if(vm.statuses.length>0) {
@@ -209,6 +210,11 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
                 vm.showEmpty = true;
             }
         });
+        $http.get('/api/announces/current/' + userWallId).then(function(res){
+            if(res.data.announces && res.data.announces.length>0){
+                vm.currentAnnounce = res.data.announces;
+            }
+        })
         searchParams = {};
         vm.displaySearch = true;
         socket.emit('create', $stateParams.user + $stateParams.id);
@@ -662,6 +668,12 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         }
     })
 
+    socket.on('putCurrentAnnounce' + userWallId, function(){
+        $http.get('/api/announces/current/' + userWallId).then(function(res){
+            vm.currentAnnounce = res.data.announces;
+        })
+    })
+
     $scope.$on('$destroy', function() {
         if (tweetTimeout) {
             $timeout.cancel(tweetTimeout);
@@ -674,7 +686,8 @@ function WallDisplay($scope, $stateParams, $interval, $timeout, $location, $http
         }
         socket.removeListener('toggle');
         socket.removeListener('addNewTweets' + userWallId);
-        socket.removeListener('checkDupSuccess'+userWallId+socketId);
+        socket.removeListener('checkDupSuccess'+ userWallId + socketId);
+        socket.removeListener('putCurrentAnnounce' + userWallId);
     });
 
 }

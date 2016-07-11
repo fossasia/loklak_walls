@@ -107,13 +107,13 @@
 }
 
 .tabs-left > li {
-    padding-bottom: 10%;
+    padding-bottom: 0;
     height: 33%;
 }
 
 .tabs-left > li > a {
     text-align: center;
-    padding: 18% 0;
+    padding: 15% 0;
 }
 
 .wall-modal {
@@ -384,6 +384,8 @@
 
 .wall-header-eventname {
     padding: 0;
+    font-size: 6vh;
+    font-family: Roboto, Arial, sans-serif;
 }
 
 .wall-body {
@@ -916,7 +918,6 @@ label.info {
     font-weight: 400;
     &.hashtag {
     transform: initial !important;
-    top: 36px !important;
     }
 }
 
@@ -927,8 +928,8 @@ label.info {
 
 img.Emoji.Emoji--forText {
     width: 33px;
-}
 
+}
 td > a {
     color: #ffffff;
 }
@@ -949,4 +950,35 @@ a {
 .leaderBoardEnabled {
     font-size: 2vh;
     line-height: 1.3em;
+}
+
+
+// For Material Design Date-Time Picker
+.md-dialog-container{
+    z-index: 1050 !important;
+    background-color: rgba(0, 0, 0, 0.34);
+}
+
+md-dialog{
+    opacity: 1 !important;
+    md-dialog-content{
+        padding: 0 !important;
+    }
+}
+
+img.announce-thumbnail-logo {
+    max-height: 124px;
+    width: auto;
+}
+
+.watermark{
+    &:hover{
+        opacity: 1;
+    }
+    font-size: 16px;
+    font-weight: 600;
+    font-family: Roboto, sans-serif, Arial;
+    text-transform: uppercase;
+    opacity: 0.25;
+    transition: 0.5s;
 }

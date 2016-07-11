@@ -49,7 +49,8 @@ angular.element(document).ready(function() {
     'nya.bootstrap.select',
     'ng-sweet-alert',
     'ngMessages',
-    'ngMaterial'
+    'ngMaterial',
+    'ngMaterialDatePicker'
   ];
 
   // mount on window for testing

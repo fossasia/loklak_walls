@@ -1,4 +1,6 @@
-<link rel="stylesheet" type="text/css" href="css/angular-toggle-switch.css">
+<link rel="stylesheet" type="text/css" href="/css/angular-toggle-switch.css">
+<link rel="stylesheet" text="text/css" href="/css/angular-material.min.css">
+<link rel="stylesheet" text="text/css" href="/css/material-datetimepicker.min.css">
 <div class="modal fade wall-modal" id="wall-modal" role="dialog">
     <div class="modal-dialog modal-lg wall-modal-dialog">
         <div class="modal-content wall-modal-content">
@@ -10,10 +12,12 @@
                 <div class="row">
                     <div class="col-xs-2 tabs-list" style="position:fixed;">
                         <ul class="nav nav-tabs tabs-left" id="selectTab">
+                            <!-- tabSelected for next / start btns -->
                             <li ng-click="tabSelected(0)" class="active"><a href="#info" data-toggle="tab"><i class="fa fa-align-left fa-2x"></i><br><h4>INFO</h4></a></li>
                             <li ng-click="tabSelected(1)"><a href="#content" data-toggle="tab"><i class="fa fa-filter fa-2x"></i><br><h4>CONTENT</h4></a></li>
                             <li ng-click="tabSelected(2)"><a href="#design" data-toggle="tab"><i class="fa fa-paint-brush fa-2x"></i><br><h4>DESIGN</h4></a></li>
-                            <li ng-show="newWallOptions.moderation"ng-click="tabSelected(3)"><a href="#moderation" data-toggle="tab"><i class="fa fa-ban fa-2x"></i><br><h4>MODERATION</h4></a></li>
+                            <li ng-show="newWallOptions.moderation"ng-click="tabSelected(3)"><a href="#moderation" data-toggle="tab"><i class="fa fa-ban fa-2x"></i><br><h4>MODERATE</h4></a></li>
+                            <li ng-show="isEditing !== -1" ng-click="tabSelected(4)"><a href="#announcements" data-toggle="tab"><i class="fa fa-bullhorn fa-2x"></i><br><h4>ANNOUNCE</h4></a></li>
                         </ul>
                     </div>
                     <div class="col-xs-offset-2">
@@ -34,7 +38,7 @@
                                     <div class="row">
                                         <div class="col-md-5">
                                         <label class="info" >Hashtag for Event:</label>
-                                        <md-input-container class="md-block hashtagBlock" style="padding-bottom: 0px; top: -28px;">
+                                        <md-input-container class="md-block hashtagBlock">
                                             <label class="info hashtag">#</label>
                                             <input class="hashtagInput" required ng-model="newWallOptions.mainHashtagText" type="text"  name="hashtagInput" style="margin-left: 17px; width: 98%;">
                                         </md-input-container>
@@ -316,13 +320,13 @@
 
                                         <div class="col-md-7 wall-preview animate-switch-container" ng-switch on="newWallOptions.headerPosition">
                                             <div ng-switch-when="Top" ng-style="{'background-color': newWallOptions.headerColour} " class="row wall-preview-header">
-                                                <div ng-style="{'color': newWallOptions.headerForeColour} " class="preview-hashtag col-md-4">{{newWallOptions.mainHashtag}}</div>
-                                                <div ng-style="{'color': newWallOptions.headerForeColour} " class="preview-event-name col-md-4">
+                                                <div ng-style="{'color': newWallOptions.headerForeColour, 'font-size': '4vh', 'font-family': 'Roboto, sans-serif'}" class="preview-hashtag col-md-4">{{newWallOptions.mainHashtag}}</div>
+                                                <div ng-style="{'color': newWallOptions.headerForeColour}" class="preview-event-name col-md-4">
                                                     <div><img class="wall-preview-logo" ng-if="newWallOptions.logo" data-ng-src="data:{{newWallOptions.logo.filetype}};base64,{{newWallOptions.logo.base64}}">
-                                                        <div ng-hide="!newWallOptions.showEventName" class="wall-header-eventname">{{newWallOptions.eventName}}</div>
+                                                        <div ng-hide="!newWallOptions.showEventName" class="wall-header-eventname" style="font-size:4vh; ">{{newWallOptions.eventName}}</div>
                                                     </div>
                                                 </div>
-                                                <div ng-hide="!newWallOptions.showLoklakLogo" ng-style="{'color': newWallOptions.headerForeColour} " class="preview-banner col-md-4">Loklak</div>
+                                                <div ng-hide="!newWallOptions.showLoklakLogo" ng-style="{'color': newWallOptions.headerForeColour,'font-weight': '800','opacity': '0.3','font-size': '1.5vh'} " class="preview-banner col-md-4">POWERED BY LOKLAK</div>
                                             </div>
                                             <div class="row animate-switch-container" ng-switch on="newWallOptions.layoutStyle">
                                                 <img ng-switch-when="1" class="img-responsive animate-switch" ng-src="{{newWallOptions.showStatistics?'/images/leaderboardlinear-layout.jpg':'/images/linear-layout.jpg'}}" alt="">
@@ -355,6 +359,71 @@
                                     </div>
                                 </div>
                             </div>
+                            <div ng-show="isEditing !== -1" class="tab-pane fade" id="announcements">
+                                <div class="box-body">
+                                    <div class="row wall-preview-container">
+                                        <div class="col-md-6">
+                                            <h3>New Announcement</h3>
+                                            <div class="row">
+                                            <div class="col-md-12">
+                                                <md-input-container style="width:100%">
+                                                    <label style="top: initial;">Header</label>
+                                                    <input ng-model="newAnnounce.header"type="text">
+                                                </md-input-container>
+                                            </div>
+                                            </div>
+                                            <div class="row">
+                                            <div class="col-md-12">
+                                              <md-input-container style="width:100%">
+                                                  <label style="top: initial;">Subheader</label>
+                                                  <textarea ng-model="newAnnounce.subheader" md-maxlength="150" md-select-on-focus></textarea>
+                                              </md-input-container>
+                                            </div>
+                                            </div>
+                                            <div class="row">
+                                            <div class="col-md-4">
+                                                <md-input-container style="width:100%">
+                                                  <label style="top: initial;">Start Date & Time</label>
+                                                  <input mdc-datetime-picker="" date="true" time="true" type="text" max-date="dateTimeEnd" ng-model="newAnnounce.startDateTime" class=" md-input" format = "ddd, MMM Do, h:mm a"
+                                                  id="announceDateTime">
+                                                </md-input-container>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <md-input-container style="width:100%">
+                                                  <label style="top: initial;">Duration /minutes</label>
+                                                  <input required type="number" step="5" name="duration" ng-model="newAnnounce.duration" min="0" max="4999" 
+                                                  id="announceDateTime">
+                                                </md-input-container>
+                                            </div>
+                                            <div class="col-md-4">
+                                              <md-input-container style="width:100%">
+                                                  <label style="top: initial;">Timeline Icon (FontAwesome)</label>
+                                                  <input ng-model="newAnnounce.faIconClassName" type="text" placeholder="eg: fa-star">
+                                              </md-input-container>
+                                            </div>
+                                            </div>
+
+                                                <div class="form-group" style="margin-top: 24px;">
+                                                    <label class="info"><h4>Announcement logo</h4></label>
+                                                    <br>
+                                                    <div class="btn btn-default btn-file">
+                                                        <input type='file' ng-model='newAnnounce.logo' accept="image/*" maxsize="500" base-sixty-four-input>Choose Image
+                                                    </div>
+                                                    <img class="announce-thumbnail-logo" ng-if="newAnnounce.logo" ng-src="data:{{newAnnounce.logo.filetype}};base64,{{newAnnounce.logo.base64}}" /><span ng-show="invalidFile">File must not exceed 500 KB.</span>
+                                                    <button ng-if="newAnnounce.logo" ng-click="resetLogoAnnounce()" class=" btn btn-danger">Clear</button>
+                                                </div>
+                                                <div style="padding: 42px 0 0 60px;">
+                                                    <a class="btn btn-lg btn-loklak-blue" ng-hide="(!showNext) && ((step1.eventNameInput.$invalid) || (step1.hashtagInput.$invalid))" class="md-raised" ng-click="addAnnounce()" >Submit</a>
+                                                </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h3>Your Announcements</h3>
+                                            <div ng-repeat="announce in announces track by $index" linear-announce data="announce" edit-announce="editAnnounce(announce)" delete-announce="deleteAnnounce(announce)"></div>
+                                        </div>
+                                     
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -364,7 +433,7 @@
                 <div style="float:left;" class="col-xs-offset-2">
                     <a ng-show="showNext" ng-click="proceed()" type="submit" style="margin-left: 15px;" class="btn btn-lg btn-loklak-blue">Next Step</a>
                     <!-- <a ng-click="proceed()" type="submit" class="btn btn-primary">Save and Close</a> -->
-                    <a ng-show="showStart" ng-disabled="!(newWallOptions.eventName && newWallOptions.mainHashtagText)" type="submit" class="btn btn-lg btn-loklak-blue" style="margin-left: 15px;"ng-click="!(newWallOptions.eventName && newWallOptions.mainHashtagText) || start()">Save twitter wall</a>
+                    <a ng-show="showStart" ng-disabled="!(newWallOptions.eventName && newWallOptions.mainHashtagText)" type="submit" class="btn btn-lg btn-loklak-blue" style="margin-left: 15px;"ng-click="!(newWallOptions.eventName && newWallOptions.mainHashtagText) || start()">Start twitter wall</a>
                     <span ng-show="(!showNext) && ((step1.eventNameInput.$invalid) || (step1.hashtagInput.$invalid))" style="color:red;">Enter an event name and your event's main hashtag</span>
                 </div>
             </div>
