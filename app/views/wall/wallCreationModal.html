@@ -53,62 +53,29 @@
                                         <md-datepicker ng-model="newWallOptions.untilDate" md-placeholder="Until date">
                                         </md-datepicker>
                                     </div>
-                                        <!-- 
-                                        <div class="form-group">
-                                            <label>Show tweets within this period:</label>
-                                            <div class="form-inline">
-                                                <div class="input-group dropdown">
-                                                    <span class="input-group-addon">
-                                                    <span class="fa fa-calendar"></span>
-                                                    </span>
-                                                    <a class="dropdown-toggle my-toggle-select" id="datetimepicker1" role="button" data-toggle="dropdown" data-target="#" href="">
-                                                        <div class="input-append">
-                                                            <input type="text" class="form-control date-input" ng-model="newWallOptions.sinceDate">
-                                                        </div>
-                                                    </a>
-                                                    <ul class="dropdown-menu" role="menu" aria-labelledby="datetimepicker1">
-                                                        <datetimepicker ng-model="newWallOptions.sinceDate" data-datetimepicker-config="{ dropdownSelector: '.my-toggle-select', minView: 'hour' }"></datetimepicker>
-                                                    </ul>
-                                                </div>
-                                                &nbsp-&nbsp
-                                                <div class="input-group dropdown">
-                                                    <span class="input-group-addon">
-                                                    <span class="fa fa-calendar"></span>
-                                                    </span>
-                                                    <a class="dropdown-toggle my-toggle-select" id="datetimepicker2" role="button" data-toggle="dropdown" data-target="#" href="">
-                                                        <div class="input-append">
-                                                            <input type="text" class="form-control date-input" ng-model="newWallOptions.untilDate">
-                                                        </div>
-                                                    </a>
-                                                    <ul class="dropdown-menu" role="menu" aria-labelledby="datetimepicker2">
-                                                        <datetimepicker ng-model="newWallOptions.untilDate" data-datetimepicker-config="{ dropdownSelector: '.my-toggle-select', minView: 'hour' }"></datetimepicker>
-                                                    </ul>
-                                                </div>
-                                                <button ng-click="resetDate()" class="btn btn-danger">Clear</button>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="hashtagInput">Hashtag for Event</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon">#</span>
-                                                <input required ng-model="newWallOptions.mainHashtagText" type="text" class="form-control" name="hashtagInput" placeholder="loklak">
-                                            </div>
-                                        </div>
-                                         -->
-                                        <div class="form-group">
-                                            <div>
-                                                <div class="form-group" style="margin-top: 24px;">
-                                                    <label class="info" style="margin-bottom: 12px;">Upload Logo</label>&nbsp&nbsp<small>Transparent PNGs work best!</small>
-                                                    <br>
-                                                    <div class="btn btn-default btn-file btn-lg">
-                                                        <input type='file' ng-model='newWallOptions.logo' accept="image/*" maxsize="500" base-sixty-four-input>Choose Image</div>
-                                                    <img class="wall-thumbnail-logo" ng-if="newWallOptions.logo" ng-src="data:{{newWallOptions.logo.filetype}};base64,{{newWallOptions.logo.base64}}" /><span ng-show="invalidFile">File must not exceed 500 KB.</span>
-                                                    <button ng-if="newWallOptions.logo" ng-click="resetLogo()" class=" btn btn-danger">Clear</button>
-                                                </div>
+                                    <div class="form-group">
+                                        <div>
+                                            <div class="form-group" style="margin-top: 24px;">
+                                                <label class="info" style="margin-bottom: 12px;">Upload Logo</label>&nbsp&nbsp<small>Transparent PNGs work best!</small>
+                                                <br>
+                                                <div class="btn btn-default btn-file btn-lg">
+                                                    <input type='file' ng-model='newWallOptions.logo' accept="image/*" maxsize="500" base-sixty-four-input>Choose Image</div>
+                                                <img class="wall-thumbnail-logo" ng-if="newWallOptions.logo" ng-src="data:{{newWallOptions.logo.filetype}};base64,{{newWallOptions.logo.base64}}" /><span ng-show="invalidFile">File must not exceed 500 KB.</span>
+                                                <button ng-if="newWallOptions.logo" ng-click="resetLogo()" class=" btn btn-danger">Clear</button>
                                             </div>
                                         </div>
                                     </div>
+                                    </div>
                                 </form>
+                                <form action="/upload"
+                                    method="post"
+                                    accept-charset="utf-8"
+                                    enctype="multipart/form-data">
+                                    Select a file:
+                                    <input type='file' name='image' />
+                                    <button type='submit'>Upload</button>
+                                </form>
+
                             </div>
                             <div class="tab-pane fade" id="content">
                                 <div>

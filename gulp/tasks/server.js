@@ -13,6 +13,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 var MongoStore = require('connect-mongo')(session);
+var fileParser = require('connect-multiparty')();
+var cloudinary = require('cloudinary');
+var fs = require('fs');
 
 require('../../mongo/models/db');
 require('../../mongo/config/passport');
@@ -107,22 +110,37 @@ gulp.task('server', function() {
       })
       delete clientIds[socket.id];
     })
-
-
   });
 
   module.exports = io;
 
   var routesApi = require('../../mongo/routes/index');
-  
 
   // Use the API routes when path starts with /api
   server.use('/api', routesApi);
+
+  // Cloudinary image uploads
+  cloudinary.config({ 
+    cloud_name: config.cloudinaryName, 
+    api_key: config.cloudinaryAPIKey, 
+    api_secret: config.cloudinaryAPISecret 
+  });
+
+  server.use('/upload', fileParser, function(req, res){
+    var imageFile = req.files.image;
+    cloudinary.uploader.upload(imageFile.path, function(result){
+      if (result.url) {
+        res.json({url: result.url});
+      } else {
+        console.log('Error uploading to cloudinary: ',result);
+        res.json({msg:'did not get url'});
+      }
+    });
+  });
 
   // Serve index.html for all other routes to leave routing up to Angular
   server.use('/*', function(req, res) {
     res.sendFile('index.html', { root: 'build' });
   });
-
 
 });

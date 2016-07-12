@@ -11,5 +11,8 @@
 	"linkDebuggingServiceHost":"http://localhost",
 	"linkDebuggingServicePort": "8061",
 	"emailID": "CHANGE_THE_EMAIL_ID",
-	"emailPW": "CHANGE_THE_EMAIL_PW"
+	"emailPW": "CHANGE_THE_EMAIL_PW",
+	"cloudinaryName": "USE_YOUR_CLOUDINARY_ACCOUNT",
+	"cloudinaryAPIKey": "USE_YOUR_CLOUDINARY_ACCOUNT",
+	"cloudinaryAPISecret": "USE_YOUR_CLOUDINARY_ACCOUNT"
 }
