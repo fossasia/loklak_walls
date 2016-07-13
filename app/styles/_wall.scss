@@ -982,3 +982,12 @@ img.announce-thumbnail-logo {
     opacity: 0.25;
     transition: 0.5s;
 }
+
+.upload-btn{
+    min-width: 144px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    font-family: Roboto !important;
+    left: -7px !important;
+    top: 16px;
+}

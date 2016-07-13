@@ -32,6 +32,7 @@ var moment = require('moment');
         faIconClassName: ""
     };
     $scope.announces=[];
+    $scope.picture = {};
 
     
     // for thumbnail url
@@ -65,6 +66,37 @@ var moment = require('moment');
             $http.delete('/api/announces/'+ userWallId + '/' + announce._id);
         }
     }
+
+
+    $scope.upload = function(file) {
+        console.log (file);
+        if (file) {
+        // create an object for the ids
+            var pictureId;
+
+            // create a new formdata to store our image
+            var fd = new FormData();
+            fd.append('photo', file);
+
+            console.log (fd);
+
+            // process the upload
+            // $http({
+            //     method: 'POST',
+            //     url: '/upload',
+            //     data: fd,
+            //     headers: { 'Content-Type': undefined, 'enctype': 'multipart/form-data' },
+            //     photo: file
+            // }).then(function(response) {
+            //     console.log ("Upload successful!");
+            //     console.log (response);
+
+            // }, function(err){
+            //     console.log (err);
+            // });
+        }
+    }
+
     /*
      * Location UI component
      * If user input > 3 chars, suggest location

@@ -50,7 +50,8 @@ angular.element(document).ready(function() {
     'ng-sweet-alert',
     'ngMessages',
     'ngMaterial',
-    'ngMaterialDatePicker'
+    'ngMaterialDatePicker',
+    'ngFileUpload'
   ];
 
   // mount on window for testing

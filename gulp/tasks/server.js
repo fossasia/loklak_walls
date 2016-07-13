@@ -130,7 +130,8 @@ gulp.task('server', function() {
     var imageFile = req.files.image;
     cloudinary.uploader.upload(imageFile.path, function(result){
       if (result.url) {
-        res.json({url: result.url});
+        console.log(result);
+        res.json({public_id: result.public_id});
       } else {
         console.log('Error uploading to cloudinary: ',result);
         res.json({msg:'did not get url'});
