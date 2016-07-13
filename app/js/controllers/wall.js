@@ -9,7 +9,7 @@ var moment = require('moment');
 /**
  * @ngInject
  */
- function WallCtrl($scope, $rootScope, $timeout, AppsService, HelloService, SearchService, AuthService, $http, $interval, socket, SweetAlert) {
+ function WallCtrl($scope, $rootScope, $timeout, AppsService, SearchService, AuthService, $http, $interval, socket, SweetAlert, AppSettings) {
 
     var vm = this;
     var term = '';
@@ -67,33 +67,28 @@ var moment = require('moment');
         }
     }
 
-
     $scope.upload = function(file) {
-        console.log (file);
         if (file) {
-        // create an object for the ids
-            var pictureId;
-
             // create a new formdata to store our image
             var fd = new FormData();
             fd.append('photo', file);
-
-            console.log (fd);
+            $scope.uploading = true;
 
             // process the upload
-            // $http({
-            //     method: 'POST',
-            //     url: '/upload',
-            //     data: fd,
-            //     headers: { 'Content-Type': undefined, 'enctype': 'multipart/form-data' },
-            //     photo: file
-            // }).then(function(response) {
-            //     console.log ("Upload successful!");
-            //     console.log (response);
-
-            // }, function(err){
-            //     console.log (err);
-            // });
+            $http({
+                method: 'POST',
+                url: '/upload',
+                data: fd,
+                headers: { 
+                    'Content-Type': undefined, 
+                },
+            }).then(function(response) {
+                console.log ("Upload successful!");
+                $scope.uploading = false;
+                $scope.newWallOptions.logoId = response.data.public_id;
+            }, function(err){
+                console.log (err);
+            });
         }
     }
 
@@ -358,7 +353,7 @@ $scope.resetDate = function() {
 };
 
 $scope.resetLogo = function() {
-    $scope.newWallOptions.logo = null;
+    $scope.newWallOptions.logoId = "";
     //$scope.$apply();
 };
 
@@ -537,4 +532,4 @@ $scope.pollWallTweets = function(){
 
 }
 
-controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', '$http', '$interval', 'socket', 'SweetAlert', WallCtrl]);
+controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$timeout', 'AppsService', 'SearchService', 'AuthService', '$http', '$interval', 'socket', 'SweetAlert', 'AppSettings', WallCtrl]);

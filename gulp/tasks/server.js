@@ -127,7 +127,8 @@ gulp.task('server', function() {
   });
 
   server.use('/upload', fileParser, function(req, res){
-    var imageFile = req.files.image;
+    console.log(req.files.photo)
+    var imageFile = req.files.photo;
     cloudinary.uploader.upload(imageFile.path, function(result){
       if (result.url) {
         console.log(result);

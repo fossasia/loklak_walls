@@ -28,7 +28,11 @@
             <span class="wall-header-eventname">{{wall.wallOptions.mainHashtag}}</span>
         </div>
         <div ng-style="{'color': wall.wallOptions.headerForeColour}" class="event-name col-md-4">
-            <img ng-if="wall.wallOptions.logo" class="wall-preview-logo" data-ng-src="data:{{wall.wallOptions.logo.filetype}};base64,{{wall.wallOptions.logo.base64}}">
+            <!-- <img ng-if="wall.wallOptions.logo" class="wall-preview-logo" data-ng-src="data:{{wall.wallOptions.logo.filetype}};base64,{{wall.wallOptions.logo.base64}}"> -->
+            <cl-image ng-if="wall.wallOptions.logoId" style="width:100%;" public-id="{{wall.wallOptions.logoId}}" format="jpg">
+                <!-- <cl-transformation crop="fill" gravity="north"/> -->
+            </cl-image>
+
             <div ng-hide="!wall.wallOptions.showEventName" class="wall-header-eventname">
                 {{wall.wallOptions.eventName}}
             </div>

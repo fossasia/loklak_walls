@@ -62,7 +62,12 @@
                                         <div>
                                             <div class="form-group" style="margin-top: 20px;">
                                                  <label class="info">Event Logo</label>&nbsp&nbsp
-                                                 <label for="input-file-id" class="md-button md-raised upload-btn">Choose Image</label>
+                                                 <label ng-hide="uploading" for="input-file-id" class="md-button md-raised upload-btn">Choose Image</label>
+                                                 <md-button class="md-icon-button " aria-label="Delete" ng-click="resetLogo()" ng-if="newWallOptions.logoId">
+                                                     <i class="fa fa-trash thumbnail-icon"></i>
+                                                 </md-button>
+
+                                                 <md-progress-circular style="display:inline-block;top:12px" ng-show="uploading" md-mode="indeterminate"></md-progress-circular>
                                                  <div ng-messages="step1.picture.$error" style="color: red;">
                                                     <div ng-message="minWidth">
                                                         <p>Min Width has to be 50.</p>
@@ -86,23 +91,19 @@
                                         </div>
                                     </div>
                                     <md-input-container class="ng-hide" >
-                                    <input name="picture" id="input-file-id" type="file" ngf-select="upload($file)" ng-model="picture" accept="image/*" ngf-max-size="2MB" ngf-validate="{width: {min: 50, max: 1000}, height: {min: 30, max: 900}}" aria-label="upload image" >
-                                    <!-- <input class="ng-hide" id="input-file-id" type="file" /> -->
+                                    <input name="picture" id="input-file-id" type="file" ngf-select="upload($file)" ng-model="$parent.picture" accept="image/*" ngf-max-size="2MB" ngf-validate="{width: {min: 50, max: 1000}, height: {min: 30, max: 900}}" aria-label="upload image">
                                     </md-input-container>
-                                    <img style="width:100%;" ngf-src="picture">
+                                    <!-- <img style="width:100%;" ngf-src="$parent.picture"> -->
+                                    <cl-image ng-if="newWallOptions.logoId" style="width:100%;" public-id="{{newWallOptions.logoId}}" format="jpg">
+                                        <!-- <cl-transformation crop="fill" gravity="north"/> -->
+                                    </cl-image>
+
+                                    {{$.cloudinary.image(newWallOptions.logoId)}}
                                     </div>
                                     </div>
 
                                     </div>
                                 </form>
-                                <!-- <form action="/upload"
-                                    method="post"
-                                    accept-charset="utf-8"
-                                    enctype="multipart/form-data">
-                                    Select a file:
-                                    <input type='file' name='image' />
-                                    <button type='submit'>Upload</button>
-                                </form> -->
 
                             </div>
                             <div class="tab-pane fade" id="content">
