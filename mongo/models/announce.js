@@ -8,7 +8,7 @@ var AnnouceSchema = new Schema({
   subheader: String,
   startDateTime: Date,
   duration: Number,
-  logo: {},
+  logoId: String,
   cronJobId: String,
   current: Boolean,
   faIconClassName: String

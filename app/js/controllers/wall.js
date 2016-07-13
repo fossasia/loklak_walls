@@ -33,6 +33,7 @@ var moment = require('moment');
     };
     $scope.announces=[];
     $scope.picture = {};
+    $scope.pictureAnnounce = {};
 
     
     // for thumbnail url
@@ -67,7 +68,9 @@ var moment = require('moment');
         }
     }
 
-    $scope.upload = function(file) {
+    // @file is image
+    // @source if it is from event or announcement
+    $scope.upload = function(file, source) {
         if (file) {
             // create a new formdata to store our image
             var fd = new FormData();
@@ -83,9 +86,13 @@ var moment = require('moment');
                     'Content-Type': undefined, 
                 },
             }).then(function(response) {
-                console.log ("Upload successful!");
+                console.log ("Upload successful!", response.data.public_id);
                 $scope.uploading = false;
-                $scope.newWallOptions.logoId = response.data.public_id;
+                if(source === "logo"){
+                    $scope.newWallOptions.logoId = response.data.public_id;
+                } else if(source === "announce"){
+                    $scope.newAnnounce.logoId = response.data.public_id;
+                }
             }, function(err){
                 console.log (err);
             });
@@ -138,6 +145,9 @@ var moment = require('moment');
         $scope.newWallOptions.showEventName = true;
     };
 
+    // Called when click side tabs,
+    // changes showNext, showStart
+    // for the btm bar buttons
     $scope.tabSelected = function(index) {
         $scope.selectedTab = index;
         if (index === 2) {

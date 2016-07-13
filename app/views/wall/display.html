@@ -159,10 +159,10 @@
                     <div class="timeline-item" ng-repeat="announcement in wall.currentAnnounce">
                         <div class="timeline-icon" style="background:{{wall.wallOptions.headerColour}};text-align: center;">
 
-                            <i ng-if="$first" class="firstAnnounce fa fa-star" style="color: {{wall.wallOptions.headerForeColour}}; ">
+                            <i ng-if="$first" class="firstAnnounce fa fa-star" style="color: {{wall.wallOptions.headerForeColour}}; opacity:0.5;">
                             </i>
 
-                            <i ng-if="!$first" class="firstAnnounce fa {{announcement.faIconClassName}}" style="color: {{wall.wallOptions.headerForeColour}}; ">
+                            <i ng-if="!$first" class="firstAnnounce fa {{announcement.faIconClassName}}" style="color: {{wall.wallOptions.headerForeColour}}; opacity:0.5;">
                             </i>
 
                         </div>
@@ -170,6 +170,10 @@
                             <h3 style="background:{{wall.wallOptions.headerColour}}">
                                 {{announcement.header}}
                             </h3>
+                            <br>
+                            <cl-image ng-if="announcement.logoId" style="max-width:100%;" public-id="{{announcement.logoId}}" format="png">
+                                <!-- <cl-transformation crop="fill" gravity="north"/> -->
+                            </cl-image>
                             <br>
                             <p>{{announcement.subheader}}</p>
                         </div>
