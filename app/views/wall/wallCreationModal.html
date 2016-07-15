@@ -1,7 +1,8 @@
 <link rel="stylesheet" type="text/css" href="/css/angular-toggle-switch.css">
 <link rel="stylesheet" text="text/css" href="/css/angular-material.min.css">
 <link rel="stylesheet" text="text/css" href="/css/material-datetimepicker.min.css">
-<div class="modal fade wall-modal" id="wall-modal" role="dialog">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/9.0.9/ng-file-upload.min.js"></script>
+    <div class="modal fade wall-modal" id="wall-modal" role="dialog">
     <div class="modal-dialog modal-lg wall-modal-dialog">
         <div class="modal-content wall-modal-content">
             <div class="modal-header">
@@ -22,93 +23,78 @@
                     </div>
                     <div class="col-xs-offset-2">
                         <div class="tab-content">
-                            <div class="tab-pane active fade in" id="info" style="margin-bottom: 80px;">
+                            <div class="tab-pane active fade in" id="info" style="margin-bottom: 200px; margin-top:24px">
                                 <form name="step1" role="form" class="wall-creation-form">
                                     <div class="box-body">
-
-                                    <div class="row">
-                                        <div class="col-md-5" style="margin-top: 10px;">
-                                        <label class="info" for="eventNameInput">Name of Event:</label>
+                                        <label class="info">Event Details</label>
+                                    <div class="row" style="margin-top: 10px;">
+                                        <div class="col-md-2" >
                                         <md-input-container class="md-block ">
+                                            <label style="top:-26px">Event Name</label>
                                             <input required ng-model="newWallOptions.eventName" type="text"  name="eventNameInput" aria-label="Event name">
                                         </md-input-container>
                                         </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-5">
-                                        <label class="info" >Hashtag for Event:</label>
+                                        <div class="col-md-3">
                                         <md-input-container class="md-block hashtagBlock">
+                                            <label style="top:-26px; left:18px;">Event Hashtag</label>
                                             <label class="info hashtag">#</label>
                                             <input class="hashtagInput" required ng-model="newWallOptions.mainHashtagText" type="text"  name="hashtagInput" style="margin-left: 17px; width: 98%;">
                                         </md-input-container>
                                         </div>
                                     </div>
 
-                                    <label class="info" >Show tweets within this period:</label>
-                                    <div>
-                                        <md-datepicker ng-model="newWallOptions.sinceDate" md-placeholder="Since date">
-                                        </md-datepicker>
-                                        <span style=" white-space: pre; display: inline-block;">       -     </span>
-                                        <md-datepicker ng-model="newWallOptions.untilDate" md-placeholder="Until date">
-                                        </md-datepicker>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                        <label class="info" >Show tweets within this period:</label>
+                                        <div>
+                                            <md-datepicker ng-model="newWallOptions.sinceDate" md-placeholder="Since date">
+                                            </md-datepicker>
+                                            <span style=" white-space: pre; display: inline-block;">       -     </span>
+                                            <md-datepicker ng-model="newWallOptions.untilDate" md-placeholder="Until date">
+                                            </md-datepicker>
+                                        </div>
+                                        </div>
                                     </div>
-                                        <!-- 
-                                        <div class="form-group">
-                                            <label>Show tweets within this period:</label>
-                                            <div class="form-inline">
-                                                <div class="input-group dropdown">
-                                                    <span class="input-group-addon">
-                                                    <span class="fa fa-calendar"></span>
-                                                    </span>
-                                                    <a class="dropdown-toggle my-toggle-select" id="datetimepicker1" role="button" data-toggle="dropdown" data-target="#" href="">
-                                                        <div class="input-append">
-                                                            <input type="text" class="form-control date-input" ng-model="newWallOptions.sinceDate">
-                                                        </div>
-                                                    </a>
-                                                    <ul class="dropdown-menu" role="menu" aria-labelledby="datetimepicker1">
-                                                        <datetimepicker ng-model="newWallOptions.sinceDate" data-datetimepicker-config="{ dropdownSelector: '.my-toggle-select', minView: 'hour' }"></datetimepicker>
-                                                    </ul>
+
+                                    <div class="row">
+                                    <div class="col-md-5">
+                                    <div class="form-group">
+                                        <div class="form-group" style="margin-top: 20px;">
+                                             <label class="info">Event Logo&nbsp;&nbsp;</label>
+                                             <label ng-hide="uploading" for="input-file-id" class="md-button md-raised upload-btn">Choose Image</label>
+                                             <md-button class="md-icon-button " aria-label="Delete" ng-click="resetLogo()" ng-if="newWallOptions.logoId">
+                                                 <i class="fa fa-trash thumbnail-icon"></i>
+                                             </md-button>
+                                             <md-progress-circular style="display:inline-block;top:12px" ng-show="uploading" md-mode="indeterminate"></md-progress-circular>
+                                             <div ng-messages="step1.picture.$error" style="color: red;">
+                                                <div ng-message="minWidth">
+                                                    <p>Min Width has to be 50.</p>
                                                 </div>
-                                                &nbsp-&nbsp
-                                                <div class="input-group dropdown">
-                                                    <span class="input-group-addon">
-                                                    <span class="fa fa-calendar"></span>
-                                                    </span>
-                                                    <a class="dropdown-toggle my-toggle-select" id="datetimepicker2" role="button" data-toggle="dropdown" data-target="#" href="">
-                                                        <div class="input-append">
-                                                            <input type="text" class="form-control date-input" ng-model="newWallOptions.untilDate">
-                                                        </div>
-                                                    </a>
-                                                    <ul class="dropdown-menu" role="menu" aria-labelledby="datetimepicker2">
-                                                        <datetimepicker ng-model="newWallOptions.untilDate" data-datetimepicker-config="{ dropdownSelector: '.my-toggle-select', minView: 'hour' }"></datetimepicker>
-                                                    </ul>
+                                                <div ng-message="minHeight">
+                                                    <p>Min height has to be 30.</p>
                                                 </div>
-                                                <button ng-click="resetDate()" class="btn btn-danger">Clear</button>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="hashtagInput">Hashtag for Event</label>
-                                            <div class="input-group">
-                                                <span class="input-group-addon">#</span>
-                                                <input required ng-model="newWallOptions.mainHashtagText" type="text" class="form-control" name="hashtagInput" placeholder="loklak">
-                                            </div>
-                                        </div>
-                                         -->
-                                        <div class="form-group">
-                                            <div>
-                                                <div class="form-group" style="margin-top: 24px;">
-                                                    <label class="info" style="margin-bottom: 12px;">Upload Logo</label>&nbsp&nbsp<small>Transparent PNGs work best!</small>
-                                                    <br>
-                                                    <div class="btn btn-default btn-file btn-lg">
-                                                        <input type='file' ng-model='newWallOptions.logo' accept="image/*" maxsize="500" base-sixty-four-input>Choose Image</div>
-                                                    <img class="wall-thumbnail-logo" ng-if="newWallOptions.logo" ng-src="data:{{newWallOptions.logo.filetype}};base64,{{newWallOptions.logo.base64}}" /><span ng-show="invalidFile">File must not exceed 500 KB.</span>
-                                                    <button ng-if="newWallOptions.logo" ng-click="resetLogo()" class=" btn btn-danger">Clear</button>
+                                                <div ng-message="maxWidth">
+                                                    Max Width has to be 1000.
+                                                </div>
+                                                <div ng-message="maxSize">
+                                                    <p>File is bigger than 3MB.</p>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <md-input-container class="ng-hide" >
+                                    <input name="picture" id="input-file-id" type="file" ngf-select="upload($file, 'logo')" ng-model="$parent.picture" accept="image/*" ngf-max-size="3MB" ngf-validate="{width: {min: 10, max: 1000}, height: {min: 30, max: 900}}" aria-label="upload image">
+                                    </md-input-container>
+                                    <!-- <img style="width:100%;" ngf-src="$parent.picture"> -->
+                                    <cl-image ng-if="newWallOptions.logoId" style="max-width:100%;max-height:12vh;margin-bottom: 14px;" public-id="{{newWallOptions.logoId}}" format="PNG">
+                                        <!-- <cl-transformation crop="fill" gravity="north"/> -->
+                                    </cl-image>
+                                    </div>
+                                    </div>
+
                                     </div>
                                 </form>
+
                             </div>
                             <div class="tab-pane fade" id="content">
                                 <div>
@@ -403,18 +389,45 @@
                                             </div>
                                             </div>
 
-                                                <div class="form-group" style="margin-top: 24px;">
-                                                    <label class="info"><h4>Announcement logo</h4></label>
-                                                    <br>
-                                                    <div class="btn btn-default btn-file">
-                                                        <input type='file' ng-model='newAnnounce.logo' accept="image/*" maxsize="500" base-sixty-four-input>Choose Image
+                                            <div class="row">
+                                                <div class="col-md-12" style="top: -33px;">
+                                                <form name="announce">
+                                                <div class="form-group">
+                                                     <label class="info">Announcement Image&nbsp;&nbsp;</label>
+                                                     <label ng-hide="uploading" for="input-file-id-announce" class="md-button md-raised upload-btn">Choose Image</label>
+                                                     <md-button class="md-icon-button " aria-label="Delete" ng-click="resetLogo()" ng-if="newAnnounce.logoId">
+                                                         <i class="fa fa-trash thumbnail-icon"></i>
+                                                     </md-button>
+
+                                                     <md-progress-circular style="display:inline-block;top:12px" ng-show="uploading" md-mode="indeterminate"></md-progress-circular>
+                                                     <div ng-messages="announce.pictureAnnounce.$error" style="color: red;">
+                                                        <div ng-message="minWidth">
+                                                            <p>Min Width has to be 50.</p>
+                                                        </div>
+                                                        <div ng-message="minHeight">
+                                                            <p>Min height has to be 30.</p>
+                                                        </div>
+                                                        <div ng-message="maxWidth">
+                                                            Max Width has to be 750.
+                                                        </div>
+                                                        <div ng-message="maxSize">
+                                                            <p>File is bigger than 3MB.</p>
+                                                        </div>
                                                     </div>
-                                                    <img class="announce-thumbnail-logo" ng-if="newAnnounce.logo" ng-src="data:{{newAnnounce.logo.filetype}};base64,{{newAnnounce.logo.base64}}" /><span ng-show="invalidFile">File must not exceed 500 KB.</span>
-                                                    <button ng-if="newAnnounce.logo" ng-click="resetLogoAnnounce()" class=" btn btn-danger">Clear</button>
                                                 </div>
-                                                <div style="padding: 42px 0 0 60px;">
-                                                    <a class="btn btn-lg btn-loklak-blue" ng-hide="(!showNext) && ((step1.eventNameInput.$invalid) || (step1.hashtagInput.$invalid))" class="md-raised" ng-click="addAnnounce()" >Submit</a>
+                                                <md-input-container class="ng-hide" >
+                                                <input name="pictureAnnounce" id="input-file-id-announce" type="file" ngf-select="upload($file, 'announce')" ng-model="$parent.pictureAnnounce" accept="image/*" ngf-max-size="3MB" ngf-validate="{width: {min: 10, max: 900}, height: {min: 10, max: 900}}" aria-label="upload announcement image">
+                                                </md-input-container>
+                                                </form>
+
+                                                <!-- <img style="width:100%;" ngf-src="$parent.picture"> -->
+                                                <cl-image ng-if="newAnnounce.logoId" style="max-width:100%;" public-id="{{newAnnounce.logoId}}" format="PNG" >
+                                                </cl-image>
                                                 </div>
+                                            </div>
+
+                                            <div style="padding: 42px 0 0 60px;">
+                                            </div>
                                         </div>
                                         <div class="col-md-6">
                                             <h3>Your Announcements</h3>
@@ -434,6 +447,7 @@
                     <a ng-show="showNext" ng-click="proceed()" type="submit" style="margin-left: 15px;" class="btn btn-lg btn-loklak-blue">Next Step</a>
                     <!-- <a ng-click="proceed()" type="submit" class="btn btn-primary">Save and Close</a> -->
                     <a ng-show="showStart" ng-disabled="!(newWallOptions.eventName && newWallOptions.mainHashtagText)" type="submit" class="btn btn-lg btn-loklak-blue" style="margin-left: 15px;"ng-click="!(newWallOptions.eventName && newWallOptions.mainHashtagText) || start()">Start twitter wall</a>
+                    <a class="btn btn-lg btn-loklak-blue" ng-show="selectedTab === 4" class="md-raised" ng-click="addAnnounce()" >Save Annoucement</a>                    
                     <span ng-show="(!showNext) && ((step1.eventNameInput.$invalid) || (step1.hashtagInput.$invalid))" style="color:red;">Enter an event name and your event's main hashtag</span>
                 </div>
             </div>

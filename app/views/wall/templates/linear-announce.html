@@ -10,7 +10,11 @@
 
     <md-card-title-media>
         <div class="md-media-sm card-media">
-        <img class="announce-thumbnail-logo" ng-if="data.logo" ng-src="data:{{data.logo.filetype}};base64,{{data.logo.base64}}" /></div>
+            <!-- <img ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out"> -->
+            <cl-image ng-if="data.logoId" style="max-width:100%;" public-id="{{data.logoId}}" format="jpg">
+                <!-- <cl-transformation crop="fill" gravity="north"/> -->
+            </cl-image>
+        </div>
     </md-card-title-media>
 </md-card-title>
 

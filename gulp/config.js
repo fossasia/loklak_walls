@@ -5,6 +5,9 @@ var config = require('../custom_configFile.json');
 module.exports = {
 
     'serverport': config.gulpDevExpressPort,
+    'cloudinaryName': config.cloudinaryName,
+    'cloudinaryAPIKey': config.cloudinaryAPIKey,
+    'cloudinaryAPISecret': config.cloudinaryAPISecret,
 
     'styles': {
         'src': 'app/styles/**/*.scss',

@@ -28,7 +28,7 @@ var UserSchema = new Schema({
       headerForeColour: String,
       headerPosition: String,
       layoutStyle: Number,
-      logo: {},
+      logoId: String,
       showStatistics: Boolean,
       showLoklakLogo: Boolean,
       showEventName: Boolean,

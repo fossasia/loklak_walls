@@ -50,7 +50,9 @@ angular.element(document).ready(function() {
     'ng-sweet-alert',
     'ngMessages',
     'ngMaterial',
-    'ngMaterialDatePicker'
+    'ngMaterialDatePicker',
+    'ngFileUpload',
+    'cloudinary'
   ];
 
   // mount on window for testing
@@ -59,6 +61,12 @@ angular.element(document).ready(function() {
   angular.module('app').constant('AppSettings', require('./constants'));
 
   angular.module('app').config(require('./routes'));
+  angular.module('app').config(['cloudinaryProvider', 'AppSettings', 
+    function (cloudinaryProvider, AppSettings) {
+    cloudinaryProvider
+    .set("cloud_name", AppSettings.cloudinaryName)
+    .set("upload_preset", AppSettings.cloudinaryAPIKey);
+  }]);
 
   angular.module('app').run(require('./on_run'));
 

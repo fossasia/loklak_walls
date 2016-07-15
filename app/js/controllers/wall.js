@@ -9,7 +9,7 @@ var moment = require('moment');
 /**
  * @ngInject
  */
- function WallCtrl($scope, $rootScope, $timeout, AppsService, HelloService, SearchService, AuthService, $http, $interval, socket, SweetAlert) {
+ function WallCtrl($scope, $rootScope, $timeout, AppsService, SearchService, AuthService, $http, $interval, socket, SweetAlert, AppSettings) {
 
     var vm = this;
     var term = '';
@@ -32,6 +32,8 @@ var moment = require('moment');
         faIconClassName: ""
     };
     $scope.announces=[];
+    $scope.picture = {};
+    $scope.pictureAnnounce = {};
 
     
     // for thumbnail url
@@ -65,6 +67,38 @@ var moment = require('moment');
             $http.delete('/api/announces/'+ userWallId + '/' + announce._id);
         }
     }
+
+    // @file is image
+    // @source if it is from event or announcement
+    $scope.upload = function(file, source) {
+        if (file) {
+            // create a new formdata to store our image
+            var fd = new FormData();
+            fd.append('photo', file);
+            $scope.uploading = true;
+
+            // process the upload
+            $http({
+                method: 'POST',
+                url: '/upload',
+                data: fd,
+                headers: { 
+                    'Content-Type': undefined, 
+                },
+            }).then(function(response) {
+                console.log ("Upload successful!", response.data.public_id);
+                $scope.uploading = false;
+                if(source === "logo"){
+                    $scope.newWallOptions.logoId = response.data.public_id;
+                } else if(source === "announce"){
+                    $scope.newAnnounce.logoId = response.data.public_id;
+                }
+            }, function(err){
+                console.log (err);
+            });
+        }
+    }
+
     /*
      * Location UI component
      * If user input > 3 chars, suggest location
@@ -111,6 +145,9 @@ var moment = require('moment');
         $scope.newWallOptions.showEventName = true;
     };
 
+    // Called when click side tabs,
+    // changes showNext, showStart
+    // for the btm bar buttons
     $scope.tabSelected = function(index) {
         $scope.selectedTab = index;
         if (index === 2) {
@@ -326,7 +363,7 @@ $scope.resetDate = function() {
 };
 
 $scope.resetLogo = function() {
-    $scope.newWallOptions.logo = null;
+    $scope.newWallOptions.logoId = "";
     //$scope.$apply();
 };
 
@@ -505,4 +542,4 @@ $scope.pollWallTweets = function(){
 
 }
 
-controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$timeout', 'AppsService', 'HelloService', 'SearchService', 'AuthService', '$http', '$interval', 'socket', 'SweetAlert', WallCtrl]);
+controllersModule.controller('WallCtrl', ['$scope', '$rootScope', '$timeout', 'AppsService', 'SearchService', 'AuthService', '$http', '$interval', 'socket', 'SweetAlert', 'AppSettings', WallCtrl]);

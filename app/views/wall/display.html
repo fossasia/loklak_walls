@@ -28,7 +28,11 @@
             <span class="wall-header-eventname">{{wall.wallOptions.mainHashtag}}</span>
         </div>
         <div ng-style="{'color': wall.wallOptions.headerForeColour}" class="event-name col-md-4">
-            <img ng-if="wall.wallOptions.logo" class="wall-preview-logo" data-ng-src="data:{{wall.wallOptions.logo.filetype}};base64,{{wall.wallOptions.logo.base64}}">
+            <!-- <img ng-if="wall.wallOptions.logo" class="wall-preview-logo" data-ng-src="data:{{wall.wallOptions.logo.filetype}};base64,{{wall.wallOptions.logo.base64}}"> -->
+            <cl-image ng-if="wall.wallOptions.logoId" style="width:100%;" public-id="{{wall.wallOptions.logoId}}" format="jpg">
+                <!-- <cl-transformation crop="fill" gravity="north"/> -->
+            </cl-image>
+
             <div ng-hide="!wall.wallOptions.showEventName" class="wall-header-eventname">
                 {{wall.wallOptions.eventName}}
             </div>
@@ -155,10 +159,10 @@
                     <div class="timeline-item" ng-repeat="announcement in wall.currentAnnounce">
                         <div class="timeline-icon" style="background:{{wall.wallOptions.headerColour}};text-align: center;">
 
-                            <i ng-if="$first" class="firstAnnounce fa fa-star" style="color: {{wall.wallOptions.headerForeColour}}; ">
+                            <i ng-if="$first" class="firstAnnounce fa fa-star" style="color: {{wall.wallOptions.headerForeColour}}; opacity:0.5;">
                             </i>
 
-                            <i ng-if="!$first" class="firstAnnounce fa {{announcement.faIconClassName}}" style="color: {{wall.wallOptions.headerForeColour}}; ">
+                            <i ng-if="!$first" class="firstAnnounce fa {{announcement.faIconClassName}}" style="color: {{wall.wallOptions.headerForeColour}}; opacity:0.5;">
                             </i>
 
                         </div>
@@ -166,6 +170,10 @@
                             <h3 style="background:{{wall.wallOptions.headerColour}}">
                                 {{announcement.header}}
                             </h3>
+                            <br>
+                            <cl-image ng-if="announcement.logoId" style="max-width:100%;" public-id="{{announcement.logoId}}" format="png">
+                                <!-- <cl-transformation crop="fill" gravity="north"/> -->
+                            </cl-image>
                             <br>
                             <p>{{announcement.subheader}}</p>
                         </div>
