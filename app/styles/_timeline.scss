@@ -31,6 +31,15 @@ $timeline-color: $primary-color;
     }
 }
 
+%clearfix {
+    &:after, &:before {
+        content: '';
+        display: block;
+        width: 100%;
+        clear: both;
+    }
+}
+
 // Timeline
 #timeline {
     position: relative;
