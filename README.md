@@ -5,7 +5,7 @@ loklak webclient
 [![Build Status](https://travis-ci.org/fossasia/loklak_webclient.svg?branch=master)](https://travis-ci.org/fossasia/loklak_webclient)
 [![Code Climate](https://codeclimate.com/github/fossasia/loklak_webclient/badges/gpa.svg)](https://codeclimate.com/github/fossasia/loklak_webclient)
 
-The loklak web client is an application that showcase the possibilities of using the loklak server data sources. To use the loklak webclient, you need a running loklak server or use the API provide by http://loklak.org. loklak.org run a server application which is able to collect messages from various sources, including twitter. The server contains a search index and a peer-to-peer index sharing interface. All messages are stored in an elasticsearch index.
+The loklak web client is an application that showcases the possibilities of using the loklak server data sources. To use the loklak webclient, you need a running loklak server or use the API provide by http://loklak.org. loklak.org run a server application which is able to collect messages from various sources, including twitter. The server contains a search index and a peer-to-peer index sharing interface. All messages are stored in an elasticsearch index.
 
 ---
 
@@ -39,7 +39,18 @@ The goal is to have a demo version that is automatically deployed from our repos
 5. Run `npm install` from the root directory **AND** from `oauth-proxy` subdirectory, **AND** from `iframely`
 6. Install mongodb and run `mongod`.
 
-### Add twitter credentials
+## Technology Stack
+
+### Components
+
+* Database - MongoDB
+* Node.js
+
+### Services and Dependencies
+
+The goal is to use [Bower](http://bower.io) to manage front-end dependencies in future.
+
+#### Add twitter credentials
 Create a Twitter application at [https://apps.twitter.com](https://apps.twitter.com), remember to set the correct website url & callback url (for localhost, `http://127.0.0.1/` works better), then modify `custom_configFile.json` as:
 * Set the twitterConsumerKey var in `custom_configFile.json` to set the Consumer Key (API Key) from your Twitter app
 * Set the twitterConsumerSecret var in `custom_configFile.json` to set the Consumer Secret from your Twitter app  
@@ -48,10 +59,10 @@ Create a Twitter application at [https://apps.twitter.com](https://apps.twitter.
 
 A twitter app is valid only for a domain (defined when creating the app). So the credentails above need to be changed also according to the domain (e.g. you'll need to create 2 twitter apps separately for a clone in localhost and for a clone in a remote server)
 
-### Loklak server
+#### Loklak server
 See here to run your own https://github.com/loklak/loklak_server (reccommended), and change `apiUrl` in config accordingly. Last resource, or for production is `http://loklak.org/api/`
 
-### Iframely Link Debugging server
+#### Iframely Link Debugging server
 Link debugging server is essential to embed rich contents from tweets, e.g. videos, links, articles, photos, ..etc. This need to be ran separately, just like the loklak server. Go to `./iframely`, and run `node server`. It's a **MUST** to be in `./iframely` folder when executing the service. `pm` or *nix `screen` can help managing this service in the background.
 
 ## Development
@@ -77,3 +88,23 @@ When there is a need to change default port `oauthProxyUrl, oauthProxyRedirectUr
    To fix, check [this post](http://stackoverflow.com/questions/16748737/grunt-watch-error-waiting-fatal-error-watch-enospc) on Stackoverflow. 
 - `version 'GLIBC_2.14' not found required by imagemin-jpegtran`. To fix this, make sure you have installed nasm, libpng-dev, dh-autoreconf. Then do `rm node_modules -r` and `npm install`.
 - Problem with `node-gyp`? Check if you meet the requirements here: [Link](https://github.com/TooTallNate/node-gyp)
+
+## Contributions, Bug Reports, Feature Requests
+
+This is an Open Source project and we would be happy to see contributors who report bugs and file feature requests submitting pull requests as well. Please report issues in the GitHub tracker.
+
+
+## Branch Policy
+
+We have the following branches
+ * **development**
+	 All development goes on in this branch. If you're making a contribution,
+	 you are supposed to make a pull request to _development_.
+	 PRs to master must pass a build check and a unit-test check on Travis
+ * **master**
+   This contains shipped code. After significant features/bugfixes are accumulated on development, we make a version update, and make a release.
+
+
+## License
+
+This project is currently licensed under the The MIT License (MIT). A copy of LICENSE.md should be present along with the source code. To obtain the software under a different license, please contact FOSSASIA.
