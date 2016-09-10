@@ -1,15 +1,25 @@
 loklak webclient
 =====================================
 
-[![Join the chat at https://gitter.im/loklak/loklak_webclient](https://badges.gitter.im/loklak/loklak_webclient.svg)](https://gitter.im/loklak/loklak_webclient?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.org/loklak/loklak_webclient.svg?branch=master)](https://travis-ci.org/loklak/loklak_webclient)
-[![Code Climate](https://codeclimate.com/github/loklak/loklak_webclient/badges/gpa.svg)](https://codeclimate.com/github/loklak/loklak_webclient)
+[![Join the chat at https://gitter.im/loklak/loklak](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/loklak/loklak)
+[![Build Status](https://travis-ci.org/fossasia/loklak_webclient.svg?branch=master)](https://travis-ci.org/fossasia/loklak_webclient)
+[![Code Climate](https://codeclimate.com/github/fossasia/loklak_webclient/badges/gpa.svg)](https://codeclimate.com/github/fossasia/loklak_webclient)
 
-Web client for loklak server (see: https://github.com/loklak/loklak_server ).
-To use the loklak webclient, you need a running loklak server.
-Install and run it first.
+The loklak web client is an application that showcase the possibilities of using the loklak server data sources. To use the loklak webclient, you need a running loklak server or use the API provide by http://loklak.org. loklak.org run a server application which is able to collect messages from various sources, including twitter. The server contains a search index and a peer-to-peer index sharing interface. All messages are stored in an elasticsearch index.
 
 ---
+
+## Communication
+
+Please join our mailing list to discuss questions regarding the project: https://groups.google.com/forum/#!forum/loklak
+
+Our chat channel is on gitter here: https://gitter.im/loklak/loklak
+
+## Demo version
+
+The goal is to have a demo version that is automatically deployed from our repositories:
+
+## Installation
 
 ### Build
 
@@ -67,7 +77,3 @@ When there is a need to change default port `oauthProxyUrl, oauthProxyRedirectUr
    To fix, check [this post](http://stackoverflow.com/questions/16748737/grunt-watch-error-waiting-fatal-error-watch-enospc) on Stackoverflow. 
 - `version 'GLIBC_2.14' not found required by imagemin-jpegtran`. To fix this, make sure you have installed nasm, libpng-dev, dh-autoreconf. Then do `rm node_modules -r` and `npm install`.
 - Problem with `node-gyp`? Check if you meet the requirements here: [Link](https://github.com/TooTallNate/node-gyp)
-
-### Chat with Development Team
-
-[![Join the chat at https://gitter.im/loklak](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/loklak?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
