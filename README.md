@@ -1,13 +1,12 @@
-loklak walls
-=====================================
+# loklak walls
 
 [![Join the chat at https://gitter.im/loklak/loklak](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/loklak/loklak)
-[![Build Status](https://travis-ci.org/fossasia/loklak_webclient.svg?branch=master)](https://travis-ci.org/fossasia/loklak_webclient)
-[![Code Climate](https://codeclimate.com/github/fossasia/loklak_webclient/badges/gpa.svg)](https://codeclimate.com/github/fossasia/loklak_webclient)
+[![Build Status](https://travis-ci.org/fossasia/loklak_walls.svg?branch=master)](https://travis-ci.org/fossasia/loklak_walls)
+[![Code Climate](https://codeclimate.com/github/fossasia/loklak_walls/badges/gpa.svg)](https://codeclimate.com/github/fossasia/loklak_walls)
 
 The loklak walls app creates social media walls using the loklak server as a data source. The goal is to develop a fully fledged alternative to closed source twitter wall services. In order to run the service you can use the API of http://loklak.org or install your own loklak server data storage engine. For some parts of the service you still require a twitter API currently (to be discontinued in the future). loklak.org is a server application which collects messages from various social media tweet sources, including twitter. The server contains a search index and a peer-to-peer index sharing interface. All messages are stored in an elasticsearch index.
 
----
+--
 
 ## Communication
 
